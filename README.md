@@ -5,7 +5,7 @@
 [![Gradle](https://img.shields.io/badge/Gradle-8%2B-02303A?logo=gradle)](https://gradle.org)
 [![JUnit](https://img.shields.io/badge/JUnit-5-25A162?logo=junit5)](https://junit.org)
 
-<img align="right" height="256" src="template_icon.png"/>
+<img align="right" height="256" src="icon.png"/>
 
 **Kotlinbrella** is an opinionated Kotlin-first Spring Boot starter suite for
 consistent backend APIs. It extracts and evolves production patterns for error
@@ -59,3 +59,4 @@ work.
 [Unlicense](LICENSE) - public domain.
 
 <a href="https://www.flaticon.com/free-icons/times-square" title="times square icons">Times square icons created by Dave Gandy - Flaticon</a>
+
