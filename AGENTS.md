@@ -12,11 +12,14 @@
 
 ## Project & Profile
 
-_Brief description of the project and its purpose._
+Kotlinbrella is an opinionated Kotlin-first Spring Boot starter suite for
+consistent web APIs. It consolidates reusable error handling, validation,
+Spring Data, access-policy, and OpenAPI conventions.
 
-Package: `com.example.project`
+Base package: `io.github.umbrellaleaf5.kotlinbrella`
 
-Built on Kotlin with a multi-module Gradle layout (`root` + application module(s)).
+Built on Kotlin with a multi-module Gradle layout. It publishes libraries and
+Spring Boot starters, not an executable application.
 
 ### Code style
 
@@ -30,10 +33,14 @@ _Instruction for Agent:_ If you haven't read `./CODE-STYLE.md` in the current se
 
 ### Modules
 
-- **Mandatory**: keep the multi-module structure (`root` + at least one application module).
-- Application code lives in a dedicated module (e.g., `core/`).
+- **Mandatory**: keep the multi-module structure.
+- Shared Kotlin APIs live in `kotlinbrella-core/`; Spring Boot auto-configuration lives in
+  `kotlinbrella-spring-boot-autoconfigure/`; dependency-only starter modules are named
+  `kotlinbrella-spring-boot-starter-*`.
+- The aggregate `kotlinbrella-spring-boot-starter/` exposes the full opinionated suite.
 - The root `build.gradle.kts` declares plugin versions with `apply false` and configures shared settings for all subprojects (`allprojects`, `subprojects`).
-- Version pins for third-party libraries go in `dependencies.gradle.kts` under `extra["versions"]`.
+- Version pins for third-party libraries belong in the single version-management
+  mechanism selected during repository foundation work.
 
 ## Operational Rules & Critical Restrictions
 
@@ -100,36 +107,12 @@ time-d -c --sec 300 "./gradlew build"
 **Every change must be verified by running the test suite.** No exceptions.
 
 ```bash
-time-d -c --sec 300 "cd app/src/test/python && uv run pytest"
+time-d -c --sec 300 "./gradlew build"
 ```
 
-All JVM tests in `./gradlew build` and all pytest integration tests must pass. If any test fails, fix the issue before considering the change complete.
-
-**Note:** The previous run's server may still be alive on the default port. Always kill it (see below) before starting a fresh one.
-
-### Start the application
-
-```bash
-time-d -c --sec 120 "cd .docker/db && docker compose up -d"
-```
-
-```bash
-time-d -c "nohup java -jar app/build/libs/app-0.0.1.jar --spring.profiles.active=dev >/dev/null 2>&1 &"
-```
-
-```bash
-time-d -c --sec 120 "for i in $(seq 1 30); do curl -s -o /dev/null http://localhost:8080/api/health 2>/dev/null && echo ready && break; sleep 3; done"
-```
-
-### Stop the application
-
-**Always kill the server when done — do not leave it running indefinitely.**
-
-```bash
-time-d -c "for pid in \$(netstat -ano 2>/dev/null | grep ':8080.*LISTENING' | awk '{print \$NF}'); do taskkill -F -PID \$pid 2>/dev/null; done && echo port free"
-```
-
-Note: `pkill -f bootRun` does **not** reliably work on Windows. Use the `taskkill` command above.
+All unit, integration, and compatibility tests must pass. If any test fails,
+fix the issue before considering the change complete. Sample applications are
+tests of the published starter contract and must be kept runnable.
 
 ### Setup
 
@@ -144,6 +127,19 @@ This downloads dependencies and builds the project. For IDE: IntelliJ IDEA with 
 ### Documentation
 
 - **Standalone Markdown documentation pages** → `SCREAMING_SNAKE_CASE` names (e.g., `CONFIG.md`, `ARCHITECTURE.md`, `CODE-STYLE.md`). Keep conventional repository files such as `README.md` unchanged unless explicitly requested.
+
+### Library boundaries
+
+- Treat public classes, annotations, properties, exception codes, configuration keys, and
+  serialized error fields as versioned contracts.
+- Prefer immutable APIs and explicit names. Do not expose project-specific entities,
+  repositories, constants, or API messages.
+- Keep Spring Boot auto-configuration and implementation details in `autoconfigure` or
+  `internal` packages. Never leak internal types through public APIs.
+- Put a type in the module with the narrowest dependency set. In particular,
+  `kotlinbrella-core` must not depend on Spring, JPA, Springdoc, or AOP.
+- Design Kotlin APIs to remain usable from Java where practical; add Java-facing tests for
+  public functionality intended for Java consumers.
 
 ### Package layout
 

@@ -1,6 +1,6 @@
 # CODE-STYLE.md
 
-All code-writing rules for Kotlin projects.
+All code-writing rules for Kotlinbrella.
 
 ## Table of Contents
 
@@ -577,7 +577,7 @@ All code-writing rules for Kotlin projects.
   - Precision/sentinel constants (`1e-9`, `-1`) — values that define computational precision or "no value" markers
   - Trivial initialisers (`0`, `1`, `""`) — when semantically obvious and not carrying domain meaning
 
-- All shared strings, magic numbers, regex patterns, and validation messages live in a dedicated `object Constants` in `Constants.kt`.
+- All shared strings, magic numbers, regex patterns, error codes, and validation messages live in a dedicated `object Constants` in `Constants.kt`.
 
 - Organize into nested objects: `Math`, `Entity`, `ErrorDescription`, `Validation`, `Pattern`.
 
