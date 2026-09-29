@@ -13,6 +13,11 @@ validated at the web boundary, where an application can distinguish an
 untrusted client field from an erroneous internal query. This module leaves
 them as internal failures rather than guessing which case occurred.
 
+Applications with an existing error JSON contract can set
+`kotlinbrella.data-jpa.errors.enabled=false` until their persistence error
+responses are migrated. Repository lookup helpers remain available when
+the advice is disabled.
+
 The focused JPA starter includes Spring Data JPA and Kotlin reflection.
 The aggregate starter additionally includes Liquibase and the PostgreSQL
 runtime driver for the Digital Factory full-stack case. PostgreSQL integration

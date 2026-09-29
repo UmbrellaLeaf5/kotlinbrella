@@ -51,6 +51,10 @@ class KotlinbrellaJpaErrorAdviceTest {
     webContext.withPropertyValues("kotlinbrella.web.enabled=false").run { context ->
       assertFalse(context.containsBean("kotlinbrellaJpaErrorAdvice"))
     }
+
+    webContext.withPropertyValues("kotlinbrella.data-jpa.errors.enabled=false").run { context ->
+      assertFalse(context.containsBean("kotlinbrellaJpaErrorAdvice"))
+    }
   }
 
 }
