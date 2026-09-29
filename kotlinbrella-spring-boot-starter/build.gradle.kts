@@ -9,4 +9,6 @@ dependencies {
   api(platform("org.springframework.boot:spring-boot-dependencies:${rootProject.extra["bootVersion"]}"))
   api("org.springframework.boot:spring-boot-starter-actuator")
   api("org.springframework.boot:spring-boot-starter-restclient")
+  api("org.springframework.boot:spring-boot-starter-liquibase")
+  runtimeOnly("org.postgresql:postgresql")
 }

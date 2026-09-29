@@ -8,6 +8,7 @@ plugins {
 
 extra["bootVersion"] = "4.0.3"
 extra["springdocVersion"] = "3.0.2"
+extra["testcontainersVersion"] = "1.21.4"
 
 allprojects {
   repositories {

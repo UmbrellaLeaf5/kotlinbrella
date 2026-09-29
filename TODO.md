@@ -23,7 +23,7 @@ API lacks unit and integration coverage.
 - [x] `kotlinbrella-spring-boot-autoconfigure`: conditional configurations.
 - [x] `kotlinbrella-spring-boot-starter-webmvc`: MVC errors and request context.
 - [x] `kotlinbrella-spring-boot-starter-validation`: neutral patch validation.
-- [ ] `kotlinbrella-spring-boot-starter-data-jpa`: repository helpers and JPA errors.
+- [x] `kotlinbrella-spring-boot-starter-data-jpa`: repository helpers and JPA errors.
 - [ ] `kotlinbrella-spring-boot-starter-openapi`: Springdoc integration.
 - [ ] `kotlinbrella-spring-boot-starter-access`: ownership/access AOP adapter.
 - [ ] `kotlinbrella-spring-boot-starter`: aggregate of stable focused starters.
@@ -151,21 +151,21 @@ Acceptance:
 
 ## Phase 5: Spring Data JPA Starter
 
-- [ ] Implement generic `CrudRepository<T, ID>.findByIdOrThrow(id, entityName)`.
-- [ ] Produce Kotlinbrella `NotFoundException` and a stable not-found code.
-- [ ] Add a factory overload only if specific codes/messages require it.
-- [ ] Support non-UUID identifier types.
-- [ ] Map optimistic locking failures to `409 Conflict`.
-- [ ] Map `DataIntegrityViolationException` conservatively; never expose constraint
+- [x] Implement generic `CrudRepository<T, ID>.findByIdOrThrow(id, entityName)`.
+- [x] Produce Kotlinbrella `NotFoundException` and a stable not-found code.
+- [x] Add a factory overload only if specific codes/messages require it.
+- [x] Support non-UUID identifier types.
+- [x] Map optimistic locking failures to `409 Conflict`.
+- [x] Map `DataIntegrityViolationException` conservatively; never expose constraint
       names by default.
-- [ ] Decide whether invalid sort/property exceptions are data or web concerns.
-- [ ] Use Testcontainers or an equivalent real database integration test for
+- [x] Decide whether invalid sort/property exceptions are data or web concerns.
+- [x] Use Testcontainers or an equivalent real database integration test for
       lookup, uniqueness, foreign keys, and optimistic locks.
 
 Acceptance:
 
-- [ ] The module depends on Spring Data/JPA, never application entities.
-- [ ] S3, upload, queue, and vendor-specific application behavior are excluded.
+- [x] The module depends on Spring Data/JPA, never application entities.
+- [x] S3, upload, queue, and vendor-specific application behavior are excluded.
 
 ## Phase 6: OpenAPI Starter
 

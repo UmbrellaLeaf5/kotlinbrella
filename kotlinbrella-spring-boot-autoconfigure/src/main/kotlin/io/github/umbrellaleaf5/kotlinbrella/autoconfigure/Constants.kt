@@ -24,6 +24,7 @@ object Constants {
     const val METHOD_NOT_ALLOWED = "Method not allowed"
     const val UNSUPPORTED_MEDIA_TYPE = "Unsupported media type"
     const val INTERNAL_ERROR = "Internal server error"
+    const val CONFLICT = "Resource conflict"
 
   }
 
