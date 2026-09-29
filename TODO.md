@@ -24,7 +24,7 @@ API lacks unit and integration coverage.
 - [x] `kotlinbrella-spring-boot-starter-webmvc`: MVC errors and request context.
 - [x] `kotlinbrella-spring-boot-starter-validation`: neutral patch validation.
 - [x] `kotlinbrella-spring-boot-starter-data-jpa`: repository helpers and JPA errors.
-- [ ] `kotlinbrella-spring-boot-starter-openapi`: Springdoc integration.
+- [x] `kotlinbrella-spring-boot-starter-openapi`: Springdoc integration.
 - [ ] `kotlinbrella-spring-boot-starter-access`: ownership/access AOP adapter.
 - [ ] `kotlinbrella-spring-boot-starter`: aggregate of stable focused starters.
 - [ ] `samples/`: full Kotlin MVC, minimal MVC, and Java consumer examples.
@@ -169,21 +169,21 @@ Acceptance:
 
 ## Phase 6: OpenAPI Starter
 
-- [ ] Add Springdoc as an intentional dependency of the OpenAPI starter.
-- [ ] Keep the Web MVC starter usable without Springdoc.
-- [ ] Port DF's `@ApiError` / `@ApiErrors` concept using canonical codes and
+- [x] Add Springdoc as an intentional dependency of the OpenAPI starter.
+- [x] Keep the Web MVC starter usable without Springdoc.
+- [x] Port DF's `@ApiError` / `@ApiErrors` concept using canonical codes and
       Kotlinbrella's error contract.
-- [ ] Choose annotation parameter types compatible with Kotlin and Java.
-- [ ] Implement an `OperationCustomizer` that preserves application-declared
+- [x] Choose annotation parameter types compatible with Kotlin and Java.
+- [x] Implement an `OperationCustomizer` that preserves application-declared
       responses while adding schemas and examples.
-- [ ] Handle duplicate statuses/codes and multiple examples safely.
-- [ ] Register canonical error and violation schemas once.
-- [ ] Test generated OpenAPI JSON against the actual MVC response contract.
-- [ ] Document API-spec interfaces as preferred, never mandatory.
+- [x] Handle duplicate statuses/codes and multiple examples safely.
+- [x] Register canonical error and violation schemas once.
+- [x] Test generated OpenAPI JSON against the actual MVC response contract.
+- [x] Document API-spec interfaces as preferred, never mandatory.
 
 Acceptance:
 
-- [ ] Documentation examples cannot drift from the runtime error renderer.
+- [x] Documentation examples cannot drift from the runtime error renderer.
 
 ## Phase 7: Access and Ownership Starter
 

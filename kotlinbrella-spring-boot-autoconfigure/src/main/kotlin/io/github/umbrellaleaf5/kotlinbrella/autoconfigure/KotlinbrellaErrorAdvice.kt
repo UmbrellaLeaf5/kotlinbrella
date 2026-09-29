@@ -168,6 +168,7 @@ class KotlinbrellaErrorAdvice(
 
     val body = ProblemDetail.forStatusAndDetail(status, detail)
     body.instance = URI.create(request.requestURI)
+    body.setProperty(Constants.Web.TYPE_KEY, Constants.Web.ABOUT_BLANK)
     body.setProperty(Constants.Web.CODE_KEY, code)
     body.setProperty(Constants.Web.TRACE_ID_KEY, request.getAttribute(Constants.Web.TRACE_ID_ATTRIBUTE)
       ?: UUID.randomUUID().toString())
