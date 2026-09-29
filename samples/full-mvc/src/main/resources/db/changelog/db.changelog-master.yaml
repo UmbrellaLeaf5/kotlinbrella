@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-sample-items
+      author: kotlinbrella
+      changes:
+        - createTable:
+            tableName: sample_items
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: owner_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

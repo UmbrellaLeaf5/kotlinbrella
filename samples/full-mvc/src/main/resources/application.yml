@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: ${SAMPLE_DATABASE_URL}
+    username: ${SAMPLE_DATABASE_USER}
+    password: ${SAMPLE_DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+kotlinbrella:
+  web:
+    enabled: true
+    expose-debug-details: false
+    request-id-header: X-Request-Id
+  access:
+    resource-id-template: '{resource}IdString'
+    user-id-parameter: userIdString

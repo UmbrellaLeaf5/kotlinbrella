@@ -3,7 +3,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {
   kotlin("jvm") version "2.3.10" apply false
+  kotlin("plugin.jpa") version "2.3.10" apply false
+  kotlin("plugin.spring") version "2.3.10" apply false
   id("io.spring.dependency-management") version "1.1.7" apply false
+  id("org.springframework.boot") version "4.0.3" apply false
 }
 
 extra["bootVersion"] = "4.0.3"
@@ -24,7 +27,7 @@ subprojects {
   extensions.configure<JavaPluginExtension> {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     withSourcesJar()
-    withJavadocJar()
+    if (!project.path.startsWith(":samples")) withJavadocJar()
   }
 
   extensions.configure<KotlinJvmProjectExtension> {
@@ -49,7 +52,7 @@ subprojects {
     isReproducibleFileOrder = true
   }
 
-  extensions.configure<PublishingExtension> {
+  if (!project.path.startsWith(":samples")) extensions.configure<PublishingExtension> {
     publications {
       create<MavenPublication>("mavenJava") {
         from(components["java"])

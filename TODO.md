@@ -7,12 +7,12 @@ API lacks unit and integration coverage.
 
 ## Product Constraints
 
-- [ ] Keep Kotlinbrella Kotlin-first and useful to Digital Factory and Terraaero.
-- [ ] Make public APIs practical for Java consumers where that does not weaken
+- [x] Keep Kotlinbrella Kotlin-first and useful to Digital Factory and Terraaero.
+- [x] Make public APIs practical for Java consumers where that does not weaken
       Kotlin ergonomics.
-- [ ] Ship an aggregate starter for the usual full-stack case and focused
+- [x] Ship an aggregate starter for the usual full-stack case and focused
       starters for services that need only a subset.
-- [ ] Never copy project entities, repositories, error text, S3 workflows,
+- [x] Never copy project entities, repositories, error text, S3 workflows,
       queues, or deployment configuration into Kotlinbrella.
 - [ ] Treat public types, annotations, properties, error codes, JSON fields,
       and documentation as versioned compatibility contracts.
@@ -26,8 +26,8 @@ API lacks unit and integration coverage.
 - [x] `kotlinbrella-spring-boot-starter-data-jpa`: repository helpers and JPA errors.
 - [x] `kotlinbrella-spring-boot-starter-openapi`: Springdoc integration.
 - [x] `kotlinbrella-spring-boot-starter-access`: ownership/access AOP adapter.
-- [ ] `kotlinbrella-spring-boot-starter`: aggregate of stable focused starters.
-- [ ] `samples/`: full Kotlin MVC, minimal MVC, and Java consumer examples.
+- [x] `kotlinbrella-spring-boot-starter`: aggregate of stable focused starters.
+- [x] `samples/`: full Kotlin MVC, minimal MVC, and Java consumer examples.
 
 ## Phase 0: Repository Foundation
 
@@ -39,7 +39,7 @@ API lacks unit and integration coverage.
       baseline; configure Kotlin JVM and strict JSR-305 handling.
 - [x] Configure JUnit 5, reproducible archives, sources, Dokka/Javadoc, and
       Gradle publishing metadata.
-- [ ] Add CI for clean build, tests, samples, and the supported JDK/Boot matrix.
+- [x] Add CI for clean build, tests, samples, and the supported JDK/Boot matrix.
 - [ ] Decide semantic versioning, changelog, license, security policy, Maven
       Central publication, signing, and CI secret handling.
 
@@ -222,19 +222,19 @@ Acceptance:
 
 ## Phase 8: Aggregate Starter and Samples
 
-- [ ] Make the aggregate starter depend on all stable focused starters.
-- [ ] Include OpenAPI in the aggregate starter, while preserving focused modules.
-- [ ] Build a Kotlin sample for errors, conversion, validation, repository lookup,
+- [x] Make the aggregate starter depend on all stable focused starters.
+- [x] Include OpenAPI in the aggregate starter, while preserving focused modules.
+- [x] Build a Kotlin sample for errors, conversion, validation, repository lookup,
       `@ApiErrors`, and `@CheckOwnership`.
-- [ ] Build a minimal MVC sample proving Web MVC does not pull JPA, AOP, or Springdoc.
-- [ ] Add Java consumer compilation/integration coverage for public APIs.
-- [ ] Provide safe example YAML for diagnostics, OpenAPI, access conventions, and
+- [x] Build a minimal MVC sample proving Web MVC does not pull JPA, AOP, or Springdoc.
+- [x] Add Java consumer compilation/integration coverage for public APIs.
+- [x] Provide safe example YAML for diagnostics, OpenAPI, access conventions, and
       request IDs. Do not include credentials or local infrastructure defaults.
 
 Acceptance:
 
-- [ ] One dependency enables the complete intended experience.
-- [ ] Focused starters do not pull unrelated infrastructure.
+- [x] One dependency enables the complete intended experience.
+- [x] Focused starters do not pull unrelated infrastructure.
 
 ## Phase 9: Existing-Service Migration
 

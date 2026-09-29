@@ -11,16 +11,18 @@
 consistent backend APIs. It extracts and evolves production patterns for error
 handling, validation, Spring Data, access checks, and OpenAPI documentation.
 
-## Planned Modules
+## Modules
 
-| Module                                      | Purpose                                                                                  |
-| ------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `kotlinbrella-core`                         | Kotlin utilities, conversions, named null checks, and client-facing exceptions.          |
-| `kotlinbrella-spring-boot-starter-webmvc`   | RFC 9457-compatible errors, validation responses, safe diagnostics, and request context. |
-| `kotlinbrella-spring-boot-starter-data-jpa` | `findByIdOrThrow`, persistence conflict handling, and optimistic-lock integration.       |
-| `kotlinbrella-spring-boot-starter-openapi`  | Springdoc schemas, error examples, and declarative endpoint error documentation.         |
-| `kotlinbrella-spring-boot-starter-access`   | Configurable `@CheckOwnership` backed by application-provided access checkers.           |
-| `kotlinbrella-spring-boot-starter`          | Aggregate starter for the complete Kotlinbrella experience.                              |
+| Module                                         | Purpose                                  |
+| ---------------------------------------------- | ---------------------------------------- |
+| `kotlinbrella-core`                            | Errors, conversions, public contracts.   |
+| `kotlinbrella-spring-boot-autoconfigure`       | Conditional Spring Boot configuration.   |
+| `kotlinbrella-spring-boot-starter-webmvc`      | MVC problem responses and request IDs.   |
+| `kotlinbrella-spring-boot-starter-validation`  | Explicit patch validation.               |
+| `kotlinbrella-spring-boot-starter-data-jpa`    | Repository lookups and safe conflicts.   |
+| `kotlinbrella-spring-boot-starter-openapi`     | Springdoc errors and schemas.            |
+| `kotlinbrella-spring-boot-starter-access`      | Ownership checks via application policy. |
+| `kotlinbrella-spring-boot-starter`             | Complete aggregate starter.              |
 
 ## Principles
 
@@ -37,9 +39,11 @@ handling, validation, Spring Data, access checks, and OpenAPI documentation.
 
 ## Status
 
-Kotlinbrella is in the design and foundation stage. The detailed architecture,
-implementation order, testing strategy, migration path, and release checklist
-are maintained in [TODO.md](TODO.md).
+Kotlinbrella has working focused starters, an aggregate starter, and runnable
+Kotlin and Java examples under `samples/`. The remaining migration and release
+work is tracked in [TODO.md](TODO.md). Consult [ERROR_CONTRACT.md](ERROR_CONTRACT.md),
+[VALIDATION.md](VALIDATION.md), [DATA_JPA.md](DATA_JPA.md), [OPENAPI.md](OPENAPI.md),
+[ACCESS.md](ACCESS.md), and [WEB_MVC.md](WEB_MVC.md) for public contracts.
 
 ## Development
 
@@ -54,6 +58,16 @@ Java 21 is required. The Spring Boot baseline is 4.0.3. For local development
 of consumers, run `./gradlew publishToMavenLocal` and add `mavenLocal()` to the
 consumer repositories. Published module coordinates use group
 `io.github.umbrellaleaf5.kotlinbrella` and version `0.1.0-SNAPSHOT`.
+
+The aggregate dependency includes the shared libraries needed by Digital
+Factory's `root` and `slicer-api`: Spring MVC, validation, JPA, Liquibase,
+PostgreSQL, Springdoc, AOP, Actuator, RestClient, Jackson Kotlin and Kotlin
+reflection. Domain-specific integrations remain application dependencies.
+
+The full sample requires PostgreSQL settings `SAMPLE_DATABASE_URL`,
+`SAMPLE_DATABASE_USER`, and `SAMPLE_DATABASE_PASSWORD`. `./gradlew build`
+runs its Testcontainers-backed contract tests when Docker is available. The
+minimal sample has no JPA, AOP or Springdoc dependency.
 
 Publication to Maven Central and signing require release credentials and are
 tracked in [TODO.md](TODO.md).
