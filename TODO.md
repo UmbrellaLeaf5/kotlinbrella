@@ -95,38 +95,38 @@ Acceptance:
 
 ### Properties and activation
 
-- [ ] Define `KotlinbrellaWebProperties` under a stable prefix.
-- [ ] Define and document an `enabled` switch.
-- [ ] Add explicit `expose-debug-details`; allow optional configured diagnostic
+- [x] Define `KotlinbrellaWebProperties` under a stable prefix.
+- [x] Define and document an `enabled` switch.
+- [x] Add explicit `expose-debug-details`; allow optional configured diagnostic
       profiles via `Environment.acceptsProfiles(...)`, never a first-active-profile
       heuristic.
-- [ ] Define request/trace ID header, response propagation, MDC behavior,
+- [x] Define request/trace ID header, response propagation, MDC behavior,
       generation policy, and privacy constraints.
 
 ### Handler
 
-- [ ] Auto-configure `@RestControllerAdvice` only for Servlet MVC.
-- [ ] Give Kotlinbrella advice a deliberate order so applications can override
+- [x] Auto-configure `@RestControllerAdvice` only for Servlet MVC.
+- [x] Give Kotlinbrella advice a deliberate order so applications can override
       individual mappings with higher-precedence advice.
-- [ ] Render Kotlinbrella exceptions through the canonical contract.
-- [ ] Map `MethodArgumentNotValidException` to structured field/global errors.
-- [ ] Map `ConstraintViolationException` for method and request validation.
-- [ ] Map malformed JSON, invalid enum/date/format, and type mismatch to `400`
+- [x] Render Kotlinbrella exceptions through the canonical contract.
+- [x] Map `MethodArgumentNotValidException` to structured field/global errors.
+- [x] Map `ConstraintViolationException` for method and request validation.
+- [x] Map malformed JSON, invalid enum/date/format, and type mismatch to `400`
       without exposing rejected values by default.
-- [ ] Map missing request values to `400`, missing resources to `404`, unsupported
+- [x] Map missing request values to `400`, missing resources to `404`, unsupported
       methods to `405`, and unsupported media types to `415`.
-- [ ] Map unknown failures to a safe `500`, log the full exception exactly once,
+- [x] Map unknown failures to a safe `500`, log the full exception exactly once,
       and return only safe details plus trace ID.
-- [ ] Define configurable logging of expected 4xx failures without request-body
+- [x] Define configurable logging of expected 4xx failures without request-body
       or secret leakage.
-- [ ] Add Spring context tests for every mapping, response JSON, detail exposure,
+- [x] Add Spring context tests for every mapping, response JSON, detail exposure,
       trace ID, advice precedence, and 5xx logging.
 
 Acceptance:
 
-- [ ] Combine Terraaero immutable messages and unknown-error logging with DF
+- [x] Combine Terraaero immutable messages and unknown-error logging with DF
       handler coverage and Slicer API's correct `405`/`415` semantics.
-- [ ] Production responses never reveal DB text, stack traces, or rejected values.
+- [x] Production responses never reveal DB text, stack traces, or rejected values.
 
 ## Phase 4: Validation Starter
 
