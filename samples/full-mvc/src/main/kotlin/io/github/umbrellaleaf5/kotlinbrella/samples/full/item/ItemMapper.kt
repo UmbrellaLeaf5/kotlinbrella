@@ -1,6 +1,7 @@
 package io.github.umbrellaleaf5.kotlinbrella.samples.full.item
 
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.data.api.ItemCreateRequest
+import io.github.umbrellaleaf5.kotlinbrella.samples.full.Constants
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.data.api.ItemResponse
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.storage.ItemEntity
 import io.github.umbrellaleaf5.kotlinbrella.util.checkFieldNotNullByName
@@ -16,14 +17,14 @@ class ItemMapper {
 
   fun toEntity(request: ItemCreateRequest, ownerId: UUID): ItemEntity = ItemEntity(
     ownerId = ownerId,
-    name = request.name.requireFieldNotNullByName { "name" },
+    name = request.name.requireFieldNotNullByName { Constants.Json.NAME },
   )
 
   // MARK: Convert persisted entity to response
   // --------------------------------------------------
 
   fun toResponse(item: ItemEntity): ItemResponse = ItemResponse(
-    id = item.id.checkFieldNotNullByName { "id" },
+    id = item.id.checkFieldNotNullByName { Constants.Json.ID },
     ownerId = item.ownerId,
     name = item.name,
   )

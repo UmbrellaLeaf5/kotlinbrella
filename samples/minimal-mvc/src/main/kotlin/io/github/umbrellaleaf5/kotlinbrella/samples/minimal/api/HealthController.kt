@@ -1,6 +1,7 @@
 package io.github.umbrellaleaf5.kotlinbrella.samples.minimal.api
 
 import io.github.umbrellaleaf5.kotlinbrella.samples.minimal.service.HealthService
+import io.github.umbrellaleaf5.kotlinbrella.samples.minimal.Constants
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -14,7 +15,7 @@ class HealthController(
   // MARK: GET /health
   // --------------------------------------------------
 
-  @GetMapping("/health")
+  @GetMapping(Constants.Api.HEALTH_PATH)
   fun status(): String = healthService.status()
 
 }

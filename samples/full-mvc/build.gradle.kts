@@ -11,5 +11,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
   testImplementation("org.testcontainers:postgresql:${rootProject.extra["testcontainersVersion"]}")
-  testImplementation("org.testcontainers:junit-jupiter:${rootProject.extra["testcontainersVersion"]}")
+  testImplementation(
+    "org.testcontainers:junit-jupiter:${rootProject.extra["testcontainersVersion"]}",
+  )
 }

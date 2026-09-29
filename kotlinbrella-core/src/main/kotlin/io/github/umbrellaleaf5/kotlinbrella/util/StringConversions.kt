@@ -14,7 +14,12 @@ fun String.toUUIDOrThrow(): UUID = try {
 }
 
 catch (exception: IllegalArgumentException) {
-  throw BadRequestException("Invalid UUID: $this", "Invalid UUID", ErrorCode.INVALID_UUID, exception)
+  throw BadRequestException(
+    "Invalid UUID: $this",
+    "Invalid UUID",
+    ErrorCode.INVALID_UUID,
+    exception,
+  )
 }
 
 // --------------------------------------------------

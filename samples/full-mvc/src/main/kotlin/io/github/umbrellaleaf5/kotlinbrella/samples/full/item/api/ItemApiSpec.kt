@@ -2,6 +2,8 @@ package io.github.umbrellaleaf5.kotlinbrella.samples.full.item.api
 
 import io.github.umbrellaleaf5.kotlinbrella.openapi.ApiError
 import io.github.umbrellaleaf5.kotlinbrella.openapi.ApiErrors
+import io.github.umbrellaleaf5.kotlinbrella.samples.full.Constants
+import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.data.api.ItemCreateRequest
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.data.api.ItemResponse
 import io.swagger.v3.oas.annotations.Operation
@@ -13,31 +15,34 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 
-@Tag(name = "Items")
+@Tag(name = Constants.Api.TAG_ITEMS)
 interface ItemApiSpec {
 
   // MARK: GET /api/item/{item_id}
   // --------------------------------------------------
 
-  @Operation(summary = "Read an owned item")
+  @Operation(summary = Constants.Api.GET_ITEM_SUMMARY)
   @ApiErrors([
-    ApiError(400, "INVALID_UUID", "Invalid UUID"),
-    ApiError(404, "NOT_FOUND", "Resource not found"),
+    ApiError(Constants.Api.BAD_REQUEST_STATUS, ErrorCode.INVALID_UUID,
+      Constants.Api.INVALID_UUID_DESCRIPTION),
+    ApiError(Constants.Api.NOT_FOUND_STATUS, ErrorCode.NOT_FOUND,
+      Constants.Api.NOT_FOUND_DESCRIPTION),
   ])
-  @GetMapping("/api/item/{item_id}")
+  @GetMapping(Constants.Api.ITEM_BY_ID_PATH)
   fun getItem(
-    @RequestParam("user_id") userIdString: String,
-    @PathVariable("item_id") itemIdString: String,
+    @RequestParam(Constants.Api.USER_ID) userIdString: String,
+    @PathVariable(Constants.Api.ITEM_ID) itemIdString: String,
   ): ItemResponse
 
   // MARK: POST /api/item
   // --------------------------------------------------
 
-  @Operation(summary = "Create an item")
-  @ApiErrors([ApiError(400, "AT_LEAST_ONE_PRESENT", "Validation failed")])
-  @PostMapping("/api/item")
+  @Operation(summary = Constants.Api.CREATE_ITEM_SUMMARY)
+  @ApiErrors([ApiError(Constants.Api.BAD_REQUEST_STATUS, ErrorCode.AT_LEAST_ONE_PRESENT,
+    Constants.Api.VALIDATION_FAILED_DESCRIPTION)])
+  @PostMapping(Constants.Api.ITEM_PATH)
   fun createItem(
-    @RequestParam("user_id") userIdString: String,
+    @RequestParam(Constants.Api.USER_ID) userIdString: String,
     @Valid @RequestBody request: ItemCreateRequest,
   ): ItemResponse
 

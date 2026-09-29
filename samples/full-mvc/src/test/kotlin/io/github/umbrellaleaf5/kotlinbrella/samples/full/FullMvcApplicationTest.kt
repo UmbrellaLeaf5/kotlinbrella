@@ -1,11 +1,13 @@
 package io.github.umbrellaleaf5.kotlinbrella.samples.full
 
+import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -31,52 +33,54 @@ class FullMvcApplicationTest(
   @Test
   fun createsAndReadsOwnedItemButConcealsForeignOwner() {
     val ownerId = UUID.randomUUID()
-    val created = mvc.perform(post("/api/item")
-      .param("user_id", ownerId.toString())
+    val name = "sample"
+    val created = mvc.perform(post(Constants.Api.ITEM_PATH)
+      .param(Constants.Api.USER_ID, ownerId.toString())
       .contentType(MediaType.APPLICATION_JSON)
-      .content("{\"name\":\"sample\"}"))
+      .content("{\"${Constants.Json.NAME}\":\"$name\"}"))
       .andReturn().response
 
-    assertEquals(200, created.status)
+    assertEquals(HttpStatus.OK.value(), created.status)
 
-    val itemId = created.contentAsString.substringAfter("\"id\":\"").substringBefore('"')
-    val owned = mvc.perform(get("/api/item/$itemId")
-      .param("user_id", ownerId.toString())).andReturn().response
-    val foreign = mvc.perform(get("/api/item/$itemId")
-      .param("user_id", UUID.randomUUID().toString())).andReturn().response
+    val itemId = created.contentAsString
+      .substringAfter("\"${Constants.Json.ID}\":\"").substringBefore('"')
+    val owned = mvc.perform(get(Constants.Api.ITEM_BY_ID_PATH, itemId)
+      .param(Constants.Api.USER_ID, ownerId.toString())).andReturn().response
+    val foreign = mvc.perform(get(Constants.Api.ITEM_BY_ID_PATH, itemId)
+      .param(Constants.Api.USER_ID, UUID.randomUUID().toString())).andReturn().response
 
-    assertEquals(200, owned.status)
-    assertEquals(404, foreign.status)
-    assertTrue(owned.contentAsString.contains("sample"))
+    assertEquals(HttpStatus.OK.value(), owned.status)
+    assertEquals(HttpStatus.NOT_FOUND.value(), foreign.status)
+    assertTrue(owned.contentAsString.contains(name))
   }
 
   // --------------------------------------------------
 
   @Test
   fun rendersValidationAndConversionFailures() {
-    val invalidPatch = mvc.perform(post("/api/item")
-      .param("user_id", UUID.randomUUID().toString())
+    val invalidPatch = mvc.perform(post(Constants.Api.ITEM_PATH)
+      .param(Constants.Api.USER_ID, UUID.randomUUID().toString())
       .contentType(MediaType.APPLICATION_JSON)
       .content("{}"))
       .andReturn().response
-    val malformedId = mvc.perform(get("/api/item/not-a-uuid")
-      .param("user_id", UUID.randomUUID().toString())).andReturn().response
+    val malformedId = mvc.perform(get(Constants.Api.ITEM_BY_ID_PATH, "not-a-uuid")
+      .param(Constants.Api.USER_ID, UUID.randomUUID().toString())).andReturn().response
 
-    assertEquals(400, invalidPatch.status)
-    assertTrue(invalidPatch.contentAsString.contains("AT_LEAST_ONE_PRESENT"))
-    assertEquals(400, malformedId.status)
-    assertTrue(malformedId.contentAsString.contains("INVALID_UUID"))
+    assertEquals(HttpStatus.BAD_REQUEST.value(), invalidPatch.status)
+    assertTrue(invalidPatch.contentAsString.contains(ErrorCode.AT_LEAST_ONE_PRESENT))
+    assertEquals(HttpStatus.BAD_REQUEST.value(), malformedId.status)
+    assertTrue(malformedId.contentAsString.contains(ErrorCode.INVALID_UUID))
   }
 
   // --------------------------------------------------
 
   @Test
   fun includesCanonicalErrorSchemasInGeneratedSpec() {
-    val response = mvc.perform(get("/v3/api-docs")).andReturn().response
+    val response = mvc.perform(get(Constants.Api.OPENAPI_PATH)).andReturn().response
 
-    assertEquals(200, response.status)
+    assertEquals(HttpStatus.OK.value(), response.status)
     assertTrue(response.contentAsString.contains("KotlinbrellaProblem"))
-    assertTrue(response.contentAsString.contains("AT_LEAST_ONE_PRESENT"))
+    assertTrue(response.contentAsString.contains(ErrorCode.AT_LEAST_ONE_PRESENT))
   }
 
   companion object {

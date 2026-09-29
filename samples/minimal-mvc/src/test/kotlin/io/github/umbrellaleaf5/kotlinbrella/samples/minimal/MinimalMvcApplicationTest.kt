@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.util.ClassUtils
@@ -28,9 +29,9 @@ class MinimalMvcApplicationTest(
       javaClass.classLoader))
     assertFalse(ClassUtils.isPresent("org.aspectj.lang.annotation.Aspect", javaClass.classLoader))
 
-    val response = mvc.perform(get("/health")).andReturn().response
+    val response = mvc.perform(get(Constants.Api.HEALTH_PATH)).andReturn().response
 
-    assertTrue(response.status == 200)
+    assertTrue(response.status == HttpStatus.OK.value())
   }
 
 }

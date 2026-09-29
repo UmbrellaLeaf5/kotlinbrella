@@ -2,6 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.samples.full.item.access
 
 import io.github.umbrellaleaf5.kotlinbrella.access.AccessChecker
 import io.github.umbrellaleaf5.kotlinbrella.access.AccessDecision
+import io.github.umbrellaleaf5.kotlinbrella.samples.full.Constants
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.storage.ItemRepository
 import io.github.umbrellaleaf5.kotlinbrella.util.toUUIDOrThrow
 import org.springframework.stereotype.Component
@@ -12,7 +13,7 @@ class ItemOwnershipChecker(
   private val itemRepository: ItemRepository,
 ) : AccessChecker {
 
-  override val resource: String = "item"
+  override val resource: String = Constants.Resource.ITEM
 
   // MARK: Check item ownership with an indexed query
   // --------------------------------------------------

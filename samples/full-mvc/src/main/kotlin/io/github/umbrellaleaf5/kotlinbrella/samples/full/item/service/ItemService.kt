@@ -2,6 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.samples.full.item.service
 
 import io.github.umbrellaleaf5.kotlinbrella.access.CheckOwnership
 import io.github.umbrellaleaf5.kotlinbrella.data.findByIdOrThrow
+import io.github.umbrellaleaf5.kotlinbrella.samples.full.Constants
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.ItemMapper
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.data.api.ItemCreateRequest
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.data.api.ItemResponse
@@ -32,11 +33,11 @@ class ItemService(
   // MARK: Read an owned item
   // --------------------------------------------------
 
-  @CheckOwnership(resource = "item")
+  @CheckOwnership(resource = Constants.Resource.ITEM)
   fun getItem(userIdString: String, itemIdString: String): ItemResponse {
     val userId = userIdString.toUUIDOrThrow()
     val itemId = itemIdString.toUUIDOrThrow()
-    val item = itemRepository.findByIdOrThrow(itemId, "Item")
+    val item = itemRepository.findByIdOrThrow(itemId, Constants.Entity.ITEM)
 
     return itemMapper.toResponse(item)
   }

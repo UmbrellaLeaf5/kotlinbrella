@@ -42,7 +42,10 @@ class KotlinbrellaErrorAdvice(
   // --------------------------------------------------
 
   @ExceptionHandler(ApiException::class)
-  fun apiException(exception: ApiException, request: HttpServletRequest): ResponseEntity<ProblemDetail> =
+  fun apiException(
+    exception: ApiException,
+    request: HttpServletRequest,
+  ): ResponseEntity<ProblemDetail> =
     problem(
       HttpStatusCode.valueOf(exception.status),
       exception.code,
@@ -170,8 +173,10 @@ class KotlinbrellaErrorAdvice(
     body.instance = URI.create(request.requestURI)
     body.setProperty(Constants.Web.TYPE_KEY, Constants.Web.ABOUT_BLANK)
     body.setProperty(Constants.Web.CODE_KEY, code)
-    body.setProperty(Constants.Web.TRACE_ID_KEY, request.getAttribute(Constants.Web.TRACE_ID_ATTRIBUTE)
-      ?: UUID.randomUUID().toString())
+    val traceId = request.getAttribute(Constants.Web.TRACE_ID_ATTRIBUTE)
+      ?: UUID.randomUUID().toString()
+
+    body.setProperty(Constants.Web.TRACE_ID_KEY, traceId)
 
     if (violations.isNotEmpty())
       body.setProperty(Constants.Web.VIOLATIONS_KEY, violations)
