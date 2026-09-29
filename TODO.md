@@ -30,13 +30,13 @@ API lacks unit and integration coverage.
 
 ## Phase 0: Repository Foundation
 
-- [ ] Create Gradle wrapper, `settings.gradle.kts`, root `build.gradle.kts`,
+- [x] Create Gradle wrapper, `settings.gradle.kts`, root `build.gradle.kts`,
       and every target module.
-- [ ] Declare plugins with `apply false`; centralize dependency versions in one
+- [x] Declare plugins with `apply false`; centralize dependency versions in one
       chosen mechanism and use it consistently.
-- [ ] Target Java 17 unless the supported Boot matrix establishes another
+- [x] Target Java 17 unless the supported Boot matrix establishes another
       baseline; configure Kotlin JVM and strict JSR-305 handling.
-- [ ] Configure JUnit 5, reproducible archives, sources, Dokka/Javadoc, and
+- [x] Configure JUnit 5, reproducible archives, sources, Dokka/Javadoc, and
       Gradle publishing metadata.
 - [ ] Add CI for clean build, tests, samples, and the supported JDK/Boot matrix.
 - [ ] Decide semantic versioning, changelog, license, security policy, Maven
@@ -44,32 +44,32 @@ API lacks unit and integration coverage.
 
 Acceptance:
 
-- [ ] `./gradlew build` works from a clean checkout.
-- [ ] Every module has an intentional artifact name and POM description.
+- [x] `./gradlew build` works from a clean checkout.
+- [x] Every module has an intentional artifact name and POM description.
 
 ## Phase 1: Canonical Error Contract
 
-- [ ] Choose one RFC 9457-compatible external error model before writing an
+- [x] Choose one RFC 9457-compatible external error model before writing an
       exception handler.
-- [ ] Document stable fields: `type`, `title`, `status`, `detail`, `instance`,
+- [x] Document stable fields: `type`, `title`, `status`, `detail`, `instance`,
       `code`, `traceId`, and `violations`.
-- [ ] Define `ErrorViolation(field, message, code)` and an uppercase stable
+- [x] Define `ErrorViolation(field, message, code)` and an uppercase stable
       error-code namespace.
-- [ ] Decide the problem-type URI strategy and message localization policy.
-- [ ] Implement immutable `ApiException` with status, code, public detail,
+- [x] Decide the problem-type URI strategy and message localization policy.
+- [x] Implement immutable `ApiException` with status, code, public detail,
       diagnostic detail, and cause preservation.
-- [ ] Implement or factory-create `BadRequestException`, `NotFoundException`,
+- [x] Implement or factory-create `BadRequestException`, `NotFoundException`,
       `ConflictException`, and `ForbiddenException`.
-- [ ] Preserve the Terraaero `unified(...)` convenience for equal details.
-- [ ] Preserve separate diagnostic and public messages without mutable static
+- [x] Preserve the Terraaero `unified(...)` convenience for equal details.
+- [x] Preserve separate diagnostic and public messages without mutable static
       state or hard-coded assumptions that development is named `dev`.
-- [ ] Test exception status, code, messages, cause, immutability, and Java use.
+- [x] Test exception status, code, messages, cause, immutability, and Java use.
 
 Acceptance:
 
-- [ ] `kotlinbrella-core` has no Spring, JPA, Springdoc, servlet, WebFlux, or
+- [x] `kotlinbrella-core` has no Spring, JPA, Springdoc, servlet, WebFlux, or
       AspectJ dependency.
-- [ ] Error code and message behavior are thoroughly unit tested.
+- [x] Error code and message behavior are thoroughly unit tested.
 
 ## Phase 2: Core Kotlin Utilities
 
