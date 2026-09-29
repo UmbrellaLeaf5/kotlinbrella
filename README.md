@@ -50,13 +50,16 @@ The repository uses Gradle, Kotlin, JUnit 5, and the conventions in
 ./gradlew build
 ```
 
-The command becomes available after the Gradle multi-module foundation is
-implemented. Until then, [TODO.md](TODO.md) is the source of truth for setup
-work.
+Java 21 is required. The Spring Boot baseline is 4.0.3. For local development
+of consumers, run `./gradlew publishToMavenLocal` and add `mavenLocal()` to the
+consumer repositories. Published module coordinates use group
+`io.github.umbrellaleaf5.kotlinbrella` and version `0.1.0-SNAPSHOT`.
+
+Publication to Maven Central and signing require release credentials and are
+tracked in [TODO.md](TODO.md).
 
 ## License
 
 [Unlicense](LICENSE) - public domain.
 
 <a href="https://www.flaticon.com/free-icons/times-square" title="times square icons">Times square icons created by Dave Gandy - Flaticon</a>
-
