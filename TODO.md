@@ -73,17 +73,17 @@ Acceptance:
 
 ## Phase 2: Core Kotlin Utilities
 
-- [ ] Port Terraaero `requireNotNullByName`, `requireFieldNotNullByName`,
+- [x] Port Terraaero `requireNotNullByName`, `requireFieldNotNullByName`,
       `checkNotNullByName`, and `checkFieldNotNullByName`.
-- [ ] Keep semantics strict: `require...` means invalid caller input and
+- [x] Keep semantics strict: `require...` means invalid caller input and
       `IllegalArgumentException`; `check...` means an internal invariant and
       `IllegalStateException`.
 - [ ] Generalize context helpers so they do not require UUID identifiers.
-- [ ] Keep lazy names/messages for successful paths.
-- [ ] Port conversion helpers for UUID, integer, long, double, instant, and enum.
-- [ ] Make malformed external input a Kotlinbrella bad request with stable codes.
-- [ ] Define whitespace, overflow, timezone, enum case, and nullability behavior.
-- [ ] Test every valid, malformed, overflow, and diagnostics path.
+- [x] Keep lazy names/messages for successful paths.
+- [x] Port conversion helpers for UUID, integer, long, double, instant, and enum.
+- [x] Make malformed external input a Kotlinbrella bad request with stable codes.
+- [x] Define whitespace, overflow, timezone, enum case, and nullability behavior.
+- [x] Test every valid, malformed, overflow, and diagnostics path.
 - [ ] Add Java-friendly facades only where extensions are impractical in Java.
 
 Acceptance:
