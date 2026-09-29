@@ -27,4 +27,14 @@ object Constants {
 
   }
 
+  // --------------------------------------------------
+
+  object Validation {
+
+    const val AT_LEAST_ONE_PRESENT_NAME = "AtLeastOnePresent"
+    const val AT_LEAST_ONE_PRESENT_CLASS =
+      "io.github.umbrellaleaf5.kotlinbrella.validation.AtLeastOnePresent"
+
+  }
+
 }

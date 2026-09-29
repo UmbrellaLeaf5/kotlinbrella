@@ -19,9 +19,10 @@ API lacks unit and integration coverage.
 
 ## Target Modules
 
-- [ ] `kotlinbrella-core`: framework-free Kotlin utilities and exceptions.
-- [ ] `kotlinbrella-spring-boot-autoconfigure`: conditional configurations.
-- [ ] `kotlinbrella-spring-boot-starter-webmvc`: MVC errors and request context.
+- [x] `kotlinbrella-core`: framework-free Kotlin utilities and exceptions.
+- [x] `kotlinbrella-spring-boot-autoconfigure`: conditional configurations.
+- [x] `kotlinbrella-spring-boot-starter-webmvc`: MVC errors and request context.
+- [x] `kotlinbrella-spring-boot-starter-validation`: neutral patch validation.
 - [ ] `kotlinbrella-spring-boot-starter-data-jpa`: repository helpers and JPA errors.
 - [ ] `kotlinbrella-spring-boot-starter-openapi`: Springdoc integration.
 - [ ] `kotlinbrella-spring-boot-starter-access`: ownership/access AOP adapter.
@@ -130,23 +131,23 @@ Acceptance:
 
 ## Phase 4: Validation Starter
 
-- [ ] Replace existing reflection-over-all-fields annotations with
+- [x] Replace existing reflection-over-all-fields annotations with
       `@AtLeastOnePresent(properties = [...])`.
-- [ ] Support Kotlin data classes, Java records, and JavaBeans without requiring
+- [x] Support Kotlin data classes, Java records, and JavaBeans without requiring
       `kotlin-reflect` for consumers that do not otherwise use it.
-- [ ] Define presence for null, blank text, empty collections/maps, zero, and false.
-- [ ] Fail clearly if an annotation names an unknown property.
-- [ ] Emit a useful class-level violation with a stable code.
-- [ ] Extract only neutral constraints; prefer standard Hibernate Validator
+- [x] Define presence for null, blank text, empty collections/maps, zero, and false.
+- [x] Fail clearly if an annotation names an unknown property.
+- [x] Emit a useful class-level violation with a stable code.
+- [x] Extract only neutral constraints; prefer standard Hibernate Validator
       `@UUID`, `@Email`, `@Positive`, and `@Pattern` over redundant annotations.
-- [ ] Add allowed-values/enum validation only after a real unmet use case remains.
-- [ ] Test Kotlin and Java inputs, empty patches, technical non-null fields, and
+- [x] Add allowed-values/enum validation only after a real unmet use case remains.
+- [x] Test Kotlin and Java inputs, empty patches, technical non-null fields, and
       message interpolation.
 
 Acceptance:
 
-- [ ] Empty patch requests fail; unrelated required fields cannot make them pass.
-- [ ] No geography, file-upload, or product-domain rules enter this module.
+- [x] Empty patch requests fail; unrelated required fields cannot make them pass.
+- [x] No geography, file-upload, or product-domain rules enter this module.
 
 ## Phase 5: Spring Data JPA Starter
 

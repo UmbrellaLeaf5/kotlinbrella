@@ -2,6 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import io.github.umbrellaleaf5.kotlinbrella.error.BadRequestException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorViolation
+import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.core.read.ListAppender
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,6 +19,7 @@ import org.springframework.mock.web.MockFilterChain
 import org.springframework.validation.BeanPropertyBindingResult
 import org.springframework.web.bind.MethodArgumentNotValidException
 import jakarta.validation.ConstraintViolationException
+import jakarta.validation.Validation
 
 class KotlinbrellaErrorAdviceTest {
 
@@ -109,6 +111,19 @@ class KotlinbrellaErrorAdviceTest {
     assertEquals(400, advice.badRequest(request).statusCode.value())
     assertEquals(405, advice.methodNotAllowed(request).statusCode.value())
     assertEquals(415, advice.unsupportedMediaType(request).statusCode.value())
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun preservesPatchViolationCode() {
+    val violations = Validation.buildDefaultValidatorFactory().validator
+      .validate(WebFixturePatchInput())
+    val result = KotlinbrellaErrorAdvice(KotlinbrellaWebProperties(), MockEnvironment())
+      .constraintViolation(ConstraintViolationException(violations), MockHttpServletRequest())
+    val details = result.body?.properties?.get(Constants.Web.VIOLATIONS_KEY) as List<*>
+
+    assertEquals(ErrorCode.AT_LEAST_ONE_PRESENT, (details.single() as ErrorViolation).code)
   }
 
   // --------------------------------------------------

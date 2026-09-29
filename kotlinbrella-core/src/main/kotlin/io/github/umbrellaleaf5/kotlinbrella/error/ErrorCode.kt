@@ -14,4 +14,5 @@ object ErrorCode {
   const val INVALID_DOUBLE = "INVALID_DOUBLE"
   const val INVALID_INSTANT = "INVALID_INSTANT"
   const val INVALID_ENUM = "INVALID_ENUM"
+  const val AT_LEAST_ONE_PRESENT = "AT_LEAST_ONE_PRESENT"
 }

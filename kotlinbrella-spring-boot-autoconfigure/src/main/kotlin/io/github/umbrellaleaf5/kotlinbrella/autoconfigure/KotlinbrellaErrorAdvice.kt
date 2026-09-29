@@ -63,7 +63,8 @@ class KotlinbrellaErrorAdvice(
         ErrorCode.BAD_REQUEST)
     } + exception.bindingResult.globalErrors.map {
       ErrorViolation(null, it.defaultMessage ?: Constants.ErrorDescription.INVALID_VALUE,
-        ErrorCode.BAD_REQUEST)
+        if (it.code == Constants.Validation.AT_LEAST_ONE_PRESENT_NAME)
+          ErrorCode.AT_LEAST_ONE_PRESENT else ErrorCode.BAD_REQUEST)
     }
 
     return problem(HttpStatus.BAD_REQUEST, ErrorCode.BAD_REQUEST,
@@ -83,7 +84,10 @@ class KotlinbrellaErrorAdvice(
     Constants.ErrorDescription.VALIDATION_FAILED,
     request,
     exception.constraintViolations.map {
-      ErrorViolation(it.propertyPath.toString(), it.message, ErrorCode.BAD_REQUEST)
+      ErrorViolation(it.propertyPath.toString(), it.message,
+        if (it.constraintDescriptor.annotation.annotationClass.java.name ==
+          Constants.Validation.AT_LEAST_ONE_PRESENT_CLASS)
+          ErrorCode.AT_LEAST_ONE_PRESENT else ErrorCode.BAD_REQUEST)
     },
   )
 

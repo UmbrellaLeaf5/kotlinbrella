@@ -12,4 +12,5 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-test")
   testImplementation("org.assertj:assertj-core")
   testImplementation("ch.qos.logback:logback-classic")
+  testImplementation(project(":kotlinbrella-spring-boot-starter-validation"))
 }
