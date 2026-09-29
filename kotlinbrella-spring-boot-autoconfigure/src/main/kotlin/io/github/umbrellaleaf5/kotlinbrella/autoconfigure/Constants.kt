@@ -2,6 +2,22 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 object Constants {
 
+  object Access {
+
+    const val RESOURCE_ID_TEMPLATE = "{resource}IdString"
+    const val RESOURCE_PLACEHOLDER = "{resource}"
+    const val USER_ID_PARAMETER = "userIdString"
+    const val INVALID_RESOURCE = "Resource key must not be blank"
+    const val DUPLICATE_CHECKER = "Duplicate access checker for resource"
+    const val MISSING_CHECKER = "No access checker registered for resource"
+    const val MISSING_PARAMETER = "Ownership parameter not found"
+    const val RESOURCE_NOT_FOUND = "Resource not found"
+    const val ACCESS_DENIED = "Access denied"
+
+  }
+
+  // --------------------------------------------------
+
   object ApiSpec {
 
     const val PROBLEM_MEDIA_TYPE = "application/problem+json"

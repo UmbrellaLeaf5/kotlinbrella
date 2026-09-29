@@ -25,7 +25,7 @@ API lacks unit and integration coverage.
 - [x] `kotlinbrella-spring-boot-starter-validation`: neutral patch validation.
 - [x] `kotlinbrella-spring-boot-starter-data-jpa`: repository helpers and JPA errors.
 - [x] `kotlinbrella-spring-boot-starter-openapi`: Springdoc integration.
-- [ ] `kotlinbrella-spring-boot-starter-access`: ownership/access AOP adapter.
+- [x] `kotlinbrella-spring-boot-starter-access`: ownership/access AOP adapter.
 - [ ] `kotlinbrella-spring-boot-starter`: aggregate of stable focused starters.
 - [ ] `samples/`: full Kotlin MVC, minimal MVC, and Java consumer examples.
 
@@ -189,36 +189,36 @@ Acceptance:
 
 ### Contract
 
-- [ ] Separate access decisions from persistence mechanics.
-- [ ] Define `AccessDecision`: at minimum `ALLOWED`, `NOT_FOUND`, `FORBIDDEN`.
-- [ ] Define application-provided `OwnershipChecker`/`AccessChecker` registry
+- [x] Separate access decisions from persistence mechanics.
+- [x] Define `AccessDecision`: at minimum `ALLOWED`, `NOT_FOUND`, `FORBIDDEN`.
+- [x] Define application-provided `OwnershipChecker`/`AccessChecker` registry
       keyed by a stable resource key or type.
-- [ ] Let checkers use efficient domain queries such as `existsByIdAndUserId`;
+- [x] Let checkers use efficient domain queries such as `existsByIdAndUserId`;
       never make a generic aspect load entities and traverse associations.
-- [ ] Decide whether checkers receive raw strings, parsed IDs, or a request object;
+- [x] Decide whether checkers receive raw strings, parsed IDs, or a request object;
       document conversion and failure behavior.
 
 ### Annotation and AOP
 
-- [ ] Port ergonomic `@CheckOwnership`.
-- [ ] Support default argument lookup by configurable templates, for example
+- [x] Port ergonomic `@CheckOwnership`.
+- [x] Support default argument lookup by configurable templates, for example
       `{resource}IdString` and `userIdString`.
-- [ ] Support explicit annotation overrides for nonstandard parameter names.
-- [ ] Support policy that turns forbidden access into `404` to conceal existence,
+- [x] Support explicit annotation overrides for nonstandard parameter names.
+- [x] Support policy that turns forbidden access into `404` to conceal existence,
       as well as an explicit `403` policy.
-- [ ] Validate missing or duplicate checkers and broken argument configuration
+- [x] Validate missing or duplicate checkers and broken argument configuration
       with actionable startup errors where possible.
-- [ ] Implement with Spring AOP only in the access starter.
-- [ ] Document and test proxy limitations, self-invocation, Kotlin `open`
+- [x] Implement with Spring AOP only in the access starter.
+- [x] Document and test proxy limitations, self-invocation, Kotlin `open`
       requirements, and annotation placement on interfaces versus implementations.
-- [ ] Log decisions safely and document TOCTOU limitations for mutations.
-- [ ] Test allowed, missing, foreign owner, hidden existence, explicit naming,
+- [x] Log decisions safely and document TOCTOU limitations for mutations.
+- [x] Test allowed, missing, foreign owner, hidden existence, explicit naming,
       convention naming, no checker, and self-invocation.
 
 Acceptance:
 
-- [ ] No DF repository or entity is referenced by Kotlinbrella.
-- [ ] A DF service can preserve existing `404` concealment through a checker.
+- [x] No DF repository or entity is referenced by Kotlinbrella.
+- [x] A DF service can preserve existing `404` concealment through a checker.
 
 ## Phase 8: Aggregate Starter and Samples
 
