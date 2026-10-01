@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 plugins {
   kotlin("jvm") version "2.3.10" apply false
@@ -9,7 +10,7 @@ plugins {
   id("org.springframework.boot") version "4.0.3" apply false
 }
 
-extra["bootVersion"] = "4.0.3"
+extra["bootBom"] = SpringBootPlugin.BOM_COORDINATES
 extra["springdocVersion"] = "3.0.2"
 extra["testcontainersVersion"] = "1.21.4"
 
@@ -20,6 +21,8 @@ allprojects {
 }
 
 subprojects {
+  val bootBom = rootProject.extra["bootBom"] as String
+
   apply(plugin = "org.jetbrains.kotlin.jvm")
   apply(plugin = "java-library")
   apply(plugin = "maven-publish")
@@ -38,7 +41,10 @@ subprojects {
   }
 
   dependencies {
-    add("testImplementation", platform("org.springframework.boot:spring-boot-dependencies:${rootProject.extra["bootVersion"]}"))
+    add(
+      "testImplementation",
+      platform(bootBom),
+    )
     add("testImplementation", "org.junit.jupiter:junit-jupiter")
     add("testRuntimeOnly", "org.junit.platform:junit-platform-launcher")
   }
