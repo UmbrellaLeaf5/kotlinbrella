@@ -12,7 +12,11 @@ import org.springframework.web.servlet.DispatcherServlet
 @AutoConfiguration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnClass(DispatcherServlet::class)
-@ConditionalOnProperty(prefix = "kotlinbrella.web", name = ["enabled"], matchIfMissing = true)
+@ConditionalOnProperty(
+  prefix = Constants.Configuration.WEB_PREFIX,
+  name = [Constants.Configuration.ENABLED],
+  matchIfMissing = true,
+)
 @EnableConfigurationProperties(KotlinbrellaWebProperties::class)
 class KotlinbrellaWebAutoConfiguration {
 
@@ -23,7 +27,13 @@ class KotlinbrellaWebAutoConfiguration {
   fun kotlinbrellaErrorAdvice(
     properties: KotlinbrellaWebProperties,
     environment: Environment,
-  ): KotlinbrellaErrorAdvice = KotlinbrellaErrorAdvice(properties, environment)
+    violationMapper: ErrorViolationMapper,
+  ): KotlinbrellaErrorAdvice = KotlinbrellaErrorAdvice(properties, environment, violationMapper)
+
+  // --------------------------------------------------
+
+  @Bean
+  fun kotlinbrellaErrorViolationMapper(): ErrorViolationMapper = ErrorViolationMapper()
 
   // --------------------------------------------------
 

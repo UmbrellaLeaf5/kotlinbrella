@@ -5,15 +5,21 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.mock.env.MockEnvironment
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class KotlinbrellaMvcTest {
 
   private val mockMvc = MockMvcBuilders.standaloneSetup(WebFixtureController())
-    .setControllerAdvice(KotlinbrellaErrorAdvice(KotlinbrellaWebProperties(), MockEnvironment()))
+    .setControllerAdvice(
+      KotlinbrellaErrorAdvice(
+        KotlinbrellaWebProperties(),
+        MockEnvironment(),
+        ErrorViolationMapper(),
+      ),
+    )
     .build()
 
   // MARK: Render canonical error body over HTTP

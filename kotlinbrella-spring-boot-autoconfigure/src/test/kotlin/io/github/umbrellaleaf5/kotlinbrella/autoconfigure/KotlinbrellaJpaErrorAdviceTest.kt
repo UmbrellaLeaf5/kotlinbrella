@@ -19,7 +19,11 @@ class KotlinbrellaJpaErrorAdviceTest {
   @Test
   fun mapsPersistenceFailuresToSafeConflict() {
     val advice = KotlinbrellaJpaErrorAdvice(
-      KotlinbrellaErrorAdvice(KotlinbrellaWebProperties(), MockEnvironment()),
+      KotlinbrellaErrorAdvice(
+        KotlinbrellaWebProperties(),
+        MockEnvironment(),
+        ErrorViolationMapper(),
+      ),
     )
     val request = MockHttpServletRequest()
     val duplicate = advice.integrityViolation(
