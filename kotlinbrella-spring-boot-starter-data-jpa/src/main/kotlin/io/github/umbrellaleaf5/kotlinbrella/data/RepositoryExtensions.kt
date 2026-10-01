@@ -10,5 +10,8 @@ fun <T : Any, ID : Any> CrudRepository<T, ID>.findByIdOrThrow(
   id: ID,
   entityName: String,
 ): T = findById(id).orElseThrow {
-  NotFoundException("$entityName with ID $id not found", "$entityName not found")
+  NotFoundException(
+    Constants.ErrorDescription.notFoundWithId(entityName, id),
+    Constants.ErrorDescription.notFound(entityName),
+  )
 }

@@ -3,19 +3,20 @@ package io.github.umbrellaleaf5.kotlinbrella.data
 import io.github.umbrellaleaf5.kotlinbrella.data.storage.TestItemEntity
 import io.github.umbrellaleaf5.kotlinbrella.data.storage.TestItemRepository
 import io.github.umbrellaleaf5.kotlinbrella.error.NotFoundException
+import io.github.umbrellaleaf5.kotlinbrella.util.checkFieldNotNullByName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.annotation.DirtiesContext
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -42,7 +43,7 @@ class DataJpaIntegrationTest(
   @Test
   fun findsByNonUuidIdAndRejectsMissingRow() {
     val saved = itemRepository.save(TestItemEntity(name = "found"))
-    val id = saved.id ?: error("Missing generated ID")
+    val id = saved.id.checkFieldNotNullByName { "id" }
 
     assertEquals("found", itemRepository.findByIdOrThrow(id, "Item").name)
     assertThrows(NotFoundException::class.java) {
@@ -80,7 +81,7 @@ class DataJpaIntegrationTest(
   @Test
   fun rejectsStaleEntityVersion() {
     val id = itemRepository.save(TestItemEntity(name = "before")).id
-      ?: error("Missing generated ID")
+      .checkFieldNotNullByName { "id" }
     val first = itemRepository.findByIdOrThrow(id, "Item")
     val stale = itemRepository.findByIdOrThrow(id, "Item")
     first.name = "after"
