@@ -4,8 +4,9 @@
 Annotate controller endpoints or API-spec interfaces with
 `@ApiErrors([ApiError(code = "BAD_REQUEST", detail = "Invalid input")])`.
 The HTTP status is derived from the code through `ErrorCode.status(...)`,
-exposed to Kotlin call sites as `apiError.status`, so the annotation works
-in Kotlin and Java without duplicated status values.
+exposed to Kotlin call sites as `apiError.status`, and the reason phrase
+through `apiError.title`, so the annotation works in Kotlin and Java
+without duplicated status values.
 Codes are the stable uppercase values from Kotlinbrella's error contract;
 examples use the same `type`, `title`, `status`, `detail`, `instance`, `code`,
 and `traceId` fields returned by MVC. Validation problems also include

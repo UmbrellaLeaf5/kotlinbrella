@@ -37,4 +37,23 @@ object ErrorCode {
     SERVICE_UNAVAILABLE -> Constants.Http.SERVICE_UNAVAILABLE
     else -> throw IllegalArgumentException("Unknown error code: $code")
   }
+
+  // MARK: Resolve the reason phrase of a documented error code
+  // --------------------------------------------------
+
+  @JvmStatic
+  fun title(code: String): String = when (code) {
+    BAD_REQUEST -> Constants.Http.Title.BAD_REQUEST
+    FORBIDDEN -> Constants.Http.Title.FORBIDDEN
+    NOT_FOUND -> Constants.Http.Title.NOT_FOUND
+    METHOD_NOT_ALLOWED -> Constants.Http.Title.METHOD_NOT_ALLOWED
+    CONFLICT -> Constants.Http.Title.CONFLICT
+    PAYLOAD_TOO_LARGE -> Constants.Http.Title.PAYLOAD_TOO_LARGE
+    UNSUPPORTED_MEDIA_TYPE -> Constants.Http.Title.UNSUPPORTED_MEDIA_TYPE
+    INTERNAL_ERROR -> Constants.Http.Title.INTERNAL_ERROR
+    SERVICE_UNAVAILABLE -> Constants.Http.Title.SERVICE_UNAVAILABLE
+    INVALID_UUID, INVALID_INTEGER, INVALID_LONG, INVALID_DOUBLE,
+    INVALID_INSTANT, INVALID_ENUM, AT_LEAST_ONE_PRESENT -> Constants.Http.Title.BAD_REQUEST
+    else -> throw IllegalArgumentException("Unknown error code: $code")
+  }
 }

@@ -38,6 +38,18 @@ object Constants {
     const val SERVICE_UNAVAILABLE = 503
     const val MAX_ERROR_STATUS = 599
 
+    object Title {
+      const val BAD_REQUEST = "Bad Request"
+      const val FORBIDDEN = "Forbidden"
+      const val NOT_FOUND = "Not Found"
+      const val METHOD_NOT_ALLOWED = "Method Not Allowed"
+      const val CONFLICT = "Conflict"
+      const val PAYLOAD_TOO_LARGE = "Payload Too Large"
+      const val UNSUPPORTED_MEDIA_TYPE = "Unsupported Media Type"
+      const val INTERNAL_ERROR = "Internal Server Error"
+      const val SERVICE_UNAVAILABLE = "Service Unavailable"
+    }
+
   }
 
   // --------------------------------------------------
