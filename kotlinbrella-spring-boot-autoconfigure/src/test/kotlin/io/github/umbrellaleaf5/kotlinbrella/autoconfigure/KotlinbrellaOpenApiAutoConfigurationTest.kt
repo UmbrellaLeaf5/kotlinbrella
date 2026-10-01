@@ -1,6 +1,5 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
@@ -11,18 +10,14 @@ class KotlinbrellaOpenApiAutoConfigurationTest {
   private val context = WebApplicationContextRunner()
     .withConfiguration(AutoConfigurations.of(KotlinbrellaOpenApiAutoConfiguration::class.java))
 
-  // MARK: Allow existing API contracts to provide their own error documentation
+  // MARK: Register canonical problem documentation
   // --------------------------------------------------
 
   @Test
-  fun canDisableCanonicalProblemDocumentation() {
+  fun registersCanonicalProblemDocumentation() {
     context.run { application ->
       assertTrue(application.containsBean("kotlinbrellaErrorOperationCustomizer"))
-    }
-
-    context.withPropertyValues("kotlinbrella.openapi.enabled=false").run { application ->
-      assertFalse(application.containsBean("kotlinbrellaErrorOperationCustomizer"))
-      assertFalse(application.containsBean("kotlinbrellaSchemaCustomizer"))
+      assertTrue(application.containsBean("kotlinbrellaSchemaCustomizer"))
     }
   }
 

@@ -18,7 +18,8 @@ schemas are registered once under `KotlinbrellaProblem` and
 `KotlinbrellaViolation`. API-spec interfaces are supported and recommended,
 not required. The Web MVC starter works without Springdoc.
 
-For an application retaining an older, versioned error response shape, set
-`kotlinbrella.openapi.enabled=false` and provide an application-specific
-`OperationCustomizer` for the library annotations. This keeps documentation
-consistent with its actual HTTP response until the API contract is migrated.
+For an application retaining an older, versioned error response shape, exclude
+`KotlinbrellaOpenApiAutoConfiguration` through `spring.autoconfigure.exclude`
+and provide an application-specific `OperationCustomizer` for the library
+annotations. This keeps documentation consistent with its actual HTTP
+response until the API contract is migrated.

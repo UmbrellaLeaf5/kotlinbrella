@@ -89,7 +89,6 @@ object Constants {
 
     const val WEB_PREFIX = "kotlinbrella.web"
     const val ACCESS_PREFIX = "kotlinbrella.access"
-    const val OPENAPI_PREFIX = "kotlinbrella.openapi"
     const val DATA_JPA_ERRORS_PREFIX = "kotlinbrella.data-jpa.errors"
     const val ENABLED = "enabled"
 
