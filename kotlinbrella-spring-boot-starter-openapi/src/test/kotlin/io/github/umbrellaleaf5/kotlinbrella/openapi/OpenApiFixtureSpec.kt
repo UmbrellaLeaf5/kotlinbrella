@@ -4,7 +4,7 @@ interface OpenApiFixtureSpec {
 
   // --------------------------------------------------
 
-  @ApiErrors([ApiError(403, "FORBIDDEN", "Access denied")])
+  @ApiErrors([ApiError("FORBIDDEN", "Access denied")])
   fun documented(): String
 
 }

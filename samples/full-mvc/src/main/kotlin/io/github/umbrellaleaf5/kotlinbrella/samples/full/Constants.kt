@@ -1,11 +1,11 @@
 package io.github.umbrellaleaf5.kotlinbrella.samples.full
 
+import io.github.umbrellaleaf5.kotlinbrella.Constants as CoreConstants
+
 object Constants {
 
   object Api {
 
-    const val BAD_REQUEST_STATUS = 400
-    const val NOT_FOUND_STATUS = 404
     const val ITEM_PATH = "/api/item"
     const val ITEM_BY_ID_PATH = "/api/item/{item_id}"
     const val OPENAPI_PATH = "/v3/api-docs"
@@ -14,9 +14,9 @@ object Constants {
     const val TAG_ITEMS = "Items"
     const val GET_ITEM_SUMMARY = "Read an owned item"
     const val CREATE_ITEM_SUMMARY = "Create an item"
-    const val INVALID_UUID_DESCRIPTION = "Invalid UUID"
-    const val NOT_FOUND_DESCRIPTION = "Resource not found"
-    const val VALIDATION_FAILED_DESCRIPTION = "Validation failed"
+    const val INVALID_UUID_DESCRIPTION = CoreConstants.ErrorDescription.INVALID_UUID
+    const val NOT_FOUND_DESCRIPTION = CoreConstants.ErrorDescription.RESOURCE_NOT_FOUND
+    const val VALIDATION_FAILED_DESCRIPTION = CoreConstants.ErrorDescription.VALIDATION_FAILED
 
   }
 

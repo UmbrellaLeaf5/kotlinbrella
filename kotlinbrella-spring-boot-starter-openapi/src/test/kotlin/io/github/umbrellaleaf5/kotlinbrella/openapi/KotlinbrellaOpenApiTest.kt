@@ -1,13 +1,14 @@
 package io.github.umbrellaleaf5.kotlinbrella.openapi
 
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.Constants
+import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.ErrorViolationMapper
+import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.KotlinbrellaErrorAdvice
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.KotlinbrellaErrorOperationCustomizer
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.KotlinbrellaSchemaCustomizer
-import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.KotlinbrellaErrorAdvice
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.KotlinbrellaWebProperties
 import io.github.umbrellaleaf5.kotlinbrella.util.checkNotNullByName
-import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.core.util.Json
+import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
@@ -91,7 +92,13 @@ class KotlinbrellaOpenApiTest {
       .checkNotNullByName { "problemSchema" }
     val specificationJson = Json.pretty(specification)
     val mvc = MockMvcBuilders.standaloneSetup(OpenApiFixtureController())
-      .setControllerAdvice(KotlinbrellaErrorAdvice(KotlinbrellaWebProperties(), MockEnvironment()))
+      .setControllerAdvice(
+        KotlinbrellaErrorAdvice(
+          KotlinbrellaWebProperties(),
+          MockEnvironment(),
+          ErrorViolationMapper(),
+        ),
+      )
       .build()
     val response = mvc.perform(get("/problem")).andReturn().response
 

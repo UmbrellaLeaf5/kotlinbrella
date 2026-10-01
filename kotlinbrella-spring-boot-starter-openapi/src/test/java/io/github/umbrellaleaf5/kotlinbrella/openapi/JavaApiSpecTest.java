@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JavaApiSpecTest {
 
-  @ApiErrors({@ApiError(status = 404, code = "NOT_FOUND", detail = "Missing")})
+  @ApiErrors({@ApiError(code = "NOT_FOUND", detail = "Missing")})
   public void endpoint() {}
 
   @Test

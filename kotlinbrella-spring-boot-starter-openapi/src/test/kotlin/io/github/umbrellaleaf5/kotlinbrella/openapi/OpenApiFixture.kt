@@ -6,9 +6,9 @@ class OpenApiFixture {
   // --------------------------------------------------
 
   @ApiErrors([
-    ApiError(400, "BAD_REQUEST", "Invalid input"),
-    ApiError(400, "INVALID_UUID", "Invalid identifier"),
-    ApiError(404, "NOT_FOUND", "Not found"),
+    ApiError("BAD_REQUEST", "Invalid input"),
+    ApiError("INVALID_UUID", "Invalid identifier"),
+    ApiError("NOT_FOUND", "Not found"),
   ])
   fun documented(): String = ""
 

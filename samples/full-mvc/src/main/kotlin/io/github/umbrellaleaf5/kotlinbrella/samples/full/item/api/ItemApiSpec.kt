@@ -1,9 +1,9 @@
 package io.github.umbrellaleaf5.kotlinbrella.samples.full.item.api
 
+import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import io.github.umbrellaleaf5.kotlinbrella.openapi.ApiError
 import io.github.umbrellaleaf5.kotlinbrella.openapi.ApiErrors
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.Constants
-import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.data.api.ItemCreateRequest
 import io.github.umbrellaleaf5.kotlinbrella.samples.full.item.data.api.ItemResponse
 import io.swagger.v3.oas.annotations.Operation
@@ -23,10 +23,8 @@ interface ItemApiSpec {
 
   @Operation(summary = Constants.Api.GET_ITEM_SUMMARY)
   @ApiErrors([
-    ApiError(Constants.Api.BAD_REQUEST_STATUS, ErrorCode.INVALID_UUID,
-      Constants.Api.INVALID_UUID_DESCRIPTION),
-    ApiError(Constants.Api.NOT_FOUND_STATUS, ErrorCode.NOT_FOUND,
-      Constants.Api.NOT_FOUND_DESCRIPTION),
+    ApiError(ErrorCode.INVALID_UUID, Constants.Api.INVALID_UUID_DESCRIPTION),
+    ApiError(ErrorCode.NOT_FOUND, Constants.Api.NOT_FOUND_DESCRIPTION),
   ])
   @GetMapping(Constants.Api.ITEM_BY_ID_PATH)
   fun getItem(
@@ -38,7 +36,7 @@ interface ItemApiSpec {
   // --------------------------------------------------
 
   @Operation(summary = Constants.Api.CREATE_ITEM_SUMMARY)
-  @ApiErrors([ApiError(Constants.Api.BAD_REQUEST_STATUS, ErrorCode.AT_LEAST_ONE_PRESENT,
+  @ApiErrors([ApiError(ErrorCode.AT_LEAST_ONE_PRESENT,
     Constants.Api.VALIDATION_FAILED_DESCRIPTION)])
   @PostMapping(Constants.Api.ITEM_PATH)
   fun createItem(
