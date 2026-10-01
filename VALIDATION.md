@@ -10,5 +10,10 @@ duplicate property is a configuration error, not a silently passing request.
 Null, blank text, empty collections/maps/arrays are absent. Zero and false
 are present. The constraint accepts Kotlin getter properties, JavaBeans and
 Java records without using `kotlin-reflect`. A null object is valid so that
-the caller's `@NotNull` can separately enforce its presence. Other constraints
-should use standard Hibernate Validator annotations.
+the caller's `@NotNull` can separately enforce its presence.
+
+The module also provides neutral single-field constraints with library-owned
+defaults: `@ValidUUID`, `@ValidEmail`, `@RequiredField`, `@ValidEnum`, and
+textual `@ValidPositiveInt`/`@ValidPositiveDouble`. Declare them without
+custom `message` arguments unless an API needs its own wording; domain rules
+such as file names, share tokens, and expiration ranges stay in applications.
