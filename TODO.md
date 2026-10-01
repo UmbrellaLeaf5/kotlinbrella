@@ -238,15 +238,23 @@ Acceptance:
 
 ## Phase 9: Existing-Service Migration
 
-- [ ] Migrate a low-risk Terraaero slice first: exceptions, converters, and
-      generic `findByIdOrThrow`.
-- [ ] Compare old/new error JSON; write a compatibility adapter only if a shipped
-      external contract requires one.
-- [ ] Migrate Terraaero global errors after response-contract tests exist.
-- [ ] Migrate DF OpenAPI declarations and compare generated specs.
-- [ ] Replace DF `OwnershipAspect` only after checker integration tests preserve
-      intended `404`/`403` behavior.
-- [ ] Delete duplicated project utility code only after use of a released artifact.
+- [ ] Migrate Digital Factory `root` and `slicer-api` null checks, converters,
+      client exceptions, and generic `findByIdOrThrow` where applicable.
+- [ ] Compare both services' old/new error JSON. Preserve the shipped
+      `error`/`message` contract through an application compatibility adapter
+      until a separately versioned API migration is approved.
+- [ ] Adopt useful neutral validation in both services; reject empty-only
+      patches consistently and update the affected API tests.
+- [ ] Migrate Digital Factory OpenAPI declarations and compare generated specs
+      with the runtime error contract.
+- [ ] Replace `root`'s `OwnershipAspect` with application-provided checkers
+      after integration tests preserve missing-user, `404`, and `403` behavior.
+- [ ] Use the starter's Web MVC and JPA error mappings wherever they can
+      preserve the existing response contract in each service.
+- [ ] Run both Gradle builds and the full Digital Factory Python autotest suite.
+- [ ] Remove duplicated Digital Factory annotations, utility classes and
+      customizers after every use has been migrated to Kotlinbrella or a
+      standard constraint and the full compatibility suite passes.
 - [ ] Turn discovered gaps into Kotlinbrella issues, not immediate domain features.
 
 ## Phase 10: Future Extensions

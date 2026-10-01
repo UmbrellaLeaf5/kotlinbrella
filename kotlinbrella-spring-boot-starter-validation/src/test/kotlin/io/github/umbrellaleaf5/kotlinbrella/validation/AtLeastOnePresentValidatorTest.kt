@@ -19,8 +19,9 @@ class AtLeastOnePresentValidatorTest {
     val empty = validator.validate(PatchInput())
 
     assertEquals(1, empty.size)
-    assertEquals("At least one specified field must be present", empty.single().message)
+    assertEquals("At least one field must be provided", empty.single().message)
     assertEquals("", empty.single().propertyPath.toString())
+    assertEquals(1, validator.validate(PatchInput(name = "")).size)
     assertEquals(1, validator.validate(PatchInput(
       name = " \t",
       tags = emptyList(),
