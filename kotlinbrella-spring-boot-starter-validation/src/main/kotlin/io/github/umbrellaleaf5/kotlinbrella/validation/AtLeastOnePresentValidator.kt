@@ -24,6 +24,10 @@ class AtLeastOnePresentValidator : ConstraintValidator<AtLeastOnePresent, Any> {
   // MARK: Validate selected patch fields
   // --------------------------------------------------
 
+  /**
+   * Проверяет присутствие только явно перечисленных свойств объекта.
+   * Числовой ноль и логическое `false` считаются присутствующими значениями.
+   */
   override fun isValid(value: Any?, context: ConstraintValidatorContext): Boolean {
     if (value == null) return true
 
@@ -57,7 +61,8 @@ class AtLeastOnePresentValidator : ConstraintValidator<AtLeastOnePresent, Any> {
       }.toMap()
     val records = type.recordComponents?.associate { it.name to it.accessor } ?: emptyMap()
     val booleanAccessors = type.methods.filter { method ->
-      method.name.startsWith("is") && method.parameterCount == 0 &&
+      method.name.startsWith(Constants.Validation.BOOLEAN_GETTER_PREFIX) &&
+        method.parameterCount == 0 &&
         (method.returnType == Boolean::class.javaPrimitiveType ||
           method.returnType == Boolean::class.javaObjectType)
     }.associate { it.name to it }

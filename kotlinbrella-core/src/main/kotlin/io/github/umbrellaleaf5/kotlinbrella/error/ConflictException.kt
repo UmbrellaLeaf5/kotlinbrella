@@ -1,11 +1,13 @@
 package io.github.umbrellaleaf5.kotlinbrella.error
 
+import io.github.umbrellaleaf5.kotlinbrella.Constants
+
 class ConflictException @JvmOverloads constructor(
   devMessage: String,
   prodMessage: String,
   code: String = ErrorCode.CONFLICT,
   cause: Throwable? = null,
-) : ApiException(409, code, prodMessage, devMessage, cause) {
+) : ApiException(Constants.Http.CONFLICT, code, prodMessage, devMessage, cause) {
 
   companion object {
 

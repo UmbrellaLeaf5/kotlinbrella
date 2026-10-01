@@ -1,11 +1,13 @@
 package io.github.umbrellaleaf5.kotlinbrella.error
 
+import io.github.umbrellaleaf5.kotlinbrella.Constants
+
 class ForbiddenException @JvmOverloads constructor(
   devMessage: String,
   prodMessage: String,
   code: String = ErrorCode.FORBIDDEN,
   cause: Throwable? = null,
-) : ApiException(403, code, prodMessage, devMessage, cause) {
+) : ApiException(Constants.Http.FORBIDDEN, code, prodMessage, devMessage, cause) {
 
   companion object {
 

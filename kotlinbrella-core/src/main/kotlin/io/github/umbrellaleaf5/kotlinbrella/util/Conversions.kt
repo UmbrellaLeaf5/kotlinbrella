@@ -1,5 +1,6 @@
 package io.github.umbrellaleaf5.kotlinbrella.util
 
+import io.github.umbrellaleaf5.kotlinbrella.Constants
 import io.github.umbrellaleaf5.kotlinbrella.error.BadRequestException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import java.time.Instant
@@ -39,7 +40,7 @@ object Conversions {
   fun <T : Enum<T>> enumValue(value: String, type: Class<T>): T =
     type.enumConstants.firstOrNull { it.name == value }
       ?: throw BadRequestException.unified(
-        "Invalid enum value",
+        Constants.ErrorDescription.INVALID_ENUM,
         ErrorCode.INVALID_ENUM,
       )
 

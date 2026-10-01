@@ -1,11 +1,13 @@
 package io.github.umbrellaleaf5.kotlinbrella.error
 
+import io.github.umbrellaleaf5.kotlinbrella.Constants
+
 class BadRequestException @JvmOverloads constructor(
   devMessage: String,
   prodMessage: String,
   code: String = ErrorCode.BAD_REQUEST,
   cause: Throwable? = null,
-) : ApiException(400, code, prodMessage, devMessage, cause) {
+) : ApiException(Constants.Http.BAD_REQUEST, code, prodMessage, devMessage, cause) {
 
   companion object {
 

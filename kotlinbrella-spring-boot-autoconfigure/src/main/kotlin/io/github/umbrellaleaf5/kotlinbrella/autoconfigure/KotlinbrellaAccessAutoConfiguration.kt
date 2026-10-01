@@ -10,7 +10,11 @@ import org.springframework.context.annotation.Bean
 
 @AutoConfiguration
 @ConditionalOnClass(Aspect::class)
-@ConditionalOnProperty(prefix = "kotlinbrella.access", name = ["enabled"], matchIfMissing = true)
+@ConditionalOnProperty(
+  prefix = Constants.Configuration.ACCESS_PREFIX,
+  name = [Constants.Configuration.ENABLED],
+  matchIfMissing = true,
+)
 @EnableConfigurationProperties(KotlinbrellaAccessProperties::class)
 class KotlinbrellaAccessAutoConfiguration {
 

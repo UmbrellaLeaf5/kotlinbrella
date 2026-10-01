@@ -14,13 +14,17 @@ class KotlinbrellaRequestIdFilter(
   // MARK: Propagate a safe request identifier
   // --------------------------------------------------
 
+  /**
+   * Создаёт либо принимает безопасный идентификатор запроса, записывает его в ответ и MDC.
+   * После обработки восстанавливает предыдущее значение MDC.
+   */
   override fun doFilterInternal(
     request: HttpServletRequest,
     response: HttpServletResponse,
     filterChain: FilterChain,
   ) {
     val supplied = request.getHeader(properties.requestIdHeader)
-    val requestId = supplied?.takeIf { it.matches(Regex(Constants.Web.REQUEST_ID_PATTERN)) }
+    val requestId = supplied?.takeIf { it.matches(Regex(Constants.Pattern.REQUEST_ID)) }
       ?: UUID.randomUUID().toString()
     val previousTraceId = MDC.get(Constants.Web.TRACE_ID_KEY)
 

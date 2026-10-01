@@ -1,6 +1,7 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.media.IntegerSchema
 import io.swagger.v3.oas.models.media.ObjectSchema
@@ -14,7 +15,7 @@ class KotlinbrellaSchemaCustomizer : OpenApiCustomizer {
   // --------------------------------------------------
 
   override fun customise(openApi: OpenAPI) {
-    val components = openApi.components ?: io.swagger.v3.oas.models.Components().also {
+    val components = openApi.components ?: Components().also {
       openApi.components = it
     }
 
@@ -38,13 +39,17 @@ class KotlinbrellaSchemaCustomizer : OpenApiCustomizer {
   private fun problemSchema(): Schema<*> = ObjectSchema()
     .addProperty(Constants.Web.TYPE_KEY, StringSchema())
     .addProperty(Constants.ApiSpec.TITLE_KEY, StringSchema())
-    .addProperty(Constants.ApiSpec.STATUS_KEY,
-      IntegerSchema().description(Constants.ApiSpec.STATUS_DESCRIPTION))
+    .addProperty(
+      Constants.ApiSpec.STATUS_KEY,
+      IntegerSchema().description(Constants.ApiSpec.STATUS_DESCRIPTION),
+    )
     .addProperty(Constants.ApiSpec.DETAIL_KEY, StringSchema())
     .addProperty(Constants.ApiSpec.INSTANCE_KEY, StringSchema())
     .addProperty(Constants.Web.CODE_KEY, StringSchema())
     .addProperty(Constants.Web.TRACE_ID_KEY, StringSchema())
-    .addProperty(Constants.Web.VIOLATIONS_KEY,
-      ArraySchema().items(Schema<Any>().`$ref`(Constants.ApiSpec.VIOLATION_REFERENCE)))
+    .addProperty(
+      Constants.Web.VIOLATIONS_KEY,
+      ArraySchema().items(Schema<Any>().`$ref`(Constants.ApiSpec.VIOLATION_REFERENCE)),
+    )
 
 }

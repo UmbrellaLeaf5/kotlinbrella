@@ -1,5 +1,7 @@
 package io.github.umbrellaleaf5.kotlinbrella.error
 
+import io.github.umbrellaleaf5.kotlinbrella.Constants
+
 open class ApiException(
   val status: Int,
   val code: String,
@@ -9,8 +11,8 @@ open class ApiException(
 ) : RuntimeException(diagnosticDetail, cause) {
 
   init {
-    require(status in 400..599)
-    require(code.matches(Regex("[A-Z][A-Z0-9_]*")))
+    require(status in Constants.Http.BAD_REQUEST..Constants.Http.MAX_ERROR_STATUS)
+    require(code.matches(Regex(Constants.Pattern.ERROR_CODE)))
   }
 
 }

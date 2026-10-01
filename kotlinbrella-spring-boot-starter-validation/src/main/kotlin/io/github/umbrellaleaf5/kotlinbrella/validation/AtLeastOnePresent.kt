@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 @Constraint(validatedBy = [AtLeastOnePresentValidator::class])
 annotation class AtLeastOnePresent(
   val properties: Array<String>,
-  val message: String = "{kotlinbrella.validation.AT_LEAST_ONE_PRESENT}",
+  val message: String = Constants.Validation.MESSAGE_TEMPLATE,
   val groups: Array<KClass<*>> = [],
   val payload: Array<KClass<out Payload>> = [],
 )

@@ -2,7 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties("kotlinbrella.web")
+@ConfigurationProperties(Constants.Configuration.WEB_PREFIX)
 class KotlinbrellaWebProperties {
 
   var enabled: Boolean = true

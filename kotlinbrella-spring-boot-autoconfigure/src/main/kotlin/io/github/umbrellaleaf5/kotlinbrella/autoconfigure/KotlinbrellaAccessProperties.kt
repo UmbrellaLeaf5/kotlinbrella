@@ -2,7 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties("kotlinbrella.access")
+@ConfigurationProperties(Constants.Configuration.ACCESS_PREFIX)
 class KotlinbrellaAccessProperties {
 
   var enabled: Boolean = true

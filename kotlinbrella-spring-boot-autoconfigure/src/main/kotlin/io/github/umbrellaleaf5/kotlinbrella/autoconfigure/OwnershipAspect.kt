@@ -27,7 +27,11 @@ class OwnershipAspect(
   // MARK: Check application-provided ownership decisions
   // --------------------------------------------------
 
-  @Around("@annotation(checkOwnership)")
+  /**
+   * Получает необработанные идентификаторы из аргументов метода и передаёт их проверяющему.
+   * При отказе применяет выбранную политику сокрытия существования ресурса.
+   */
+  @Around(Constants.Access.OWNERSHIP_POINTCUT)
   fun checkOwnership(
     joinPoint: ProceedingJoinPoint,
     checkOwnership: CheckOwnership,
@@ -46,16 +50,16 @@ class OwnershipAspect(
     val userId = argument(joinPoint.args, names, userParam)
     val decision = registry.checker(checkOwnership.resource).check(resourceId, userId)
 
-    logger.debug("Ownership check for {} resulted in {}", checkOwnership.resource, decision)
+    logger.debug(Constants.Access.DECISION_LOG, checkOwnership.resource, decision)
 
     return when (decision) {
       AccessDecision.ALLOWED -> joinPoint.proceed()
       AccessDecision.NOT_FOUND -> throw NotFoundException.unified(
-        Constants.Access.RESOURCE_NOT_FOUND,
+        Constants.ErrorDescription.RESOURCE_NOT_FOUND,
       )
       AccessDecision.FORBIDDEN -> when (checkOwnership.policy) {
         DenialPolicy.HIDE_EXISTENCE -> throw NotFoundException.unified(
-          Constants.Access.RESOURCE_NOT_FOUND,
+          Constants.ErrorDescription.RESOURCE_NOT_FOUND,
         )
         DenialPolicy.FORBIDDEN -> throw ForbiddenException.unified(Constants.Access.ACCESS_DENIED)
       }

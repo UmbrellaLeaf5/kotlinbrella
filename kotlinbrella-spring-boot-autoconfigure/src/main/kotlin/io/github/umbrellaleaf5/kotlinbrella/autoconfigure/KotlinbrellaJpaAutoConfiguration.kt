@@ -12,8 +12,8 @@ import org.springframework.dao.OptimisticLockingFailureException
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnClass(OptimisticLockingFailureException::class)
 @ConditionalOnProperty(
-  prefix = "kotlinbrella.data-jpa.errors",
-  name = ["enabled"],
+  prefix = Constants.Configuration.DATA_JPA_ERRORS_PREFIX,
+  name = [Constants.Configuration.ENABLED],
   matchIfMissing = true,
 )
 @ConditionalOnBean(KotlinbrellaErrorAdvice::class)
