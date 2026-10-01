@@ -41,6 +41,22 @@ class ApiExceptionTest {
   // --------------------------------------------------
 
   @Test
+  fun resolvesHttpStatusFromErrorCode() {
+    assertEquals(400, ErrorCode.status(ErrorCode.BAD_REQUEST))
+    assertEquals(400, ErrorCode.status(ErrorCode.INVALID_UUID))
+    assertEquals(404, ErrorCode.status(ErrorCode.NOT_FOUND))
+    assertEquals(409, ErrorCode.status(ErrorCode.CONFLICT))
+    assertEquals(413, ErrorCode.status(ErrorCode.PAYLOAD_TOO_LARGE))
+    assertEquals(503, ErrorCode.status(ErrorCode.SERVICE_UNAVAILABLE))
+
+    assertThrows(IllegalArgumentException::class.java) {
+      ErrorCode.status("UNKNOWN_CODE")
+    }
+  }
+
+  // --------------------------------------------------
+
+  @Test
   fun rejectsInvalidCodesAndStatuses() {
     assertThrows(IllegalArgumentException::class.java) {
       ApiException(200, ErrorCode.BAD_REQUEST, "invalid")
