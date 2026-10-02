@@ -5,8 +5,8 @@ import io.github.umbrellaleaf5.kotlinbrella.error.NotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import org.springframework.data.repository.CrudRepository
 import java.util.Optional
 

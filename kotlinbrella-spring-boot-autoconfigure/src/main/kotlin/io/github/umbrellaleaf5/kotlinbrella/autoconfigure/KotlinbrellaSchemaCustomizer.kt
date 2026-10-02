@@ -1,8 +1,8 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
-import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Components
+import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.media.IntegerSchema
 import io.swagger.v3.oas.models.media.ObjectSchema

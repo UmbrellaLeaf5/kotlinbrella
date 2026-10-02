@@ -260,6 +260,7 @@ class KotlinbrellaErrorAdvice(
 
     if (verbose())
       logger.info(Constants.Web.EXPECTED_FAILURE_DETAIL_LOG, code, detail, request.requestURI)
+
     else
       logger.info(Constants.Web.EXPECTED_FAILURE_LOG, code)
   }

@@ -1,11 +1,11 @@
 package io.github.umbrellaleaf5.kotlinbrella.samples.full.item.storage
 
+import io.github.umbrellaleaf5.kotlinbrella.samples.full.Constants
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import io.github.umbrellaleaf5.kotlinbrella.samples.full.Constants
 import java.util.UUID
 
 @Entity

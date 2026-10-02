@@ -1,18 +1,20 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
+import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
+import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.Mode
 import io.github.umbrellaleaf5.kotlinbrella.error.BadRequestException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
+import io.github.umbrellaleaf5.kotlinbrella.error.SimpleErrorResponse
 import jakarta.validation.ConstraintViolationException
 import jakarta.validation.Validation
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
-import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.Mode
-import io.github.umbrellaleaf5.kotlinbrella.error.SimpleErrorResponse
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.core.MethodParameter
@@ -71,7 +73,7 @@ class KotlinbrellaErrorAdviceTest {
   @Test
   fun unknownFailuresDoNotExposeExceptionText() {
     val logger = LoggerFactory.getLogger(KotlinbrellaErrorAdvice::class.java) as Logger
-    val appender = ListAppender<ch.qos.logback.classic.spi.ILoggingEvent>()
+    val appender = ListAppender<ILoggingEvent>()
     appender.start()
     logger.addAppender(appender)
 
@@ -134,7 +136,9 @@ class KotlinbrellaErrorAdviceTest {
     assertEquals(400, advice.constraintViolation(ConstraintViolationException(emptySet()),
       request).statusCode.value())
     assertEquals(400, advice.unreadableMessage(
-      HttpMessageNotReadableException("broken", MockHttpInputMessage(ByteArray(0))), request).statusCode.value())
+      HttpMessageNotReadableException("broken", MockHttpInputMessage(ByteArray(0))),
+      request,
+    ).statusCode.value())
     assertEquals(400, advice.typeMismatch(
       probeMismatch(), request).statusCode.value())
     assertEquals(400, advice.missingValue(
@@ -204,10 +208,10 @@ class KotlinbrellaErrorAdviceTest {
   @Test
   fun standardLogLevelFiltersAdviceRecords() {
     val logger = LoggerFactory.getLogger(KotlinbrellaErrorAdvice::class.java) as Logger
-    val appender = ListAppender<ch.qos.logback.classic.spi.ILoggingEvent>()
+    val appender = ListAppender<ILoggingEvent>()
     appender.start()
     logger.addAppender(appender)
-    logger.level = ch.qos.logback.classic.Level.ERROR
+    logger.level = Level.ERROR
 
     val advice = KotlinbrellaErrorAdvice(KotlinbrellaWebProperties(), ErrorViolationMapper())
 
@@ -235,7 +239,7 @@ class KotlinbrellaErrorAdviceTest {
   @Test
   fun verboseRecordsIncludeDetailsWhileMinimalKeepsCode() {
     val logger = LoggerFactory.getLogger(KotlinbrellaErrorAdvice::class.java) as Logger
-    val appender = ListAppender<ch.qos.logback.classic.spi.ILoggingEvent>()
+    val appender = ListAppender<ILoggingEvent>()
     appender.start()
     logger.addAppender(appender)
 
@@ -279,7 +283,9 @@ class KotlinbrellaErrorAdviceTest {
     val request = MockHttpServletRequest()
 
     val unreadable = advice.unreadableMessage(
-      HttpMessageNotReadableException("broken", MockHttpInputMessage(ByteArray(0))), request).body as ProblemDetail
+      HttpMessageNotReadableException("broken", MockHttpInputMessage(ByteArray(0))),
+      request,
+    ).body as ProblemDetail
 
     assertEquals("Invalid request", unreadable.detail)
 
@@ -293,18 +299,6 @@ class KotlinbrellaErrorAdviceTest {
       .body as ProblemDetail
 
     assertEquals("Missing required value: 'value'", missing.detail)
-  }
-
-  // --------------------------------------------------
-
-  // MARK: Private Helpers
-  // --------------------------------------------------
-
-  private fun probeMismatch(): MethodArgumentTypeMismatchException {
-    val method = WebFixtureController::class.java.getMethod("probe", String::class.java)
-
-    return MethodArgumentTypeMismatchException("x", String::class.java, "value",
-      MethodParameter(method, 0), IllegalArgumentException())
   }
 
   // --------------------------------------------------
@@ -337,6 +331,16 @@ class KotlinbrellaErrorAdviceTest {
 
     assertEquals("safe-id", response.getHeader(Constants.Web.REQUEST_ID_HEADER))
     assertEquals("safe-id", request.getAttribute(Constants.Web.TRACE_ID_ATTRIBUTE))
+  }
+
+  // MARK: Private Helpers
+  // --------------------------------------------------
+
+  private fun probeMismatch(): MethodArgumentTypeMismatchException {
+    val method = WebFixtureController::class.java.getMethod("probe", String::class.java)
+
+    return MethodArgumentTypeMismatchException("x", String::class.java, "value",
+      MethodParameter(method, 0), IllegalArgumentException())
   }
 
 }
