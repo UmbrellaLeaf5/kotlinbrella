@@ -24,7 +24,7 @@ object Constants {
   object ApiSpec {
 
     const val PROBLEM_MEDIA_TYPE = "application/problem+json"
-    const val LEGACY_MEDIA_TYPE = "application/json"
+    const val SIMPLE_MEDIA_TYPE = "application/json"
     const val PROBLEM_SCHEMA = "KotlinbrellaProblem"
     const val VIOLATION_SCHEMA = "KotlinbrellaViolation"
     const val SCHEMA_PREFIX = "#/components/schemas/"

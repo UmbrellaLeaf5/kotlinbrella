@@ -113,11 +113,13 @@ Acceptance:
 - [x] Add explicit `expose-debug-details`; allow optional configured diagnostic
       profiles via `Environment.acceptsProfiles(...)`, never a first-active-profile
       heuristic.
-- [ ] Let applications configure only diagnostic profile *names*; all profile
-      branching lives in the library, never in application code.
-- [ ] Add an error-shape switch (`problem` for RFC 9457, `legacy` for
-      `{error, message}`) so applications on a versioned legacy contract can
-      use the library handler without changing their response shape.
+- [x] Select diagnostics through a single `mode` (`dev`/`prod`, default
+      `prod`) set in profile files; all branching lives in the library, never
+      in application code. `expose-debug-details`, `diagnostic-profiles`, and
+      `log-expected4xx` are removed.
+- [x] Add an error-shape switch (`standard` for RFC 9457, `simple` for
+      `{error, message}`) so applications on a compact contract can use the
+      library handler without changing their response shape.
 - [ ] Derive log verbosity from the diagnostics decision: diagnostics on
       (dev) logs full records with details, diagnostics off (prod) logs
       minimal one-line records. Unknown 5xx failures always log full with a
@@ -143,9 +145,9 @@ Acceptance:
       methods to `405`, and unsupported media types to `415`.
 - [ ] Map invalid sort/property references (`PropertyReferenceException`) to
       `400` with the offending property name but no query exposure.
-- [ ] Render the `legacy` shape (`error` = reason phrase, `message` = detail,
-      violations joined into the message) from the same data as the problem
-      shape; register no problem schemas in `legacy` mode.
+- [x] Render the `simple` shape (`error` = reason phrase, `message` = detail,
+      violations joined into the message) from the same data as the standard
+      shape; register no problem schemas in `simple` mode.
 - [ ] Route every advice-emitted log through the configured level threshold
       and the derived verbosity; log unknown 5xx failures exactly once, always
       with a stack trace regardless of verbosity.
@@ -155,7 +157,7 @@ Acceptance:
       or secret leakage.
 - [x] Add Spring context tests for every mapping, response JSON, detail exposure,
       trace ID, advice precedence, and 5xx logging.
-- [ ] Add context tests for the `legacy` shape, the level threshold, both
+- [x] Add context tests for the `simple` shape, the level threshold, both
       verbosity modes, and custom diagnostic profile names.
 - [ ] Keep vendor-specific failures (S3, queues, brokers) out of the library;
       domain exceptions must extend the `ApiException` family to be handled.

@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.springframework.mock.env.MockEnvironment
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.method.HandlerMethod
@@ -95,7 +94,6 @@ class KotlinbrellaOpenApiTest {
       .setControllerAdvice(
         KotlinbrellaErrorAdvice(
           KotlinbrellaWebProperties(),
-          MockEnvironment(),
           ErrorViolationMapper(),
         ),
       )

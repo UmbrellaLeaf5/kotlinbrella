@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.springframework.mock.env.MockEnvironment
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -16,7 +15,6 @@ class KotlinbrellaMvcTest {
     .setControllerAdvice(
       KotlinbrellaErrorAdvice(
         KotlinbrellaWebProperties(),
-        MockEnvironment(),
         ErrorViolationMapper(),
       ),
     )

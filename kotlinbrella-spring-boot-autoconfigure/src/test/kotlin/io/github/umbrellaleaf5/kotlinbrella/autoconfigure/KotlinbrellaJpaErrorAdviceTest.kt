@@ -11,7 +11,6 @@ import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.data.core.PropertyReferenceException
 import org.springframework.data.core.TypeInformation
 import org.springframework.http.ProblemDetail
-import org.springframework.mock.env.MockEnvironment
 import org.springframework.mock.web.MockHttpServletRequest
 
 class KotlinbrellaJpaErrorAdviceTest {
@@ -24,7 +23,6 @@ class KotlinbrellaJpaErrorAdviceTest {
     val advice = KotlinbrellaJpaErrorAdvice(
       KotlinbrellaErrorAdvice(
         KotlinbrellaWebProperties(),
-        MockEnvironment(),
         ErrorViolationMapper(),
       ),
     )
@@ -47,7 +45,6 @@ class KotlinbrellaJpaErrorAdviceTest {
     val advice = KotlinbrellaJpaErrorAdvice(
       KotlinbrellaErrorAdvice(
         KotlinbrellaWebProperties(),
-        MockEnvironment(),
         ErrorViolationMapper(),
       ),
     )

@@ -3,17 +3,16 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.LogLevel
+import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.Mode
 import io.github.umbrellaleaf5.kotlinbrella.error.ApiException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorViolation
-import io.github.umbrellaleaf5.kotlinbrella.error.LegacyErrorResponse
+import io.github.umbrellaleaf5.kotlinbrella.error.SimpleErrorResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
-import org.springframework.core.env.Environment
-import org.springframework.core.env.Profiles
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
@@ -39,7 +38,6 @@ import java.util.UUID
 class KotlinbrellaErrorAdvice(
   // params:
   private val properties: KotlinbrellaWebProperties,
-  private val environment: Environment,
 
   // mappers:
   private val violationMapper: ErrorViolationMapper,
@@ -232,8 +230,7 @@ class KotlinbrellaErrorAdvice(
   // MARK: Private Helpers
   // --------------------------------------------------
 
-  private fun exposeDiagnostics(): Boolean = properties.exposeDebugDetails ||
-    properties.diagnosticProfiles.any { environment.acceptsProfiles(Profiles.of(it)) }
+  private fun exposeDiagnostics(): Boolean = properties.mode == Mode.DEV
 
   // --------------------------------------------------
 
@@ -257,7 +254,7 @@ class KotlinbrellaErrorAdvice(
   ) {
     val level = when {
       cause != null || status.is5xxServerError -> LogLevel.ERROR
-      status.is4xxClientError && properties.logExpected4xx -> LogLevel.INFO
+      status.is4xxClientError -> LogLevel.INFO
       else -> return
     }
 
@@ -292,13 +289,13 @@ class KotlinbrellaErrorAdvice(
     val traceId = request.getAttribute(Constants.Web.TRACE_ID_ATTRIBUTE)
       ?: UUID.randomUUID().toString()
 
-    if (properties.errorShape == ErrorShape.LEGACY) {
+    if (properties.errorShape == ErrorShape.SIMPLE) {
       val message = if (violations.isNotEmpty()) joinViolations(violations) else detail
-      val legacy = LegacyErrorResponse(ErrorCode.title(code), message)
+      val simple = SimpleErrorResponse(ErrorCode.title(code), message)
 
       return ResponseEntity.status(status)
         .contentType(MediaType.APPLICATION_JSON)
-        .body(legacy)
+        .body(simple)
     }
 
     val body = ProblemDetail.forStatusAndDetail(status, detail)

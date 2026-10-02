@@ -18,7 +18,7 @@ class KotlinbrellaSchemaCustomizer(
   // --------------------------------------------------
 
   override fun customise(openApi: OpenAPI) {
-    if (properties.errorShape == ErrorShape.LEGACY) return
+    if (properties.errorShape == ErrorShape.SIMPLE) return
 
     val components = openApi.components ?: Components().also {
       openApi.components = it

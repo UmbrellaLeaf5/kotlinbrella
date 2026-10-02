@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
-import org.springframework.core.env.Environment
 import org.springframework.web.servlet.DispatcherServlet
 
 @AutoConfiguration
@@ -26,9 +25,8 @@ class KotlinbrellaWebAutoConfiguration {
   @Bean
   fun kotlinbrellaErrorAdvice(
     properties: KotlinbrellaWebProperties,
-    environment: Environment,
     violationMapper: ErrorViolationMapper,
-  ): KotlinbrellaErrorAdvice = KotlinbrellaErrorAdvice(properties, environment, violationMapper)
+  ): KotlinbrellaErrorAdvice = KotlinbrellaErrorAdvice(properties, violationMapper)
 
   // --------------------------------------------------
 
