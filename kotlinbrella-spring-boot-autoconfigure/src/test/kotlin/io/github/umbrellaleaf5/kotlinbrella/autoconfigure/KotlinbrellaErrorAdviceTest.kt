@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
-import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.LogLevel
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.Mode
 import io.github.umbrellaleaf5.kotlinbrella.error.SimpleErrorResponse
 import org.slf4j.LoggerFactory
@@ -203,16 +202,14 @@ class KotlinbrellaErrorAdviceTest {
   // --------------------------------------------------
 
   @Test
-  fun logLevelThresholdSkipsExpectedFailures() {
+  fun standardLogLevelFiltersAdviceRecords() {
     val logger = LoggerFactory.getLogger(KotlinbrellaErrorAdvice::class.java) as Logger
     val appender = ListAppender<ch.qos.logback.classic.spi.ILoggingEvent>()
     appender.start()
     logger.addAppender(appender)
+    logger.level = ch.qos.logback.classic.Level.ERROR
 
-    val properties = KotlinbrellaWebProperties().apply {
-      logLevel = LogLevel.ERROR
-    }
-    val advice = KotlinbrellaErrorAdvice(properties, ErrorViolationMapper())
+    val advice = KotlinbrellaErrorAdvice(KotlinbrellaWebProperties(), ErrorViolationMapper())
 
     try {
       advice.apiException(BadRequestException.unified("bad"),
@@ -227,6 +224,7 @@ class KotlinbrellaErrorAdviceTest {
     }
 
     finally {
+      logger.level = null
       logger.detachAppender(appender)
       appender.stop()
     }

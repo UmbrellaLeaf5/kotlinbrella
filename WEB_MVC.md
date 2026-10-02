@@ -11,7 +11,6 @@ the fields documented in [ERROR_CONTRACT.md](ERROR_CONTRACT.md).
 | `kotlinbrella.web.mode` | `prod` | `dev` exposes diagnostics and full log records, `prod` keeps them public and minimal. |
 | `kotlinbrella.web.request-id-header` | `X-Request-Id` | Correlation header. |
 | `kotlinbrella.web.error-shape` | `standard` | `standard` for RFC 9457, `simple` for `{error, message}`. |
-| `kotlinbrella.web.log-level` | `info` | Minimum level for advice-emitted logs (`trace`..`error`). |
 
 The filter accepts caller-supplied IDs matching `[A-Za-z0-9_-]{1,64}` and
 replaces other values with random UUIDs. It returns the ID in the response,
@@ -23,9 +22,10 @@ Error mode and logging form two independent dimensions that compose with
 Spring profiles (dev and prod modes belong in profile files, the library only
 reads them): mode decides *what* may be exposed (`dev` shows diagnostic
 details and full log records, `prod` shows public details and one-line
-records), while `log-level` decides which advice-emitted records are written
-at all (`error` keeps only error logs and drops info records, including the
-always-logged expected 4xx). Unknown 5xx failures are always logged once with
+records), while standard `logging.level` decides which advice-emitted records
+are written at all (expected 4xx go to info, unexpected 5xx to error, so
+`logging.level.io.github.umbrellaleaf5: error` keeps only error logs; the
+Boot default `info` shows both). Unknown 5xx failures are always logged once with
 a stack trace and rendered as a safe 500 without their exception text,
 regardless of both settings. Rejected values and secrets are never logged.
 
@@ -40,9 +40,9 @@ the library only reads them and composes with the active Spring profiles.
 
 ```yaml
 # application-prod.yaml: quiet production with public messages
-kotlinbrella:
-  web:
-    log-level: error
+logging:
+  level:
+    io.github.umbrellaleaf5: error
 ```
 
 ```yaml
@@ -50,7 +50,6 @@ kotlinbrella:
 kotlinbrella:
   web:
     mode: dev
-    log-level: trace
 ```
 
 ```yaml
@@ -58,7 +57,6 @@ kotlinbrella:
 kotlinbrella:
   web:
     mode: prod
-    log-level: info
 ```
 
 ```yaml
