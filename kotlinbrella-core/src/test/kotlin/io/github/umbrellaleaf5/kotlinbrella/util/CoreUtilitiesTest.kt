@@ -20,18 +20,42 @@ class CoreUtilitiesTest {
     assertEquals("value", present.checkFieldNotNullByName { error("evaluated") })
 
     val absent: String? = null
-    assertEquals("id must not be null", assertThrows(IllegalArgumentException::class.java) {
+    assertEquals("id cannot be null", assertThrows(IllegalArgumentException::class.java) {
       absent.requireNotNullByName { "id" }
     }.message)
-    assertEquals("Field id must not be null", assertThrows(IllegalArgumentException::class.java) {
+    assertEquals("String.id cannot be null", assertThrows(IllegalArgumentException::class.java) {
       absent.requireFieldNotNullByName { "id" }
     }.message)
-    assertThrows(IllegalStateException::class.java) {
+    assertEquals("id cannot be null", assertThrows(IllegalStateException::class.java) {
       absent.checkNotNullByName { "id" }
-    }
-    assertThrows(IllegalStateException::class.java) {
+    }.message)
+    assertEquals("String.id cannot be null", assertThrows(IllegalStateException::class.java) {
       absent.checkFieldNotNullByName { "id" }
-    }
+    }.message)
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun objectScopedChecksIncludeObjectIdentity() {
+    val objectId = UUID.randomUUID()
+    val present: String? = "value"
+
+    assertEquals("value", present.requireNotNullByNameInObject("field", "User", objectId))
+
+    val absent: String? = null
+    assertEquals(
+      "field cannot be null in User: $objectId",
+      assertThrows(IllegalArgumentException::class.java) {
+        absent.requireNotNullByNameInObject("field", "User", objectId)
+      }.message,
+    )
+    assertEquals(
+      "String.id cannot be null in User: $objectId",
+      assertThrows(IllegalStateException::class.java) {
+        absent.checkFieldNotNullByNameInObject("id", "User", objectId)
+      }.message,
+    )
   }
 
   // --------------------------------------------------

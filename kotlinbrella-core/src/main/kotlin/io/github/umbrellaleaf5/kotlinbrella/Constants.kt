@@ -72,15 +72,6 @@ object Constants {
 
   // --------------------------------------------------
 
-  object Validation {
-
-    const val FIELD_PREFIX = "Field "
-    const val NULL_SUFFIX = " must not be null"
-
-  }
-
-  // --------------------------------------------------
-
   object Pattern {
 
     const val ERROR_CODE = "[A-Z][A-Z0-9_]*"

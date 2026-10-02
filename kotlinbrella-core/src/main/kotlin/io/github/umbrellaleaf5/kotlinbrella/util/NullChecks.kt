@@ -1,29 +1,82 @@
 package io.github.umbrellaleaf5.kotlinbrella.util
 
-import io.github.umbrellaleaf5.kotlinbrella.Constants
+import java.util.UUID
+
+// MARK: Named null messages
+// --------------------------------------------------
+
+fun valueCannotBeNull(name: String): String = "$name cannot be null"
+
+// --------------------------------------------------
+
+fun valueCannotBeNullInObject(
+  name: String,
+  objectName: String,
+  objectId: UUID,
+): String = "${valueCannotBeNull(name)} in $objectName: $objectId"
 
 // MARK: Named input checks
 // --------------------------------------------------
 
-inline fun <T : Any> T?.requireNotNullByName(name: () -> String): T =
-  this ?: throw IllegalArgumentException("${name()}${Constants.Validation.NULL_SUFFIX}")
+fun <T> T?.requireNotNullByName(lazyName: () -> String): T & Any =
+  requireNotNull(this) { valueCannotBeNull(lazyName()) }
 
 // --------------------------------------------------
 
-inline fun <T : Any> T?.requireFieldNotNullByName(name: () -> String): T =
-  this ?: throw IllegalArgumentException(
-    "${Constants.Validation.FIELD_PREFIX}${name()}${Constants.Validation.NULL_SUFFIX}",
-  )
+fun <T> T?.requireNotNullByNameInObject(
+  name: String,
+  objectName: String,
+  objectId: UUID,
+): T & Any = requireNotNull(this) {
+  valueCannotBeNullInObject(name, objectName, objectId)
+}
+
+// --------------------------------------------------
+
+inline fun <reified T : Any> T?.requireFieldNotNullByName(noinline lazyName: () -> String): T =
+  requireNotNullByName { "${T::class.simpleName}.${lazyName()}" }
+
+// --------------------------------------------------
+
+inline fun <reified T : Any> T?.requireFieldNotNullByNameInObject(
+  name: String,
+  objectName: String,
+  objectId: UUID,
+): T = requireNotNullByNameInObject(
+  "${T::class.simpleName}.$name",
+  objectName,
+  objectId,
+)
 
 // MARK: Named state checks
 // --------------------------------------------------
 
-inline fun <T : Any> T?.checkNotNullByName(name: () -> String): T =
-  this ?: throw IllegalStateException("${name()}${Constants.Validation.NULL_SUFFIX}")
+fun <T> T?.checkNotNullByName(lazyName: () -> String): T & Any =
+  checkNotNull(this) { valueCannotBeNull(lazyName()) }
 
 // --------------------------------------------------
 
-inline fun <T : Any> T?.checkFieldNotNullByName(name: () -> String): T =
-  this ?: throw IllegalStateException(
-    "${Constants.Validation.FIELD_PREFIX}${name()}${Constants.Validation.NULL_SUFFIX}",
-  )
+fun <T> T?.checkNotNullByNameInObject(
+  name: String,
+  objectName: String,
+  objectId: UUID,
+): T & Any = checkNotNull(this) {
+  valueCannotBeNullInObject(name, objectName, objectId)
+}
+
+// --------------------------------------------------
+
+inline fun <reified T : Any> T?.checkFieldNotNullByName(noinline lazyName: () -> String): T =
+  checkNotNullByName { "${T::class.simpleName}.${lazyName()}" }
+
+// --------------------------------------------------
+
+inline fun <reified T : Any> T?.checkFieldNotNullByNameInObject(
+  name: String,
+  objectName: String,
+  objectId: UUID,
+): T = checkNotNullByNameInObject(
+  "${T::class.simpleName}.$name",
+  objectName,
+  objectId,
+)
