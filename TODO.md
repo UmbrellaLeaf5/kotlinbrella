@@ -286,30 +286,30 @@ Acceptance:
 - [x] Replace `root`'s `OwnershipAspect` with application-provided checkers
       after integration tests preserve missing-user, `404`, and `403` behavior.
 - [x] Migrate null checks to the library; delete the local utility file.
-- [ ] Migrate string converters (`toUUIDOrThrow`, `toLongOrThrow`,
+- [x] Migrate string converters (`toUUIDOrThrow`, `toLongOrThrow`,
       `toEnumOrThrow`) to the library; delete `StringExtensions.kt` including
       its unused `toInt`/`toDouble`/`*OrNull` members.
-- [ ] Migrate generic `findByIdOrThrow` to the library; update Python assertions
-      to the library not-found text (checker paths keep their exact messages).
-- [ ] Migrate all client exceptions to the `ApiException` family with stable
+- [x] Migrate generic `findByIdOrThrow` to the library; no Python assertion
+      needed changes (checker paths keep their exact messages).
+- [x] Migrate all client exceptions to the `ApiException` family with stable
       codes, preserving texts asserted by Python tests (`"active orders"` stays
       a `CONFLICT` detail).
-- [ ] Rehome the four S3 exceptions onto library exception types with fixed
+- [x] Rehome the four S3 exceptions onto library exception types with fixed
       codes (`FORBIDDEN`, `NOT_FOUND`, `PAYLOAD_TOO_LARGE`, `INTERNAL_ERROR`).
-- [ ] Delete `root`'s `GlobalExceptionHandler`, `ProfileUtils`, and
+- [x] Delete `root`'s `GlobalExceptionHandler`, `ProfileUtils`, and
       `ExceptionModeInitializer`; the library advice renders the `legacy`
       shape from `kotlinbrella.web` configuration (shape, diagnostic profile
-      names, log verbosity, log-level threshold). Give the deleted handler no
-      successor in application code.
-- [ ] Configure `root` through `kotlinbrella.web` properties only; keep
+      names, derived verbosity, log-level threshold). No successor handler in
+      application code.
+- [x] Configure `root` through `kotlinbrella.web` properties only; keep
       `data-jpa.errors.enabled=false` and the `KotlinbrellaOpenApiAutoConfiguration`
       exclusion until their migrations are approved.
-- [ ] Compare old/new error JSON for every endpoint family before and after;
+- [x] Compare old/new error JSON for every endpoint family before and after;
       the shipped `error`/`message` shape stays byte-compatible, only vetted
       message texts change.
-- [ ] Run the `root` Gradle build and the full Digital Factory Python autotest
+- [x] Run the `root` Gradle build and the full Digital Factory Python autotest
       suite (all 162 tests, not a subset): error paths are covered only there.
-- [ ] Remove every duplicated annotation, utility class, and customizer after
+- [x] Remove every duplicated annotation, utility class, and customizer after
       its uses have been migrated and the full suite passes.
 - [ ] Turn discovered gaps into Kotlinbrella issues, not immediate domain features.
 
