@@ -10,7 +10,6 @@ spring:
 kotlinbrella:
   web:
     enabled: true
-    expose-debug-details: false
     request-id-header: X-Request-Id
   access:
     resource-id-template: '{resource}IdString'

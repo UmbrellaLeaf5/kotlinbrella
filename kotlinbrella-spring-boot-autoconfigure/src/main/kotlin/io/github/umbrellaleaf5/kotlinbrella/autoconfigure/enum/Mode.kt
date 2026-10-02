@@ -1,6 +1,6 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum
 
-enum class ErrorShape {
-  STANDARD,
-  SIMPLE,
+enum class Mode {
+  DEV,
+  PROD,
 }

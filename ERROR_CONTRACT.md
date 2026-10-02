@@ -9,13 +9,14 @@ public description. `instance` is the request path, without query parameters.
 `{field, message, code}` objects (`field` is null for global errors).
 
 All messages are supplied by applications in their chosen language; the
-library does not translate messages. Diagnostic details are exposed only when
-explicitly enabled by application configuration. Codes and JSON names are
-versioned public contracts. Unknown errors must never expose exception text.
+library does not translate messages. Diagnostic details are exposed only in
+`dev` mode, selected per profile through application configuration. Codes
+and JSON names are versioned public contracts. Unknown errors must never
+expose exception text.
 
-Applications on a versioned legacy contract use the `legacy` error shape:
+Applications on a compact contract use the `simple` error shape:
 `{error, message}`, where `error` is the reason phrase and `message` is the
-same public detail as the problem shape (validation violations joined with
+same public detail as the standard shape (validation violations joined with
 `; `).
 
 Library policy: runtime client failures are always the `ApiException`
