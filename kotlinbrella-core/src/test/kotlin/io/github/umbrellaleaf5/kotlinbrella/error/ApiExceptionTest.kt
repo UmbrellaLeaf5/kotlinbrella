@@ -73,6 +73,24 @@ class ApiExceptionTest {
   // --------------------------------------------------
 
   @Test
+  fun serverExceptionsCarryTheirStatusesAndCodes() {
+    val exceptions = listOf(
+      PayloadTooLargeException.unified("too large"),
+      ServiceUnavailableException.unified("unavailable"),
+      InternalServerException.unified("failure"),
+    )
+
+    assertEquals(listOf(413, 503, 500), exceptions.map { it.status })
+    assertEquals(
+      listOf(ErrorCode.PAYLOAD_TOO_LARGE, ErrorCode.SERVICE_UNAVAILABLE, ErrorCode.INTERNAL_ERROR),
+      exceptions.map { it.code },
+    )
+    assertEquals(exceptions.map { it.publicDetail }, exceptions.map { it.diagnosticDetail })
+  }
+
+  // --------------------------------------------------
+
+  @Test
   fun rejectsInvalidCodesAndStatuses() {
     assertThrows(IllegalArgumentException::class.java) {
       ApiException(200, ErrorCode.BAD_REQUEST, "invalid")

@@ -74,6 +74,35 @@ class CoreUtilitiesTest {
   // --------------------------------------------------
 
   @Test
+  fun nullableParsingReturnsNullInsteadOfThrowing() {
+    val uuid = UUID.randomUUID()
+    assertEquals(uuid, uuid.toString().toUUIDOrNull())
+    assertEquals(42, "42".toIntOrNull())
+    assertEquals(42L, "42".toLongOrNull())
+    assertEquals(1.5, "1.5".toDoubleOrNull())
+    assertEquals(Instant.EPOCH, "1970-01-01T00:00:00Z".toInstantOrNull())
+    assertEquals(Thread.State.RUNNABLE, "RUNNABLE".toEnumOrNull<Thread.State>())
+
+    val missing: String? = null
+    assertEquals(null, missing.toUUIDOrNull())
+    assertEquals(null, missing.toIntOrNull())
+    assertEquals(null, missing.toLongOrNull())
+    assertEquals(null, missing.toDoubleOrNull())
+    assertEquals(null, missing.toInstantOrNull())
+    assertEquals(null, missing.toEnumOrNull<Thread.State>())
+
+    assertEquals(null, "x".toUUIDOrNull())
+    assertEquals(null, "2147483648".toIntOrNull())
+    assertEquals(null, "9223372036854775808".toLongOrNull())
+    assertEquals(null, "NaN".toDoubleOrNull())
+    assertEquals(null, "Infinity".toDoubleOrNull())
+    assertEquals(null, "yesterday".toInstantOrNull())
+    assertEquals(null, "runnable".toEnumOrNull<Thread.State>())
+  }
+
+  // --------------------------------------------------
+
+  @Test
   fun rejectsMalformedAndOverflowInputs() {
     val invalid = listOf(
       "x".let { runCatching { it.toUUIDOrThrow() }.exceptionOrNull() },

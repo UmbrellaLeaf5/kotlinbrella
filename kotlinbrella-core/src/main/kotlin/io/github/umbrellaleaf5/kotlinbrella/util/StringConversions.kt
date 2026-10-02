@@ -25,6 +25,16 @@ catch (exception: IllegalArgumentException) {
 
 // --------------------------------------------------
 
+fun String?.toUUIDOrNull(): UUID? = try {
+  this?.let { UUID.fromString(it) }
+}
+
+catch (_: IllegalArgumentException) {
+  null
+}
+
+// --------------------------------------------------
+
 fun String.toIntOrThrow(): Int = toIntOrNull()
   ?: throw BadRequestException.unified(
     Constants.ErrorDescription.INVALID_INTEGER,
@@ -64,9 +74,54 @@ catch (exception: DateTimeParseException) {
 
 // --------------------------------------------------
 
-inline fun <reified T : Enum<T>> String.toEnumOrThrow(): T =
-  enumValues<T>().firstOrNull { it.name == this }
-    ?: throw BadRequestException.unified(
-      Constants.ErrorDescription.INVALID_ENUM,
-      ErrorCode.INVALID_ENUM,
-    )
+inline fun <reified T : Enum<T>> String.toEnumOrThrow(): T = toEnumOrNull<T>()
+  ?: throw BadRequestException.unified(
+    Constants.ErrorDescription.INVALID_ENUM,
+    ErrorCode.INVALID_ENUM,
+  )
+
+// --------------------------------------------------
+
+inline fun <reified T : Enum<T>> String?.toEnumOrNull(): T? =
+  this?.let { value -> enumValues<T>().firstOrNull { it.name == value } }
+
+// MARK: Nullable numeric and instant parsing
+// --------------------------------------------------
+
+fun String?.toIntOrNull(): Int? = try {
+  this?.toInt()
+}
+
+catch (_: NumberFormatException) {
+  null
+}
+
+// --------------------------------------------------
+
+fun String?.toLongOrNull(): Long? = try {
+  this?.toLong()
+}
+
+catch (_: NumberFormatException) {
+  null
+}
+
+// --------------------------------------------------
+
+fun String?.toDoubleOrNull(): Double? = try {
+  this?.toDouble()?.takeIf { it.isFinite() }
+}
+
+catch (_: NumberFormatException) {
+  null
+}
+
+// --------------------------------------------------
+
+fun String?.toInstantOrNull(): Instant? = try {
+  this?.let { Instant.parse(it) }
+}
+
+catch (_: DateTimeParseException) {
+  null
+}
