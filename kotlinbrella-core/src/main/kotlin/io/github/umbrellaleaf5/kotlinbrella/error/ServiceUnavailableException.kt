@@ -2,7 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.error
 
 import io.github.umbrellaleaf5.kotlinbrella.Constants
 
-class ServiceUnavailableException @JvmOverloads constructor(
+open class ServiceUnavailableException @JvmOverloads constructor(
   devMessage: String,
   prodMessage: String,
   code: String = ErrorCode.SERVICE_UNAVAILABLE,

@@ -2,7 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.error
 
 import io.github.umbrellaleaf5.kotlinbrella.Constants
 
-class NotFoundException @JvmOverloads constructor(
+open class NotFoundException @JvmOverloads constructor(
   devMessage: String,
   prodMessage: String,
   code: String = ErrorCode.NOT_FOUND,

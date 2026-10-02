@@ -2,7 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.error
 
 import io.github.umbrellaleaf5.kotlinbrella.Constants
 
-class ConflictException @JvmOverloads constructor(
+open class ConflictException @JvmOverloads constructor(
   devMessage: String,
   prodMessage: String,
   code: String = ErrorCode.CONFLICT,
