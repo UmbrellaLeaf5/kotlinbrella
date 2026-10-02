@@ -25,16 +25,6 @@ catch (exception: IllegalArgumentException) {
 
 // --------------------------------------------------
 
-fun String?.toUUIDOrNull(): UUID? = try {
-  this?.let { UUID.fromString(it) }
-}
-
-catch (_: IllegalArgumentException) {
-  null
-}
-
-// --------------------------------------------------
-
 fun String.toIntOrThrow(): Int = toIntOrNull()
   ?: throw BadRequestException.unified(
     Constants.ErrorDescription.INVALID_INTEGER,
@@ -80,12 +70,17 @@ inline fun <reified T : Enum<T>> String.toEnumOrThrow(): T = toEnumOrNull<T>()
     ErrorCode.INVALID_ENUM,
   )
 
+// MARK: Nullable parsing
 // --------------------------------------------------
 
-inline fun <reified T : Enum<T>> String?.toEnumOrNull(): T? =
-  this?.let { value -> enumValues<T>().firstOrNull { it.name == value } }
+fun String?.toUUIDOrNull(): UUID? = try {
+  this?.let { UUID.fromString(it) }
+}
 
-// MARK: Nullable numeric and instant parsing
+catch (_: IllegalArgumentException) {
+  null
+}
+
 // --------------------------------------------------
 
 fun String?.toIntOrNull(): Int? = try {
@@ -125,3 +120,8 @@ fun String?.toInstantOrNull(): Instant? = try {
 catch (_: DateTimeParseException) {
   null
 }
+
+// --------------------------------------------------
+
+inline fun <reified T : Enum<T>> String?.toEnumOrNull(): T? =
+  this?.let { value -> enumValues<T>().firstOrNull { it.name == value } }

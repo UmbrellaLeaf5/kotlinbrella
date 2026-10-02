@@ -1,8 +1,8 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
-import io.swagger.v3.oas.models.Operation
 import io.github.umbrellaleaf5.kotlinbrella.openapi.ApiErrors
 import io.github.umbrellaleaf5.kotlinbrella.openapi.status
+import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.examples.Example
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType

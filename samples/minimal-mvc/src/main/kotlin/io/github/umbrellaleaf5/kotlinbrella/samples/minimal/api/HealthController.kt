@@ -1,7 +1,7 @@
 package io.github.umbrellaleaf5.kotlinbrella.samples.minimal.api
 
-import io.github.umbrellaleaf5.kotlinbrella.samples.minimal.service.HealthService
 import io.github.umbrellaleaf5.kotlinbrella.samples.minimal.Constants
+import io.github.umbrellaleaf5.kotlinbrella.samples.minimal.service.HealthService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 

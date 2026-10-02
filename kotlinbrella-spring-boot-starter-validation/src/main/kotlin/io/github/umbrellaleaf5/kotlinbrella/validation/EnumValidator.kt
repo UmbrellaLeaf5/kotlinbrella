@@ -21,6 +21,7 @@ class EnumValidator : ConstraintValidator<ValidEnum, String> {
 
   override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {
     if (value == null) return false
+
     if (value.trim() in allowedValues) return true
 
     context.disableDefaultConstraintViolation()
