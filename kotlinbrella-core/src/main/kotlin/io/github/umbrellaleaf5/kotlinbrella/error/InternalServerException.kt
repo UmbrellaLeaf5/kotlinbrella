@@ -2,7 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.error
 
 import io.github.umbrellaleaf5.kotlinbrella.Constants
 
-class InternalServerException @JvmOverloads constructor(
+open class InternalServerException @JvmOverloads constructor(
   devMessage: String,
   prodMessage: String,
   code: String = ErrorCode.INTERNAL_ERROR,

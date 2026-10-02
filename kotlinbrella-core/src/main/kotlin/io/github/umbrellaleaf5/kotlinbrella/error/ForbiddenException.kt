@@ -2,7 +2,7 @@ package io.github.umbrellaleaf5.kotlinbrella.error
 
 import io.github.umbrellaleaf5.kotlinbrella.Constants
 
-class ForbiddenException @JvmOverloads constructor(
+open class ForbiddenException @JvmOverloads constructor(
   devMessage: String,
   prodMessage: String,
   code: String = ErrorCode.FORBIDDEN,
