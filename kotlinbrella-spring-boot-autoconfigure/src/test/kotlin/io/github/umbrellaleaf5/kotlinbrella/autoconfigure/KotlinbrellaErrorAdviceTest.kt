@@ -16,6 +16,7 @@ import io.github.umbrellaleaf5.kotlinbrella.error.LegacyErrorResponse
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.core.MethodParameter
+import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.mock.env.MockEnvironment
@@ -24,6 +25,7 @@ import org.springframework.mock.web.MockFilterChain
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.validation.BeanPropertyBindingResult
+import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
@@ -145,7 +147,17 @@ class KotlinbrellaErrorAdviceTest {
       MissingServletRequestParameterException("value", "String"), request)
       .statusCode.value())
     assertEquals(405, advice.methodNotAllowed(request).statusCode.value())
-    assertEquals(415, advice.unsupportedMediaType(request).statusCode.value())
+
+    val unsupported = advice.unsupportedMediaType(
+      HttpMediaTypeNotSupportedException(
+        MediaType.APPLICATION_XML,
+        listOf(MediaType.APPLICATION_JSON),
+      ),
+      request,
+    )
+
+    assertEquals(415, unsupported.statusCode.value())
+    assertTrue((unsupported.body as ProblemDetail).detail.orEmpty().contains("application/xml"))
   }
 
   // --------------------------------------------------

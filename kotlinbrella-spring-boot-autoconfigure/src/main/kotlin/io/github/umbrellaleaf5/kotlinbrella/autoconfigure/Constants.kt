@@ -72,6 +72,7 @@ object Constants {
     const val RESOURCE_NOT_FOUND = CoreConstants.ErrorDescription.RESOURCE_NOT_FOUND
     const val METHOD_NOT_ALLOWED = "Method not allowed"
     const val UNSUPPORTED_MEDIA_TYPE = "Unsupported media type"
+    const val MISSING_CONTENT_TYPE = "Content-Type header is missing"
     const val INTERNAL_ERROR = "Internal server error"
     const val CONFLICT = "Resource conflict"
     const val INVALID_SORT_PROPERTY = "Invalid sort property"
