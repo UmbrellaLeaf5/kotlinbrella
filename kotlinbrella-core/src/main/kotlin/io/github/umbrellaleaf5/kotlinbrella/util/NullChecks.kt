@@ -1,7 +1,5 @@
 package io.github.umbrellaleaf5.kotlinbrella.util
 
-import java.util.UUID
-
 // MARK: Named null messages
 // --------------------------------------------------
 
@@ -12,7 +10,7 @@ fun valueCannotBeNull(name: String): String = "$name cannot be null"
 fun valueCannotBeNullInObject(
   name: String,
   objectName: String,
-  objectId: UUID,
+  objectId: Any,
 ): String = "${valueCannotBeNull(name)} in $objectName: $objectId"
 
 // MARK: Named input checks
@@ -26,7 +24,7 @@ fun <T> T?.requireNotNullByName(lazyName: () -> String): T & Any =
 fun <T> T?.requireNotNullByNameInObject(
   name: String,
   objectName: String,
-  objectId: UUID,
+  objectId: Any,
 ): T & Any = requireNotNull(this) {
   valueCannotBeNullInObject(name, objectName, objectId)
 }
@@ -41,7 +39,7 @@ inline fun <reified T : Any> T?.requireFieldNotNullByName(noinline lazyName: () 
 inline fun <reified T : Any> T?.requireFieldNotNullByNameInObject(
   name: String,
   objectName: String,
-  objectId: UUID,
+  objectId: Any,
 ): T = requireNotNullByNameInObject(
   "${T::class.simpleName}.$name",
   objectName,
@@ -59,7 +57,7 @@ fun <T> T?.checkNotNullByName(lazyName: () -> String): T & Any =
 fun <T> T?.checkNotNullByNameInObject(
   name: String,
   objectName: String,
-  objectId: UUID,
+  objectId: Any,
 ): T & Any = checkNotNull(this) {
   valueCannotBeNullInObject(name, objectName, objectId)
 }
@@ -74,7 +72,7 @@ inline fun <reified T : Any> T?.checkFieldNotNullByName(noinline lazyName: () ->
 inline fun <reified T : Any> T?.checkFieldNotNullByNameInObject(
   name: String,
   objectName: String,
-  objectId: UUID,
+  objectId: Any,
 ): T = checkNotNullByNameInObject(
   "${T::class.simpleName}.$name",
   objectName,
