@@ -196,13 +196,22 @@ class KotlinbrellaErrorAdvice(
   // --------------------------------------------------
 
   @ExceptionHandler(HttpMediaTypeNotSupportedException::class)
-  fun unsupportedMediaType(request: HttpServletRequest): ResponseEntity<Any> =
-    problem(
+  fun unsupportedMediaType(
+    exception: HttpMediaTypeNotSupportedException,
+    request: HttpServletRequest,
+  ): ResponseEntity<Any> {
+    val detail = if (exception.contentType != null)
+      "${exception.contentType} is not supported"
+    else
+      Constants.ErrorDescription.MISSING_CONTENT_TYPE
+
+    return problem(
       HttpStatus.UNSUPPORTED_MEDIA_TYPE,
       ErrorCode.UNSUPPORTED_MEDIA_TYPE,
-      Constants.ErrorDescription.UNSUPPORTED_MEDIA_TYPE,
+      detail,
       request,
     )
+  }
 
   // MARK: Hide unexpected server errors
   // --------------------------------------------------
