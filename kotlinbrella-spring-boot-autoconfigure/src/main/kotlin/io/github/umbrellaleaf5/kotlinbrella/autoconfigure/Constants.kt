@@ -24,6 +24,7 @@ object Constants {
   object ApiSpec {
 
     const val PROBLEM_MEDIA_TYPE = "application/problem+json"
+    const val LEGACY_MEDIA_TYPE = "application/json"
     const val PROBLEM_SCHEMA = "KotlinbrellaProblem"
     const val VIOLATION_SCHEMA = "KotlinbrellaViolation"
     const val SCHEMA_PREFIX = "#/components/schemas/"
@@ -52,9 +53,11 @@ object Constants {
     const val TRACE_ID_ATTRIBUTE = "kotlinbrella.traceId"
     const val TRACE_ID_KEY = "traceId"
     const val CODE_KEY = "code"
+    const val ERROR_KEY = "error"
     const val VIOLATIONS_KEY = "violations"
     const val UNKNOWN_FAILURE_LOG = "Unexpected request failure"
     const val EXPECTED_FAILURE_LOG = "Expected client failure: {}"
+    const val EXPECTED_FAILURE_DETAIL_LOG = "Expected client failure: {} {} {}"
 
   }
 
@@ -63,6 +66,7 @@ object Constants {
   object ErrorDescription {
 
     const val INVALID_VALUE = "Invalid value"
+    const val MISSING_VALUE = "Missing required value"
     const val VALIDATION_FAILED = CoreConstants.ErrorDescription.VALIDATION_FAILED
     const val INVALID_REQUEST = "Invalid request"
     const val RESOURCE_NOT_FOUND = CoreConstants.ErrorDescription.RESOURCE_NOT_FOUND
@@ -70,6 +74,7 @@ object Constants {
     const val UNSUPPORTED_MEDIA_TYPE = "Unsupported media type"
     const val INTERNAL_ERROR = "Internal server error"
     const val CONFLICT = "Resource conflict"
+    const val INVALID_SORT_PROPERTY = "Invalid sort property"
 
   }
 

@@ -10,6 +10,7 @@ dependencies {
   compileOnly("org.springframework.boot:spring-boot-starter-webmvc")
   compileOnly("org.springframework.boot:spring-boot-starter-validation")
   compileOnly("org.springframework:spring-tx")
+  compileOnly("org.springframework.data:spring-data-commons")
   compileOnly("org.springframework.boot:spring-boot-starter-aspectj")
   compileOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
   testImplementation("org.springframework.boot:spring-boot-starter-webmvc")

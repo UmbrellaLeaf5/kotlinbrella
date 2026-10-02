@@ -16,6 +16,10 @@ API lacks unit and integration coverage.
       queues, or deployment configuration into Kotlinbrella.
 - [ ] Treat public types, annotations, properties, error codes, JSON fields,
       and documentation as versioned compatibility contracts.
+- [ ] Library policy: runtime client failures are the `ApiException` family
+      only; configuration failures are `IllegalStateException` or
+      `IllegalArgumentException`. Document the policy in `ERROR_CONTRACT.md`
+      and `README.md`.
 
 ## Target Modules
 
@@ -61,6 +65,11 @@ Acceptance:
       diagnostic detail, and cause preservation.
 - [x] Implement or factory-create `BadRequestException`, `NotFoundException`,
       `ConflictException`, and `ForbiddenException`.
+- [ ] Add typical 5xx types (`InternalException`, `PayloadTooLargeException`,
+      `ServiceUnavailableException`) reusing the existing constructor and
+      `unified(...)` shape, with unit coverage.
+- [x] Resolve every documented error code to its HTTP status (`ErrorCode.status`)
+      and reason phrase (`ErrorCode.title`, exposed as `ApiError.status/title`).
 - [x] Preserve the Terraaero `unified(...)` convenience for equal details.
 - [x] Preserve separate diagnostic and public messages without mutable static
       state or hard-coded assumptions that development is named `dev`.
@@ -82,6 +91,9 @@ Acceptance:
 - [ ] Generalize context helpers so they do not require UUID identifiers.
 - [x] Keep lazy names/messages for successful paths.
 - [x] Port conversion helpers for UUID, integer, long, double, instant, and enum.
+- [ ] Add `*OrNull` variants (`toUUIDOrNull`, `toIntOrNull`, `toLongOrNull`,
+      `toDoubleOrNull`, `toInstantOrNull`, `toEnumOrNull`) returning null for
+      malformed input instead of throwing, with unit coverage.
 - [x] Make malformed external input a Kotlinbrella bad request with stable codes.
 - [x] Define whitespace, overflow, timezone, enum case, and nullability behavior.
 - [x] Test every valid, malformed, overflow, and diagnostics path.
@@ -101,8 +113,21 @@ Acceptance:
 - [x] Add explicit `expose-debug-details`; allow optional configured diagnostic
       profiles via `Environment.acceptsProfiles(...)`, never a first-active-profile
       heuristic.
+- [ ] Let applications configure only diagnostic profile *names*; all profile
+      branching lives in the library, never in application code.
+- [ ] Add an error-shape switch (`problem` for RFC 9457, `legacy` for
+      `{error, message}`) so applications on a versioned legacy contract can
+      use the library handler without changing their response shape.
+- [ ] Derive log verbosity from the diagnostics decision: diagnostics on
+      (dev) logs full records with details, diagnostics off (prod) logs
+      minimal one-line records. Unknown 5xx failures always log full with a
+      stack trace regardless of verbosity; rejected values are never logged.
+- [ ] Add a log-level threshold for advice-emitted logs using standard levels:
+      entries below the configured level are skipped (for example `ERROR`
+      keeps only error logs and drops info/warning records).
 - [x] Define request/trace ID header, response propagation, MDC behavior,
       generation policy, and privacy constraints.
+- [ ] Document every new property in `WEB_MVC.md` with defaults.
 
 ### Handler
 
@@ -116,12 +141,24 @@ Acceptance:
       without exposing rejected values by default.
 - [x] Map missing request values to `400`, missing resources to `404`, unsupported
       methods to `405`, and unsupported media types to `415`.
+- [ ] Map invalid sort/property references (`PropertyReferenceException`) to
+      `400` with the offending property name but no query exposure.
+- [ ] Render the `legacy` shape (`error` = reason phrase, `message` = detail,
+      violations joined into the message) from the same data as the problem
+      shape; register no problem schemas in `legacy` mode.
+- [ ] Route every advice-emitted log through the configured level threshold
+      and the derived verbosity; log unknown 5xx failures exactly once, always
+      with a stack trace regardless of verbosity.
 - [x] Map unknown failures to a safe `500`, log the full exception exactly once,
       and return only safe details plus trace ID.
 - [x] Define configurable logging of expected 4xx failures without request-body
       or secret leakage.
 - [x] Add Spring context tests for every mapping, response JSON, detail exposure,
       trace ID, advice precedence, and 5xx logging.
+- [ ] Add context tests for the `legacy` shape, the level threshold, both
+      verbosity modes, and custom diagnostic profile names.
+- [ ] Keep vendor-specific failures (S3, queues, brokers) out of the library;
+      domain exceptions must extend the `ApiException` family to be handled.
 
 Acceptance:
 
@@ -158,6 +195,10 @@ Acceptance:
 - [x] Map optimistic locking failures to `409 Conflict`.
 - [x] Map `DataIntegrityViolationException` conservatively; never expose constraint
       names by default.
+- [x] Decide integrity semantics explicitly: the library maps every integrity
+      violation to `409` for uniformity; the Digital Factory legacy `400`
+      branch for non-unique violations is intentionally not ported. Invalid
+      sort/property references are data concerns handled by the JPA advice.
 - [x] Decide whether invalid sort/property exceptions are data or web concerns.
 - [x] Use Testcontainers or an equivalent real database integration test for
       lookup, uniqueness, foreign keys, and optimistic locks.
@@ -236,28 +277,50 @@ Acceptance:
 - [x] One dependency enables the complete intended experience.
 - [x] Focused starters do not pull unrelated infrastructure.
 
-## Phase 9: Existing-Service Migration
+## Phase 9: Full Digital Factory `root` Migration
 
-- [ ] Migrate Digital Factory `root` and `slicer-api` null checks, converters,
-      client exceptions, and generic `findByIdOrThrow` where applicable.
-- [ ] Compare both services' old/new error JSON. Preserve the shipped
-      `error`/`message` contract through an application compatibility adapter
-      until a separately versioned API migration is approved.
-- [ ] Adopt useful neutral validation in both services; reject empty-only
-      patches consistently and update the affected API tests.
-- [ ] Migrate Digital Factory OpenAPI declarations and compare generated specs
-      with the runtime error contract.
-- [ ] Replace `root`'s `OwnershipAspect` with application-provided checkers
+- [x] Adopt neutral validation (`AtLeastOnePresent`, `ValidUUID`, `ValidEmail`,
+      `RequiredField`, `ValidEnum`); reject empty-only patches consistently.
+- [x] Migrate OpenAPI declarations to library `ApiError`/`ApiErrors` and compare
+      generated specs with the runtime error contract.
+- [x] Replace `root`'s `OwnershipAspect` with application-provided checkers
       after integration tests preserve missing-user, `404`, and `403` behavior.
-- [ ] Use the starter's Web MVC and JPA error mappings wherever they can
-      preserve the existing response contract in each service.
-- [ ] Run both Gradle builds and the full Digital Factory Python autotest suite.
-- [ ] Remove duplicated Digital Factory annotations, utility classes and
-      customizers after every use has been migrated to Kotlinbrella or a
-      standard constraint and the full compatibility suite passes.
+- [x] Migrate null checks to the library; delete the local utility file.
+- [ ] Migrate string converters (`toUUIDOrThrow`, `toLongOrThrow`,
+      `toEnumOrThrow`) to the library; delete `StringExtensions.kt` including
+      its unused `toInt`/`toDouble`/`*OrNull` members.
+- [ ] Migrate generic `findByIdOrThrow` to the library; update Python assertions
+      to the library not-found text (checker paths keep their exact messages).
+- [ ] Migrate all client exceptions to the `ApiException` family with stable
+      codes, preserving texts asserted by Python tests (`"active orders"` stays
+      a `CONFLICT` detail).
+- [ ] Rehome the four S3 exceptions onto library exception types with fixed
+      codes (`FORBIDDEN`, `NOT_FOUND`, `PAYLOAD_TOO_LARGE`, `INTERNAL_ERROR`).
+- [ ] Delete `root`'s `GlobalExceptionHandler`, `ProfileUtils`, and
+      `ExceptionModeInitializer`; the library advice renders the `legacy`
+      shape from `kotlinbrella.web` configuration (shape, diagnostic profile
+      names, log verbosity, log-level threshold). Give the deleted handler no
+      successor in application code.
+- [ ] Configure `root` through `kotlinbrella.web` properties only; keep
+      `data-jpa.errors.enabled=false` and the `KotlinbrellaOpenApiAutoConfiguration`
+      exclusion until their migrations are approved.
+- [ ] Compare old/new error JSON for every endpoint family before and after;
+      the shipped `error`/`message` shape stays byte-compatible, only vetted
+      message texts change.
+- [ ] Run the `root` Gradle build and the full Digital Factory Python autotest
+      suite (all 162 tests, not a subset): error paths are covered only there.
+- [ ] Remove every duplicated annotation, utility class, and customizer after
+      its uses have been migrated and the full suite passes.
 - [ ] Turn discovered gaps into Kotlinbrella issues, not immediate domain features.
 
-## Phase 10: Future Extensions
+## Phase 10: Slicer API Migration
+
+- [ ] After `root` is fully green, repeat the Phase 9 migration for
+      `slicer-api`: null checks, converters, client exceptions, `findByIdOrThrow`,
+      neutral validation, ownership (if any), and handler/profile-config removal.
+- [ ] Run the `slicer-api` Gradle build and the Python suite paths covering it.
+
+## Phase 11: Future Extensions
 
 - [ ] Separate WebFlux starter with no Servlet types.
 - [ ] Optional `Clock` auto-configuration that never replaces an application clock.
@@ -274,6 +337,7 @@ Acceptance:
 ## Release Checklist
 
 - [ ] Review public API compatibility and document migration.
+- [ ] Confirm every runtime client failure uses the `ApiException` family.
 - [ ] Run build, integration tests, compatibility matrix, and samples.
 - [ ] Verify generated OpenAPI matches MVC responses.
 - [ ] Verify dependency graph: core stays framework-free and focused starters

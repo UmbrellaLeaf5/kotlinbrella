@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.OptimisticLockingFailureException
+import org.springframework.data.core.PropertyReferenceException
+import org.springframework.data.core.TypeInformation
+import org.springframework.http.ProblemDetail
 import org.springframework.mock.env.MockEnvironment
 import org.springframework.mock.web.MockHttpServletRequest
 
@@ -35,6 +38,27 @@ class KotlinbrellaJpaErrorAdviceTest {
     assertEquals(409, stale.statusCode.value())
     assertFalse(duplicate.body.toString().contains("secret_constraint_name"))
     assertFalse(stale.body.toString().contains("private row version"))
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun rejectsUnknownSortPropertyWithoutQueryExposure() {
+    val advice = KotlinbrellaJpaErrorAdvice(
+      KotlinbrellaErrorAdvice(
+        KotlinbrellaWebProperties(),
+        MockEnvironment(),
+        ErrorViolationMapper(),
+      ),
+    )
+    val result = advice.invalidSortProperty(
+      PropertyReferenceException("name", TypeInformation.of(String::class.java), emptyList()),
+      MockHttpServletRequest(),
+    )
+    val body = result.body as ProblemDetail
+
+    assertEquals(400, result.statusCode.value())
+    assertEquals("Invalid sort property: 'name'", body.detail)
   }
 
   // --------------------------------------------------

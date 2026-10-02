@@ -29,6 +29,8 @@ handling, validation, Spring Data, access checks, and OpenAPI documentation.
 - Kotlin-first implementation with practical Java interoperability.
 - One full dependency for opinionated services, focused starters for minimal services.
 - Immutable exceptions with safe public details and optional diagnostics.
+- Runtime client failures are always the `ApiException` family; see
+  [ERROR_CONTRACT.md](ERROR_CONTRACT.md) for the policy.
 - Correct HTTP semantics for validation, missing resources, method/media errors,
   conflicts, and unexpected failures.
 - Springdoc documentation generated from the same error contract used at runtime.

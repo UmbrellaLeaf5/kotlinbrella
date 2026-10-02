@@ -12,3 +12,17 @@ All messages are supplied by applications in their chosen language; the
 library does not translate messages. Diagnostic details are exposed only when
 explicitly enabled by application configuration. Codes and JSON names are
 versioned public contracts. Unknown errors must never expose exception text.
+
+Applications on a versioned legacy contract use the `legacy` error shape:
+`{error, message}`, where `error` is the reason phrase and `message` is the
+same public detail as the problem shape (validation violations joined with
+`; `).
+
+Library policy: runtime client failures are always the `ApiException`
+family (`BadRequestException`, `NotFoundException`, `ConflictException`,
+`ForbiddenException`, `PayloadTooLargeException`, `ServiceUnavailableException`,
+`InternalServerException`), at any status. Configuration failures are
+`IllegalStateException` or `IllegalArgumentException` and never cross the
+HTTP boundary as client errors. Domain exceptions must extend the
+`ApiException` family to be rendered; vendor-specific failures (S3, queues,
+brokers) stay outside the library.

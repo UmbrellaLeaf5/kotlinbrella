@@ -1,5 +1,6 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
+import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.media.ArraySchema
@@ -9,12 +10,16 @@ import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.StringSchema
 import org.springdoc.core.customizers.OpenApiCustomizer
 
-class KotlinbrellaSchemaCustomizer : OpenApiCustomizer {
+class KotlinbrellaSchemaCustomizer(
+  private val properties: KotlinbrellaWebProperties = KotlinbrellaWebProperties(),
+) : OpenApiCustomizer {
 
   // MARK: Register canonical error schemas once
   // --------------------------------------------------
 
   override fun customise(openApi: OpenAPI) {
+    if (properties.errorShape == ErrorShape.LEGACY) return
+
     val components = openApi.components ?: Components().also {
       openApi.components = it
     }
