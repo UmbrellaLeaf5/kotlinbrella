@@ -2,7 +2,6 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
-import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.LogLevel
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.Mode
 import io.github.umbrellaleaf5.kotlinbrella.error.ApiException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
@@ -252,18 +251,12 @@ class KotlinbrellaErrorAdvice(
     request: HttpServletRequest,
     cause: Throwable? = null,
   ) {
-    val level = when {
-      cause != null || status.is5xxServerError -> LogLevel.ERROR
-      status.is4xxClientError -> LogLevel.INFO
-      else -> return
-    }
-
-    if (level < properties.logLevel) return
-
-    if (level == LogLevel.ERROR) {
+    if (cause != null || status.is5xxServerError) {
       logger.error(Constants.Web.UNKNOWN_FAILURE_LOG, cause)
       return
     }
+
+    if (!status.is4xxClientError) return
 
     if (verbose())
       logger.info(Constants.Web.EXPECTED_FAILURE_DETAIL_LOG, code, detail, request.requestURI)

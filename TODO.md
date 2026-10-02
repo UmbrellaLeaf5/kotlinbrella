@@ -124,9 +124,9 @@ Acceptance:
       (dev) logs full records with details, diagnostics off (prod) logs
       minimal one-line records. Unknown 5xx failures always log full with a
       stack trace regardless of verbosity; rejected values are never logged.
-- [ ] Add a log-level threshold for advice-emitted logs using standard levels:
-      entries below the configured level are skipped (for example `ERROR`
-      keeps only error logs and drops info/warning records).
+- [x] Filter advice-emitted logs through standard `logging.level` instead of
+      a custom threshold: expected 4xx go to info, unexpected 5xx to error,
+      the framework drops the rest (no custom setting).
 - [x] Define request/trace ID header, response propagation, MDC behavior,
       generation policy, and privacy constraints.
 - [ ] Document every new property in `WEB_MVC.md` with defaults.
@@ -148,17 +148,17 @@ Acceptance:
 - [x] Render the `simple` shape (`error` = reason phrase, `message` = detail,
       violations joined into the message) from the same data as the standard
       shape; register no problem schemas in `simple` mode.
-- [ ] Route every advice-emitted log through the configured level threshold
-      and the derived verbosity; log unknown 5xx failures exactly once, always
-      with a stack trace regardless of verbosity.
+- [x] Route every advice-emitted log through standard levels with the
+      derived verbosity; log unknown 5xx failures exactly once, always with
+      a stack trace regardless of verbosity.
 - [x] Map unknown failures to a safe `500`, log the full exception exactly once,
       and return only safe details plus trace ID.
 - [x] Define configurable logging of expected 4xx failures without request-body
       or secret leakage.
 - [x] Add Spring context tests for every mapping, response JSON, detail exposure,
       trace ID, advice precedence, and 5xx logging.
-- [x] Add context tests for the `simple` shape, the level threshold, both
-      verbosity modes, and custom diagnostic profile names.
+- [x] Add context tests for the `simple` shape, standard level filtering,
+      both verbosity modes, and the `mode` switch.
 - [ ] Keep vendor-specific failures (S3, queues, brokers) out of the library;
       domain exceptions must extend the `ApiException` family to be handled.
 
@@ -300,8 +300,8 @@ Acceptance:
       codes (`FORBIDDEN`, `NOT_FOUND`, `PAYLOAD_TOO_LARGE`, `INTERNAL_ERROR`).
 - [x] Delete `root`'s `GlobalExceptionHandler`, `ProfileUtils`, and
       `ExceptionModeInitializer`; the library advice renders the `legacy`
-      shape from `kotlinbrella.web` configuration (shape, diagnostic profile
-      names, derived verbosity, log-level threshold). No successor handler in
+      shape from `kotlinbrella.web` configuration (shape and mode; levels go
+      through standard `logging.level`). No successor handler in
       application code.
 - [x] Configure `root` through `kotlinbrella.web` properties only; keep
       `data-jpa.errors.enabled=false` and the `KotlinbrellaOpenApiAutoConfiguration`

@@ -1,7 +1,6 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
-import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.LogLevel
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.Mode
 import org.springframework.boot.context.properties.ConfigurationProperties
 
@@ -12,6 +11,5 @@ class KotlinbrellaWebProperties {
   var mode: Mode = Mode.PROD
   var requestIdHeader: String = Constants.Web.REQUEST_ID_HEADER
   var errorShape: ErrorShape = ErrorShape.STANDARD
-  var logLevel: LogLevel = LogLevel.INFO
 
 }
