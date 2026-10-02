@@ -88,16 +88,18 @@ Acceptance:
 - [x] Keep semantics strict: `require...` means invalid caller input and
       `IllegalArgumentException`; `check...` means an internal invariant and
       `IllegalStateException`.
-- [ ] Generalize context helpers so they do not require UUID identifiers.
+- [x] Generalize context helpers so they do not require UUID identifiers.
 - [x] Keep lazy names/messages for successful paths.
 - [x] Port conversion helpers for UUID, integer, long, double, instant, and enum.
-- [ ] Add `*OrNull` variants (`toUUIDOrNull`, `toIntOrNull`, `toLongOrNull`,
+- [x] Add `*OrNull` variants (`toUUIDOrNull`, `toIntOrNull`, `toLongOrNull`,
       `toDoubleOrNull`, `toInstantOrNull`, `toEnumOrNull`) returning null for
       malformed input instead of throwing, with unit coverage.
+- [x] Add shared contract DTOs (`IdResponse`) as versioned JSON contracts and
+      adopt them in Digital Factory services.
 - [x] Make malformed external input a Kotlinbrella bad request with stable codes.
 - [x] Define whitespace, overflow, timezone, enum case, and nullability behavior.
 - [x] Test every valid, malformed, overflow, and diagnostics path.
-- [ ] Add Java-friendly facades only where extensions are impractical in Java.
+- [x] Add Java-friendly facades only where extensions are impractical in Java.
 
 Acceptance:
 

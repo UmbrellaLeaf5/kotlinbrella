@@ -44,4 +44,35 @@ object Conversions {
         ErrorCode.INVALID_ENUM,
       )
 
+  // --------------------------------------------------
+
+  @JvmStatic
+  fun uuidOrNull(value: String?): UUID? = value.toUUIDOrNull()
+
+  // --------------------------------------------------
+
+  @JvmStatic
+  fun integerOrNull(value: String?): Int? = value.toIntOrNull()
+
+  // --------------------------------------------------
+
+  @JvmStatic
+  fun longOrNull(value: String?): Long? = value.toLongOrNull()
+
+  // --------------------------------------------------
+
+  @JvmStatic
+  fun doubleOrNull(value: String?): Double? = value.toDoubleOrNull()
+
+  // --------------------------------------------------
+
+  @JvmStatic
+  fun instantOrNull(value: String?): Instant? = value.toInstantOrNull()
+
+  // --------------------------------------------------
+
+  @JvmStatic
+  fun <T : Enum<T>> enumValueOrNull(value: String?, type: Class<T>): T? =
+    value?.let { text -> type.enumConstants.firstOrNull { it.name == text } }
+
 }

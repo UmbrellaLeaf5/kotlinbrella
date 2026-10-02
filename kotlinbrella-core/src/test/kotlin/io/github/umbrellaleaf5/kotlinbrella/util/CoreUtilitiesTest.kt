@@ -56,6 +56,18 @@ class CoreUtilitiesTest {
         absent.checkFieldNotNullByNameInObject("id", "User", objectId)
       }.message,
     )
+    assertEquals(
+      "count cannot be null in Order: 42",
+      assertThrows(IllegalArgumentException::class.java) {
+        absent.requireNotNullByNameInObject("count", "Order", 42L)
+      }.message,
+    )
+    assertEquals(
+      "token cannot be null in Session: abc",
+      assertThrows(IllegalStateException::class.java) {
+        absent.checkNotNullByNameInObject("token", "Session", "abc")
+      }.message,
+    )
   }
 
   // --------------------------------------------------
