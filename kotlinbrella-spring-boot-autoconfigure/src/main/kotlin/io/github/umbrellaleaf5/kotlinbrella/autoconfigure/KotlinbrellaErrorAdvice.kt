@@ -1,8 +1,12 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
+import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
+import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.LogLevel
 import io.github.umbrellaleaf5.kotlinbrella.error.ApiException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorViolation
+import io.github.umbrellaleaf5.kotlinbrella.error.LegacyErrorResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
@@ -12,6 +16,7 @@ import org.springframework.core.env.Environment
 import org.springframework.core.env.Profiles
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
+import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -19,6 +24,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingRequestHeaderException
+import org.springframework.web.bind.MissingRequestValueException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -48,7 +54,7 @@ class KotlinbrellaErrorAdvice(
   fun apiException(
     exception: ApiException,
     request: HttpServletRequest,
-  ): ResponseEntity<ProblemDetail> =
+  ): ResponseEntity<Any> =
     problem(
       HttpStatusCode.valueOf(exception.status),
       exception.code,
@@ -66,7 +72,7 @@ class KotlinbrellaErrorAdvice(
   fun invalidArgument(
     exception: MethodArgumentNotValidException,
     request: HttpServletRequest,
-  ): ResponseEntity<ProblemDetail> {
+  ): ResponseEntity<Any> {
     val violations = exception.bindingResult.fieldErrors.map(violationMapper::toFieldViolation) +
       exception.bindingResult.globalErrors.map(violationMapper::toGlobalViolation)
 
@@ -85,7 +91,7 @@ class KotlinbrellaErrorAdvice(
   fun constraintViolation(
     exception: ConstraintViolationException,
     request: HttpServletRequest,
-  ): ResponseEntity<ProblemDetail> = problem(
+  ): ResponseEntity<Any> = problem(
     HttpStatus.BAD_REQUEST,
     ErrorCode.BAD_REQUEST,
     Constants.ErrorDescription.VALIDATION_FAILED,
@@ -96,25 +102,79 @@ class KotlinbrellaErrorAdvice(
   // MARK: Render malformed or missing request values
   // --------------------------------------------------
 
+  @ExceptionHandler(HttpMessageNotReadableException::class)
+  fun unreadableMessage(
+    exception: HttpMessageNotReadableException,
+    request: HttpServletRequest,
+  ): ResponseEntity<Any> {
+    val field = (exception.cause as? InvalidFormatException)
+      ?.path?.firstOrNull()?.fieldName
+    val detail = if (field != null && exposeDiagnostics())
+      "${Constants.ErrorDescription.INVALID_VALUE} for field '$field'"
+    else
+      Constants.ErrorDescription.INVALID_REQUEST
+
+    return problem(
+      HttpStatus.BAD_REQUEST,
+      ErrorCode.BAD_REQUEST,
+      detail,
+      request,
+    )
+  }
+
+  // --------------------------------------------------
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+  fun typeMismatch(
+    exception: MethodArgumentTypeMismatchException,
+    request: HttpServletRequest,
+  ): ResponseEntity<Any> {
+    val detail = if (exposeDiagnostics())
+      "${Constants.ErrorDescription.INVALID_VALUE} for parameter '${exception.name}'"
+    else
+      Constants.ErrorDescription.INVALID_REQUEST
+
+    return problem(
+      HttpStatus.BAD_REQUEST,
+      ErrorCode.BAD_REQUEST,
+      detail,
+      request,
+    )
+  }
+
+  // --------------------------------------------------
+
   @ExceptionHandler(
-    HttpMessageNotReadableException::class,
-    MethodArgumentTypeMismatchException::class,
     MissingServletRequestParameterException::class,
     MissingRequestHeaderException::class,
   )
-  fun badRequest(request: HttpServletRequest): ResponseEntity<ProblemDetail> =
-    problem(
+  fun missingValue(
+    exception: MissingRequestValueException,
+    request: HttpServletRequest,
+  ): ResponseEntity<Any> {
+    val name = when (exception) {
+      is MissingServletRequestParameterException -> exception.parameterName
+      is MissingRequestHeaderException -> exception.headerName
+      else -> null
+    }
+    val detail = if (name != null && exposeDiagnostics())
+      "${Constants.ErrorDescription.MISSING_VALUE}: '$name'"
+    else
+      Constants.ErrorDescription.INVALID_REQUEST
+
+    return problem(
       HttpStatus.BAD_REQUEST,
       ErrorCode.BAD_REQUEST,
-      Constants.ErrorDescription.INVALID_REQUEST,
+      detail,
       request,
     )
+  }
 
   // MARK: Preserve HTTP status semantics
   // --------------------------------------------------
 
   @ExceptionHandler(NoResourceFoundException::class, NoHandlerFoundException::class)
-  fun notFound(request: HttpServletRequest): ResponseEntity<ProblemDetail> =
+  fun notFound(request: HttpServletRequest): ResponseEntity<Any> =
     problem(
       HttpStatus.NOT_FOUND,
       ErrorCode.NOT_FOUND,
@@ -125,7 +185,7 @@ class KotlinbrellaErrorAdvice(
   // --------------------------------------------------
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-  fun methodNotAllowed(request: HttpServletRequest): ResponseEntity<ProblemDetail> =
+  fun methodNotAllowed(request: HttpServletRequest): ResponseEntity<Any> =
     problem(
       HttpStatus.METHOD_NOT_ALLOWED,
       ErrorCode.METHOD_NOT_ALLOWED,
@@ -136,7 +196,7 @@ class KotlinbrellaErrorAdvice(
   // --------------------------------------------------
 
   @ExceptionHandler(HttpMediaTypeNotSupportedException::class)
-  fun unsupportedMediaType(request: HttpServletRequest): ResponseEntity<ProblemDetail> =
+  fun unsupportedMediaType(request: HttpServletRequest): ResponseEntity<Any> =
     problem(
       HttpStatus.UNSUPPORTED_MEDIA_TYPE,
       ErrorCode.UNSUPPORTED_MEDIA_TYPE,
@@ -151,16 +211,14 @@ class KotlinbrellaErrorAdvice(
   fun unexpected(
     exception: Exception,
     request: HttpServletRequest,
-  ): ResponseEntity<ProblemDetail> {
-    logger.error(Constants.Web.UNKNOWN_FAILURE_LOG, exception)
-
-    return problem(
+  ): ResponseEntity<Any> =
+    problem(
       HttpStatus.INTERNAL_SERVER_ERROR,
       ErrorCode.INTERNAL_ERROR,
       Constants.ErrorDescription.INTERNAL_ERROR,
       request,
+      cause = exception,
     )
-  }
 
   // MARK: Private Helpers
   // --------------------------------------------------
@@ -170,8 +228,47 @@ class KotlinbrellaErrorAdvice(
 
   // --------------------------------------------------
 
+  private fun verbose(): Boolean = exposeDiagnostics()
+
+  // --------------------------------------------------
+
+  private fun joinViolations(violations: List<ErrorViolation>): String =
+    violations.joinToString("; ") {
+      if (it.field == null) it.message else "${it.field}: ${it.message}"
+    }
+
+  // --------------------------------------------------
+
+  private fun logRecord(
+    status: HttpStatusCode,
+    code: String,
+    detail: String,
+    request: HttpServletRequest,
+    cause: Throwable? = null,
+  ) {
+    val level = when {
+      cause != null || status.is5xxServerError -> LogLevel.ERROR
+      status.is4xxClientError && properties.logExpected4xx -> LogLevel.INFO
+      else -> return
+    }
+
+    if (level < properties.logLevel) return
+
+    if (level == LogLevel.ERROR) {
+      logger.error(Constants.Web.UNKNOWN_FAILURE_LOG, cause)
+      return
+    }
+
+    if (verbose())
+      logger.info(Constants.Web.EXPECTED_FAILURE_DETAIL_LOG, code, detail, request.requestURI)
+    else
+      logger.info(Constants.Web.EXPECTED_FAILURE_LOG, code)
+  }
+
+  // --------------------------------------------------
+
   /**
-   * Формирует безопасный проблемный ответ с кодом ошибки и идентификатором запроса.
+   * Формирует безопасный ответ об ошибке в выбранной форме с кодом и идентификатором запроса.
    */
   private fun problem(
     status: HttpStatusCode,
@@ -179,18 +276,26 @@ class KotlinbrellaErrorAdvice(
     detail: String,
     request: HttpServletRequest,
     violations: List<ErrorViolation> = emptyList(),
-  ): ResponseEntity<ProblemDetail> {
-    if (properties.logExpected4xx && status.is4xxClientError)
-      logger.info(Constants.Web.EXPECTED_FAILURE_LOG, code)
+    cause: Throwable? = null,
+  ): ResponseEntity<Any> {
+    logRecord(status, code, detail, request, cause)
+
+    val traceId = request.getAttribute(Constants.Web.TRACE_ID_ATTRIBUTE)
+      ?: UUID.randomUUID().toString()
+
+    if (properties.errorShape == ErrorShape.LEGACY) {
+      val message = if (violations.isNotEmpty()) joinViolations(violations) else detail
+      val legacy = LegacyErrorResponse(ErrorCode.title(code), message)
+
+      return ResponseEntity.status(status)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(legacy)
+    }
 
     val body = ProblemDetail.forStatusAndDetail(status, detail)
     body.instance = URI.create(request.requestURI)
     body.setProperty(Constants.Web.TYPE_KEY, Constants.Web.ABOUT_BLANK)
     body.setProperty(Constants.Web.CODE_KEY, code)
-
-    val traceId = request.getAttribute(Constants.Web.TRACE_ID_ATTRIBUTE)
-      ?: UUID.randomUUID().toString()
-
     body.setProperty(Constants.Web.TRACE_ID_KEY, traceId)
 
     if (violations.isNotEmpty())
