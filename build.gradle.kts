@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.gradle.jvm.tasks.Jar
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 plugins {
@@ -8,6 +9,8 @@ plugins {
   kotlin("plugin.spring") version "2.3.10" apply false
   id("io.spring.dependency-management") version "1.1.7" apply false
   id("org.springframework.boot") version "4.0.3" apply false
+  // Dokka реально применяется к корню (агрегация документации), поэтому без apply false.
+  id("org.jetbrains.dokka") version "2.2.0"
 }
 
 extra["bootBom"] = SpringBootPlugin.BOM_COORDINATES
@@ -58,22 +61,61 @@ subprojects {
     isReproducibleFileOrder = true
   }
 
-  if (!project.path.startsWith(":samples")) extensions.configure<PublishingExtension> {
-    publications {
-      create<MavenPublication>("mavenJava") {
-        from(components["java"])
-        pom {
-          name.set(project.name)
-          description.set(project.description)
-          url.set("https://github.com/UmbrellaLeaf5/kotlinbrella")
-          licenses {
-            license {
-              name.set("The Unlicense")
-              url.set("https://unlicense.org/")
+  if (!project.path.startsWith(":samples")) {
+    apply(plugin = "org.jetbrains.dokka")
+
+    val dokkaPublicationHtml = tasks.named("dokkaGeneratePublicationHtml")
+
+    tasks.named<Jar>("javadocJar") {
+      dependsOn(dokkaPublicationHtml)
+      from(dokkaPublicationHtml.map { it.outputs.files })
+    }
+
+    tasks.named("javadoc") { enabled = false }
+
+    extensions.configure<PublishingExtension> {
+      publications {
+        create<MavenPublication>("mavenJava") {
+          from(components["java"])
+          pom {
+            name.set(project.name)
+            description.set(project.description)
+            url.set("https://github.com/UmbrellaLeaf5/kotlinbrella")
+            licenses {
+              license {
+                name.set("The Unlicense")
+                url.set("https://unlicense.org/")
+              }
             }
           }
         }
       }
+
+      repositories {
+        val githubActor = System.getenv("GITHUB_ACTOR")
+        val githubToken = System.getenv("GITHUB_TOKEN")
+
+        if (!githubActor.isNullOrBlank() && !githubToken.isNullOrBlank())
+          maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/UmbrellaLeaf5/kotlinbrella")
+            credentials {
+              username = githubActor
+              password = githubToken
+            }
+          }
+      }
     }
   }
+}
+
+dependencies {
+  dokka(project(":kotlinbrella-core"))
+  dokka(project(":kotlinbrella-spring-boot-autoconfigure"))
+  dokka(project(":kotlinbrella-spring-boot-starter-webmvc"))
+  dokka(project(":kotlinbrella-spring-boot-starter-validation"))
+  dokka(project(":kotlinbrella-spring-boot-starter-data-jpa"))
+  dokka(project(":kotlinbrella-spring-boot-starter-openapi"))
+  dokka(project(":kotlinbrella-spring-boot-starter-access"))
+  dokka(project(":kotlinbrella-spring-boot-starter"))
 }
