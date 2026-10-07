@@ -30,7 +30,7 @@ handling, validation, Spring Data, access checks, and OpenAPI documentation.
 - One full dependency for opinionated services, focused starters for minimal services.
 - Immutable exceptions with safe public details and optional diagnostics.
 - Runtime client failures are always the `ApiException` family; see
-  [ERROR_CONTRACT.md](ERROR_CONTRACT.md) for the policy.
+  [GUIDE.md](GUIDE.md) for the policy.
 - Correct HTTP semantics for validation, missing resources, method/media errors,
   conflicts, and unexpected failures.
 - Springdoc documentation generated from the same error contract used at runtime.
@@ -43,9 +43,8 @@ handling, validation, Spring Data, access checks, and OpenAPI documentation.
 
 Kotlinbrella has working focused starters, an aggregate starter, and runnable
 Kotlin and Java examples under `samples/`. The remaining migration and release
-work is tracked in [TODO.md](TODO.md). Consult [ERROR_CONTRACT.md](ERROR_CONTRACT.md),
-[VALIDATION.md](VALIDATION.md), [DATA_JPA.md](DATA_JPA.md), [OPENAPI.md](OPENAPI.md),
-[ACCESS.md](ACCESS.md), and [WEB_MVC.md](WEB_MVC.md) for public contracts.
+work is tracked in [TODO.md](TODO.md). Consult [GUIDE.md](GUIDE.md) for public
+contracts and usage cases.
 
 ## Development
 
