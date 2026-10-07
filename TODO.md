@@ -9,21 +9,12 @@ Done items are deleted, not ticked: if it is not listed here, it is shipped.
 
 ## Phase 1: Slicer API Migration (staged, green suite after each step)
 
-- [ ] Step 1.1 — dependency and `IdResponse`: `jitpack.io` instead of
-      `mavenLocal`/`0.1.0-SNAPSHOT` (version in `dependencies.gradle.kts`),
-      delete the domain `IdResponse` in favor of the library one; verify with
-      `./gradlew build` plus a smoke probe. This also removes the last
-      `mavenLocal` usage.
-- [ ] Step 1.2 — exceptions and handler: domain `BaseClientException` family
-      becomes the library `ApiException` family with 1:1 texts; delete
-      `GlobalExceptionHandler`, `ProfileUtils`, `FindByIdOrThrow`,
-      `ToNotNullOrThrow`, and the domain `ErrorResponse`; verify with the full
-      Python suite (the `{error, message}` contract stays intact).
-- [ ] Step 1.3 — validation and boundaries: neutral annotations on
-      `CalculationRequest`, `*String` controller/service boundaries with
-      library conversions, `error-shape: simple` and `mode` per profile,
-      `@ApiErrors` on specs; verify with the full suite plus an `/api-docs`
-      diff.
+Steps 1.1 (JitPack dependency, domain `IdResponse` deleted), 1.2 (library
+exceptions/handler/utils, `error-shape: simple`) and 1.3 (neutral annotations
+on `CalculationRequest`, `*String` boundaries with library conversions, `mode`
+per profile; manual per-endpoint error docs kept, no duplication with the
+library OpenAPI customizer) are shipped: suite 162/162.
+
 - [ ] Step 1.4 — JPA advice and sign-off: drop `enabled: false`, run the
       slicer paths (creation/deletion/estimation/timing) plus targeted
       400/409 probes; suite 162/162 closes the phase.
