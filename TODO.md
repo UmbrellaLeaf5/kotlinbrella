@@ -64,7 +64,7 @@ Work:
       `KotlinbrellaOpenApiAutoConfiguration` exclude; `/api-docs` diff must
       show only the schema rename (`ErrorResponse` to `SimpleErrorResponse`);
       full suite green.
-- [ ] Step 2.3 — tag `0.1.1`, bump the version in root and slicer-api,
+- [ ] Step 2.3 — tag `0.2.0`, bump the version in root and slicer-api,
       full suite green.
 - [ ] Step 2.4 — slicer-api: replace the manual error blocks in
       `CalculationApiSpec` with `@ApiErrors` (manual plus generated entries
