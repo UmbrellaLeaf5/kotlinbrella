@@ -7,19 +7,7 @@ API lacks unit and integration coverage.
 
 Done items are deleted, not ticked: if it is not listed here, it is shipped.
 
-## Phase 1: Slicer API Migration (staged, green suite after each step)
-
-Steps 1.1 (JitPack dependency, domain `IdResponse` deleted), 1.2 (library
-exceptions/handler/utils, `error-shape: simple`) and 1.3 (neutral annotations
-on `CalculationRequest`, `*String` boundaries with library conversions, `mode`
-per profile; manual per-endpoint error docs kept, no duplication with the
-library OpenAPI customizer) are shipped: suite 162/162.
-
-- [ ] Step 1.4 — JPA advice and sign-off: drop `enabled: false`, run the
-      slicer paths (creation/deletion/estimation/timing) plus targeted
-      400/409 probes; suite 162/162 closes the phase.
-
-## Phase 2: Future Extensions
+## Phase 1: Future Extensions
 
 - [ ] Spring Security integration based on authenticated principals, never IDs
       supplied in request bodies.
