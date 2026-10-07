@@ -25,8 +25,8 @@ class AtLeastOnePresentValidator : ConstraintValidator<AtLeastOnePresent, Any> {
   // --------------------------------------------------
 
   /**
-   * Проверяет присутствие только явно перечисленных свойств объекта.
-   * Числовой ноль и логическое `false` считаются присутствующими значениями.
+    * Checks presence of only the explicitly listed object properties.
+    * Numeric zero and boolean `false` count as present values.
    */
   override fun isValid(value: Any?, context: ConstraintValidatorContext): Boolean {
     if (value == null) return true

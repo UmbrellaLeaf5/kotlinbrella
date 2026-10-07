@@ -492,13 +492,13 @@ All code-writing rules for Kotlinbrella.
   // --------------------------------------------------
 
   /**
-   * Вычисляет и сохраняет состояние для заданной сущности
-   * на указанный момент времени.
+   * Calculates and persists the state for the given entity
+   * at the specified point in time.
    *
-   * @param entity сущность для расчёта
-   * @param item связанный объект или `null`, если не назначен
-   * @param time момент времени, на который вычисляется состояние
-   * @return результирующий [CalculationState]
+   * @param entity entity to calculate
+   * @param item related object or `null` if not assigned
+   * @param time point in time the state is calculated for
+   * @return resulting [CalculationState]
    */
   @Transactional
   fun calculateAndPersist(
@@ -513,7 +513,7 @@ All code-writing rules for Kotlinbrella.
   The KDoc block is separated from the blank-line separator by one blank line and sits directly above the function with no blank line between KDoc and the function.
 
 - **Language of comments:**
-  - **KDoc** — **exclusively in Russian**. All `@param`, `@return`, and description text must be written in Russian.
+  - **KDoc** — **exclusively in English**. All `@param`, `@return`, and description text must be written in English (public API docs are published via Dokka).
   - **`// MARK:` comments** — **exclusively in English**.
   - **Regular `//` comments** — either English or Russian is acceptable, but **Russian is preferred**. Historic English comments may remain, but new or modified comments should use Russian.
 

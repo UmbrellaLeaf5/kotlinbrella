@@ -28,8 +28,8 @@ class OwnershipAspect(
   // --------------------------------------------------
 
   /**
-   * Получает необработанные идентификаторы из аргументов метода и передаёт их проверяющему.
-   * При отказе применяет выбранную политику сокрытия существования ресурса.
+    * Reads raw identifiers from method arguments and passes them to the checker.
+    * On denial applies the selected resource-existence hiding policy.
    */
   @Around(Constants.Access.OWNERSHIP_POINTCUT)
   fun checkOwnership(

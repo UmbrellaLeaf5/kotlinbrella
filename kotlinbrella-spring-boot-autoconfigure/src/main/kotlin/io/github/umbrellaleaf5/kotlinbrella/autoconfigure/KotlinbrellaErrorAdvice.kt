@@ -63,7 +63,7 @@ class KotlinbrellaErrorAdvice(
   // --------------------------------------------------
 
   /**
-   * Преобразует ошибки полей и ошибки уровня объекта в единый ответ проверки запроса.
+    * Merges field errors and object-level errors into a single request validation response.
    */
   @ExceptionHandler(MethodArgumentNotValidException::class)
   fun invalidArgument(
@@ -268,7 +268,7 @@ class KotlinbrellaErrorAdvice(
   // --------------------------------------------------
 
   /**
-   * Формирует безопасный ответ об ошибке в выбранной форме с кодом и идентификатором запроса.
+    * Builds a safe error response in the selected shape with code and request identifier.
    */
   private fun problem(
     status: HttpStatusCode,

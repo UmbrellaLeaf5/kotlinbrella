@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.UUID
 
 /**
- * Ответ с идентификатором созданной сущности.
+ * Response carrying the identifier of the created entity.
  *
- * Явный креатор делает десериализацию детерминированной
- * без Kotlin-модуля на любом Jackson.
+ * The explicit creator keeps deserialization deterministic
+ * on any Jackson setup without the Kotlin module.
  */
 data class IdResponse @JsonCreator constructor(
   @param:JsonProperty("id")

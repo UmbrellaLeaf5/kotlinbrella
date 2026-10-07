@@ -1,7 +1,7 @@
 package io.github.umbrellaleaf5.kotlinbrella.error
 
 /**
- * Упрощённое тело ошибки для контрактов вида `{error, message}`.
+ * Simplified error body for `{error, message}` contracts.
  */
 data class SimpleErrorResponse(
   val error: String,  // reason phrase статуса

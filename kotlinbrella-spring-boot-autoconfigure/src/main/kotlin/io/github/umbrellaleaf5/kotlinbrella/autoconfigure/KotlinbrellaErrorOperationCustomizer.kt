@@ -20,8 +20,8 @@ class KotlinbrellaErrorOperationCustomizer : OperationCustomizer {
   // --------------------------------------------------
 
   /**
-   * Дополняет ответы операции примерами ошибок, сохраняя описания и схемы приложения.
-   * Объединяет ошибки с одинаковым HTTP-статусом в одном ответе.
+    * Enriches operation responses with error examples while keeping application descriptions and schemas.
+    * Merges errors sharing the same HTTP status into a single response.
    */
   override fun customize(operation: Operation, handlerMethod: HandlerMethod): Operation {
     val annotations = AnnotatedElementUtils.findMergedAnnotation(

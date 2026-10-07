@@ -15,8 +15,8 @@ class KotlinbrellaRequestIdFilter(
   // --------------------------------------------------
 
   /**
-   * Создаёт либо принимает безопасный идентификатор запроса, записывает его в ответ и MDC.
-   * После обработки восстанавливает предыдущее значение MDC.
+    * Creates or accepts a safe request identifier, writes it to the response and MDC.
+    * Restores the previous MDC value after processing.
    */
   override fun doFilterInternal(
     request: HttpServletRequest,
