@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":kotlinbrella-core/main":[],":kotlinbrella-spring-boot-starter-validation/main":[],":kotlinbrella-spring-boot-autoconfigure/main":[],":kotlinbrella-spring-boot-starter-data-jpa/main":[]}'
