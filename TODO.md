@@ -16,9 +16,9 @@ API lacks unit and integration coverage.
 
 ## Phase 0: Repository Foundation
 
-- [ ] Decide semantic versioning, license, security policy, Maven Central
-      publication, signing, and CI secret handling. Release notes live in
-      GitHub releases; there is no `CHANGELOG.md` file.
+- [ ] Decide semantic versioning, license, security policy, JitPack publication
+      (git tags as versions, no credentials), and CI secret handling. Release
+      notes live in GitHub releases; there is no `CHANGELOG.md` file.
 
 ## Phase 2: Core Kotlin Utilities
 
@@ -98,4 +98,5 @@ Acceptance:
 - [ ] Scan sources, tests, docs, and build outputs for credentials, tokens, local
       paths, and development URLs.
 - [ ] Generate release notes with supported versions and configuration changes.
-- [ ] Publish signed artifacts, sources, documentation, and checksums.
+- [ ] Tag the release so JitPack builds versioned artifacts with sources and
+      javadoc; documentation deploys via `docs.yml`.

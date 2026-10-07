@@ -55,10 +55,13 @@ The repository uses Gradle, Kotlin, JUnit 5, and the conventions in
 ./gradlew build
 ```
 
-Java 21 is required. The Spring Boot baseline is 4.0.3. For local development
-of consumers, run `./gradlew publishToMavenLocal` and add `mavenLocal()` to the
-consumer repositories. Published module coordinates use group
-`io.github.umbrellaleaf5.kotlinbrella` and version `0.1.0-SNAPSHOT`.
+Java 21 is required. The Spring Boot baseline is 4.0.3. Releases are consumed
+from [JitPack](https://jitpack.io) with no credentials: add
+`maven { url = uri("https://jitpack.io") }` to the consumer repositories and
+depend on group `com.github.UmbrellaLeaf5.kotlinbrella` with the git tag as
+version (e.g. `0.1.0`). For local development of consumers, run
+`./gradlew publishToMavenLocal` and add `mavenLocal()` to the consumer
+repositories.
 
 The aggregate dependency includes the shared libraries needed by Digital
 Factory's `root` and `slicer-api`: Spring MVC, validation, JPA, Liquibase,
@@ -69,9 +72,6 @@ The full sample requires PostgreSQL settings `SAMPLE_DATABASE_URL`,
 `SAMPLE_DATABASE_USER`, and `SAMPLE_DATABASE_PASSWORD`. `./gradlew build`
 runs its Testcontainers-backed contract tests when Docker is available. The
 minimal sample has no JPA, AOP or Springdoc dependency.
-
-Publication to Maven Central and signing require release credentials and are
-tracked in [TODO.md](TODO.md).
 
 ## License
 

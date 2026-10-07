@@ -90,21 +90,6 @@ subprojects {
           }
         }
       }
-
-      repositories {
-        val githubActor = System.getenv("GITHUB_ACTOR")
-        val githubToken = System.getenv("GITHUB_TOKEN")
-
-        if (!githubActor.isNullOrBlank() && !githubToken.isNullOrBlank())
-          maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/UmbrellaLeaf5/kotlinbrella")
-            credentials {
-              username = githubActor
-              password = githubToken
-            }
-          }
-      }
     }
   }
 }
