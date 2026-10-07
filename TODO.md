@@ -16,7 +16,7 @@ API lacks unit and integration coverage.
 
 ## Phase 0: Repository Foundation
 
-- [ ] Decide semantic versioning, license, security policy, JitPack publication
+- [x] Decide semantic versioning, license, security policy, JitPack publication
       (git tags as versions, no credentials), and CI secret handling. Release
       notes live in GitHub releases; there is no `CHANGELOG.md` file.
 
@@ -34,30 +34,37 @@ Acceptance:
 
 ## Phase 9: Full Digital Factory `root` Migration
 
-- [ ] Decide `root` JPA error mappings. The library advice is currently
-      disabled (`kotlinbrella.data-jpa.errors.enabled=false`) while `root`'s
-      own `DataAccessException` branch is deleted, so duplicate-key, unique,
-      integrity, and sort failures fall through to generic 500. Either enable
-      the library advice (integrity always 409, sort 400 with identical text)
-      and verify with targeted probes plus the full suite, or record keeping
-      it off as an explicit decision.
-- [ ] Remove migration leftovers in `root`: unreferenced `Constants.Exception`,
-      `Constants.Validation`, `Constants.Debug`, `Constants.Pattern`, and
-      `DetailedErrorMessage` subsets, plus unused `SlicerClient` imports.
-- [ ] Turn discovered gaps into Kotlinbrella issues, not immediate domain features.
+- [x] Decide `root` JPA error mappings. The library advice is enabled
+      (`data-jpa.errors.enabled` override removed): integrity always 409,
+      sort 400 with identical text. Verified with a live 400 probe
+      (`Invalid sort property`) plus the full 162-test suite.
+- [x] Remove migration leftovers in `root`: dead `Constants.Exception`
+      (except used `S3_OPERATION_FAILED`), `Constants.Validation`,
+      `Constants.Debug`, `Constants.Pattern`, and `DetailedErrorMessage`
+      subsets, plus file-operation `ApiSpec` descriptions (176/176 members
+      live, texts byte-identical). `SlicerClient` has no unused imports.
+- [x] Turn discovered gaps into Kotlinbrella issues, not immediate domain features.
 
-## Phase 10: Slicer API Migration
+## Phase 10: Slicer API Migration (staged, green suite after each step)
 
-- [ ] After `root` is fully green, repeat the Phase 9 migration for
-      `slicer-api`: null checks, converters, client exceptions, `findByIdOrThrow`,
-      handler/profile-config removal.
-- [ ] Give `slicer-api` the validation it lacks: neutral annotations on
+- [ ] Step 1.1 — dependency and `IdResponse`: `jitpack.io` instead of
+      `mavenLocal`/`0.1.0-SNAPSHOT` (version in `dependencies.gradle.kts`),
+      delete the domain `IdResponse` in favor of the library one; verify with
+      `./gradlew build` plus a smoke probe. This also removes the last
+      `mavenLocal` usage.
+- [ ] Step 1.2 — exceptions and handler: domain `BaseClientException` family
+      becomes the library `ApiException` family with 1:1 texts; delete
+      `GlobalExceptionHandler`, `ProfileUtils`, `FindByIdOrThrow`,
+      `ToNotNullOrThrow`, and the domain `ErrorResponse`; verify with the full
+      Python suite (the `{error, message}` contract stays intact).
+- [ ] Step 1.3 — validation and boundaries: neutral annotations on
       `CalculationRequest`, `*String` controller/service boundaries with
-      library conversions, and request-id behavior through starter defaults.
-- [ ] Document `slicer-api` errors with library annotations in `simple` shape;
-      configure `kotlinbrella.web` per profile (mode, shape) and delete its
-      handler and profile utilities. Keep domain consts, scheduler, and queue code.
-- [ ] Run the `slicer-api` Gradle build and the Python suite paths covering it.
+      library conversions, `error-shape: simple` and `mode` per profile,
+      `@ApiErrors` on specs; verify with the full suite plus an `/api-docs`
+      diff.
+- [ ] Step 1.4 — JPA advice and sign-off: drop `enabled: false`, run the
+      slicer paths (creation/deletion/estimation/timing) plus targeted
+      400/409 probes; suite 162/162 closes the phase.
 
 ## Phase 11: Future Extensions
 
@@ -75,15 +82,20 @@ Acceptance:
 
 ## Phase 12: Documentation and API Reference
 
-- [ ] Write public KDoc in English for every public type, function, and property;
-      update the `CODE-STYLE.md` language rule accordingly.
+- [ ] Top up public KDoc in English for every public type, function, and property
+      (Step 2.2); the `CODE-STYLE.md` language rule is already updated.
 - [ ] Merge user docs into a single `GUIDE.md` organized by use cases (errors in
       both shapes, validation, access, JPA, OpenAPI, conversions, samples);
-      trim `README.md` to a front page with links.
-- [ ] Add the Dokka plugin (version in the root version mechanism), an aggregate
-      HTML build, and a `docs.yml` workflow deploying to GitHub Pages (requires
-      enabling Pages from Actions in the repository settings).
-- [ ] Delete the merged files (`WEB_MVC.md`, `ACCESS.md`, `OPENAPI.md`,
+      trim `README.md` to a front page with links. Follows the Dokka curation below.
+- [x] Add the Dokka plugin (version in the root version mechanism), an aggregate
+      HTML build, and a `docs.yml` workflow deploying to GitHub Pages.
+- [ ] Step 2.1 — Dokka curation: `package.md` per public package, suppress
+      `*internal*` packages from navigation, README includes on the aggregate page.
+- [ ] Step 2.2 — Dokka finish: footer with the tag version plus GitHub link,
+      `suppressObviousFunctions`, KDoc top-up (see above).
+- [ ] Step 2.3 — verify with a local `:dokkaGenerate` and a visual check of the
+      home page plus two modules; deploy rides the next tag.
+- [x] Delete the merged files (`WEB_MVC.md`, `ACCESS.md`, `OPENAPI.md`,
       `DATA_JPA.md`, `VALIDATION.md`, `CORE_UTILITIES.md`, `ERROR_CONTRACT.md`,
       `SAMPLES.md`, `CHANGELOG.md`); fix all links.
 
