@@ -15,30 +15,6 @@ Done items are deleted, not ticked: if it is not listed here, it is shipped.
 - [ ] KSP research only after two applications share a stable interface-to-delegate
       contract; do not begin with a reflection code generator.
 
-## Phase 2: Shape-Aware Error Docs, Slicer-api Adoption
-
-Direction: one shape-aware error-docs customizer in the library, driven by
-`kotlinbrella.web.error-shape` with no new configuration keys. Slicer-api
-adopts `@ApiError`/`@ApiErrors` exactly like root does. Root migration stays
-with the service owner and is out of scope here, as is any service-side work
-(thick services, validators, health, limits, reconciliation).
-
-Work:
-
-- [ ] Step 2.1 — library: rewrite `KotlinbrellaErrorOperationCustomizer` as
-      shape-aware (inject `KotlinbrellaWebProperties`). Both shapes merge
-      `• detail` bullets into the response description. SIMPLE:
-      `application/json`, `$ref SimpleErrorResponse`, single error becomes
-      `example {error, message}`, several become an `examples` dropdown keyed
-      by detail. STANDARD: `application/problem+json`, `$ref
-      KotlinbrellaProblem`, same single/multi example rule. Register the
-      `SimpleErrorResponse` component in `KotlinbrellaSchemaCustomizer` for
-      the SIMPLE shape. Cover both shapes (single/multi/merge) with tests.
-- [ ] Step 2.2 — tag `0.2.0`, bump the version in slicer-api.
-- [ ] Step 2.3 — slicer-api: replace the manual error blocks in
-      `CalculationApiSpec` with `@ApiErrors` (manual plus generated entries
-      on the same statuses would duplicate descriptions); suite green.
-
 ## Phase 3: Documentation as One System (GUIDE.md + Pages, no duplication)
 
 Principle: each knowledge type has exactly one home. `GUIDE.md` is the
