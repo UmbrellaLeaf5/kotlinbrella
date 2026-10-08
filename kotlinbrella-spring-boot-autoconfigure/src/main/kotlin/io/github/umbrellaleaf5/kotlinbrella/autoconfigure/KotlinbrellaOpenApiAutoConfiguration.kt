@@ -17,8 +17,9 @@ class KotlinbrellaOpenApiAutoConfiguration {
   // --------------------------------------------------
 
   @Bean
-  fun kotlinbrellaErrorOperationCustomizer(): OperationCustomizer =
-    KotlinbrellaErrorOperationCustomizer()
+  fun kotlinbrellaErrorOperationCustomizer(
+    properties: KotlinbrellaWebProperties,
+  ): OperationCustomizer = KotlinbrellaErrorOperationCustomizer(properties)
 
   // --------------------------------------------------
 

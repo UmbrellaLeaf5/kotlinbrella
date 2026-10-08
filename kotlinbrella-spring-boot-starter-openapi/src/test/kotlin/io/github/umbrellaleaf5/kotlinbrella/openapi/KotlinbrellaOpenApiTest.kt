@@ -24,11 +24,11 @@ import org.springframework.web.method.HandlerMethod
 
 class KotlinbrellaOpenApiTest {
 
-  // MARK: Preserve existing responses and add distinct examples
+  // MARK: Merge declared errors into existing responses
   // --------------------------------------------------
 
   @Test
-  fun documentsMultipleCodesWithoutClobberingDeclaredResponses() {
+  fun mergesDeclaredErrorsIntoExistingResponses() {
     val existing = ApiResponse().description("Existing description")
       .content(Content().addMediaType("application/json", MediaType()))
     val operation = Operation().responses(ApiResponses().addApiResponse("400", existing))
@@ -41,11 +41,14 @@ class KotlinbrellaOpenApiTest {
     val media = response.content[Constants.ApiSpec.PROBLEM_MEDIA_TYPE]
       .checkNotNullByName { "problemMedia" }
 
-    assertEquals("Existing description", response.description)
+    assertEquals(
+      "Existing description<br>• Invalid input<br>• Invalid identifier",
+      response.description,
+    )
     assertNotNull(response.content["application/json"])
     assertEquals(Constants.ApiSpec.PROBLEM_REFERENCE, media.schema.`$ref`)
     assertEquals(setOf("BAD_REQUEST-1", "INVALID_UUID-2"), media.examples.keys)
-    assertEquals("Not Found", operation.responses["404"]?.description)
+    assertEquals("• Not found", operation.responses["404"]?.description)
   }
 
   // --------------------------------------------------

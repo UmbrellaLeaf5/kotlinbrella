@@ -27,9 +27,11 @@ object Constants {
     const val SIMPLE_MEDIA_TYPE = "application/json"
     const val PROBLEM_SCHEMA = "KotlinbrellaProblem"
     const val VIOLATION_SCHEMA = "KotlinbrellaViolation"
+    const val SIMPLE_SCHEMA = "SimpleErrorResponse"
     const val SCHEMA_PREFIX = "#/components/schemas/"
     const val PROBLEM_REFERENCE = SCHEMA_PREFIX + PROBLEM_SCHEMA
     const val VIOLATION_REFERENCE = SCHEMA_PREFIX + VIOLATION_SCHEMA
+    const val SIMPLE_REFERENCE = SCHEMA_PREFIX + SIMPLE_SCHEMA
     const val TITLE_KEY = "title"
     const val STATUS_KEY = "status"
     const val DETAIL_KEY = "detail"
@@ -40,6 +42,8 @@ object Constants {
     const val SAMPLE_TRACE_ID = "example-trace-id"
     const val STATUS_DESCRIPTION = "HTTP problem status"
     const val UNSUPPORTED_STATUS = "Unsupported API error status"
+    const val BULLET_PREFIX = "• "
+    const val DESCRIPTION_SEPARATOR = "<br>"
 
   }
 

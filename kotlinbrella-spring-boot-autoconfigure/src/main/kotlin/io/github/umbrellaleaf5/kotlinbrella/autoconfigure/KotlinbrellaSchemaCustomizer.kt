@@ -18,10 +18,15 @@ class KotlinbrellaSchemaCustomizer(
   // --------------------------------------------------
 
   override fun customise(openApi: OpenAPI) {
-    if (properties.errorShape == ErrorShape.SIMPLE) return
-
     val components = openApi.components ?: Components().also {
       openApi.components = it
+    }
+
+    if (properties.errorShape == ErrorShape.SIMPLE) {
+      if (components.schemas?.containsKey(Constants.ApiSpec.SIMPLE_SCHEMA) != true)
+        components.addSchemas(Constants.ApiSpec.SIMPLE_SCHEMA, simpleSchema())
+
+      return
     }
 
     if (components.schemas?.containsKey(Constants.ApiSpec.VIOLATION_SCHEMA) != true)
@@ -32,6 +37,12 @@ class KotlinbrellaSchemaCustomizer(
   }
 
   // MARK: Private Helpers
+  // --------------------------------------------------
+
+  private fun simpleSchema(): Schema<*> = ObjectSchema()
+    .addProperty(Constants.Web.ERROR_KEY, StringSchema())
+    .addProperty(Constants.ApiSpec.MESSAGE_KEY, StringSchema())
+
   // --------------------------------------------------
 
   private fun violationSchema(): Schema<*> = ObjectSchema()
