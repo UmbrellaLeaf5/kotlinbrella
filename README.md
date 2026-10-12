@@ -23,6 +23,7 @@ handling, validation, Spring Data, access checks, and OpenAPI documentation.
 | `kotlinbrella-spring-boot-starter-openapi`     | Springdoc errors and schemas.            |
 | `kotlinbrella-spring-boot-starter-access`      | Ownership checks via application policy. |
 | `kotlinbrella-spring-boot-starter`             | Complete aggregate starter.              |
+| `kotlinbrella-test`                            | Error-docs parity contract for tests.    |
 
 ## Principles
 
