@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
 import org.springdoc.core.customizers.OperationCustomizer
+import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.http.HttpStatus
 import org.springframework.web.method.HandlerMethod
@@ -20,6 +21,8 @@ import org.springframework.web.method.HandlerMethod
 class KotlinbrellaErrorOperationCustomizer(
   private val properties: KotlinbrellaWebProperties = KotlinbrellaWebProperties(),
 ) : OperationCustomizer {
+
+  private val logger = LoggerFactory.getLogger(javaClass)
 
   // MARK: Add declared errors without overwriting responses
   // --------------------------------------------------
@@ -38,7 +41,22 @@ class KotlinbrellaErrorOperationCustomizer(
 
     if (annotations.isEmpty()) return operation
 
-    for ((status, errors) in annotations.groupBy { it.status }) {
+    val known = annotations.filter { error ->
+      try {
+        error.status
+        true
+      }
+
+      catch (e: IllegalArgumentException) {
+        logger.warn("Skipping ApiError with unknown code {} on {}", error.code, handlerMethod.method)
+
+        false
+      }
+    }
+
+    if (known.isEmpty()) return operation
+
+    for ((status, errors) in known.groupBy { it.status }) {
       val httpStatus = HttpStatus.resolve(status)
         ?: throw IllegalArgumentException("${Constants.ApiSpec.UNSUPPORTED_STATUS}: $status")
 

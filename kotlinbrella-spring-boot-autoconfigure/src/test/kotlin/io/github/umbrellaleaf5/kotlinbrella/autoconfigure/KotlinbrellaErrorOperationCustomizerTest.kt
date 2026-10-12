@@ -185,6 +185,21 @@ class KotlinbrellaErrorOperationCustomizerTest {
   // --------------------------------------------------
 
   @Test
+  fun skipsUnknownCodesWithoutFailing() {
+    val bean = ErrorDocsBadCodeFixture()
+    val method = ErrorDocsBadCodeFixture::class.java.getMethod("broken")
+    val properties = KotlinbrellaWebProperties().apply {
+      errorShape = ErrorShape.SIMPLE
+    }
+    val operation = KotlinbrellaErrorOperationCustomizer(properties)
+      .customize(Operation(), HandlerMethod(bean, method))
+
+    assertNull(operation.responses)
+  }
+
+  // --------------------------------------------------
+
+  @Test
   fun leavesOperationsWithoutAnnotationsUntouched() {
     val operation = Operation()
 
