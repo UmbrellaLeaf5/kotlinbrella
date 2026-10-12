@@ -9,6 +9,7 @@ include(
   "kotlinbrella-spring-boot-starter-openapi",
   "kotlinbrella-spring-boot-starter-access",
   "kotlinbrella-spring-boot-starter",
+  "kotlinbrella-test",
   "samples:full-mvc",
   "samples:minimal-mvc",
   "samples:java-consumer",

@@ -103,4 +103,5 @@ dependencies {
   dokka(project(":kotlinbrella-spring-boot-starter-openapi"))
   dokka(project(":kotlinbrella-spring-boot-starter-access"))
   dokka(project(":kotlinbrella-spring-boot-starter"))
+  dokka(project(":kotlinbrella-test"))
 }
