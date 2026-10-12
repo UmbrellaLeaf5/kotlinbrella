@@ -3,6 +3,7 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 import org.springdoc.core.customizers.OpenApiCustomizer
 import org.springdoc.core.customizers.OperationCustomizer
 import org.springframework.boot.autoconfigure.AutoConfiguration
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
@@ -35,7 +36,7 @@ class KotlinbrellaOpenApiAutoConfiguration {
   @Bean
   @ConditionalOnBean(RequestMappingHandlerMapping::class)
   fun apiErrorCodeValidator(
-    mappings: RequestMappingHandlerMapping,
+    @Qualifier("requestMappingHandlerMapping") mappings: RequestMappingHandlerMapping,
   ): ApiErrorCodeValidator = ApiErrorCodeValidator(mappings)
 
 }
