@@ -166,6 +166,27 @@ class KotlinbrellaErrorOperationCustomizerTest {
     )
   }
 
+  // --------------------------------------------------
+
+  @Test
+  fun dropsForeignSchemasForSimpleShape() {
+    val openApi = OpenAPI().apply { components = Components() }
+    val standard = KotlinbrellaWebProperties().apply {
+      errorShape = ErrorShape.STANDARD
+    }
+    val simple = KotlinbrellaWebProperties().apply {
+      errorShape = ErrorShape.SIMPLE
+    }
+
+    KotlinbrellaSchemaCustomizer(standard).customise(openApi)
+    KotlinbrellaSchemaCustomizer(simple).customise(openApi)
+
+    assertEquals(
+      setOf(Constants.ApiSpec.SIMPLE_SCHEMA),
+      openApi.components.schemas.keys,
+    )
+  }
+
   // MARK: Keep repeated customization idempotent
   // --------------------------------------------------
 

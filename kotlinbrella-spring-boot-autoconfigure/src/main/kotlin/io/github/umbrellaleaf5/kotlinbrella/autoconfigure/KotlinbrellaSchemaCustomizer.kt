@@ -23,6 +23,9 @@ class KotlinbrellaSchemaCustomizer(
     }
 
     if (properties.errorShape == ErrorShape.SIMPLE) {
+      components.schemas?.remove(Constants.ApiSpec.PROBLEM_SCHEMA)
+      components.schemas?.remove(Constants.ApiSpec.VIOLATION_SCHEMA)
+
       if (components.schemas?.containsKey(Constants.ApiSpec.SIMPLE_SCHEMA) != true)
         components.addSchemas(Constants.ApiSpec.SIMPLE_SCHEMA, simpleSchema())
 
