@@ -1,9 +1,11 @@
 package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import io.github.umbrellaleaf5.kotlinbrella.error.BadRequestException
+import io.github.umbrellaleaf5.kotlinbrella.validation.ValidBatchIds
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
@@ -25,5 +27,10 @@ class WebFixtureController {
 
   @GetMapping("/failure")
   fun failure(): String = throw BadRequestException("private", "public")
+
+  // --------------------------------------------------
+
+  @PostMapping("/batch", consumes = [MediaType.APPLICATION_JSON_VALUE])
+  fun batch(@RequestBody @ValidBatchIds ids: List<String>): String = "ok"
 
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -43,6 +44,25 @@ class KotlinbrellaMvcTest {
 
     assertEquals(400, response.status)
     assertFalse(response.contentAsString.contains("valueString"))
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun mapsMethodValidationFailureToBadRequest() {
+    val empty = mockMvc.perform(
+      post("/batch").contentType(MediaType.APPLICATION_JSON).content("[]")
+    ).andReturn().response
+
+    assertEquals(400, empty.status)
+    assertTrue(empty.contentAsString.contains("\"code\":\"BAD_REQUEST\""))
+
+    val oversized = mockMvc.perform(
+      post("/batch").contentType(MediaType.APPLICATION_JSON)
+        .content(List(101) { "\"id-$it\"" }.joinToString(",", "[", "]"))
+    ).andReturn().response
+
+    assertEquals(400, oversized.status)
   }
 
   // --------------------------------------------------

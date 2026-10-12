@@ -20,12 +20,15 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
+import org.springframework.validation.FieldError
+import org.springframework.validation.ObjectError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingRequestHeaderException
 import org.springframework.web.bind.MissingRequestValueException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.HandlerMethodValidationException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.resource.NoResourceFoundException
@@ -72,6 +75,36 @@ class KotlinbrellaErrorAdvice(
   ): ResponseEntity<Any> {
     val violations = exception.bindingResult.fieldErrors.map(violationMapper::toFieldViolation) +
       exception.bindingResult.globalErrors.map(violationMapper::toGlobalViolation)
+
+    return problem(
+      HttpStatus.BAD_REQUEST,
+      ErrorCode.BAD_REQUEST,
+      Constants.ErrorDescription.VALIDATION_FAILED,
+      request,
+      violations,
+    )
+  }
+
+  // --------------------------------------------------
+
+  /**
+    * Maps method validation failures (parameter constraints
+    * without cascade) the same way as body validation failures.
+   */
+  @ExceptionHandler(HandlerMethodValidationException::class)
+  fun invalidMethodParameter(
+    exception: HandlerMethodValidationException,
+    request: HttpServletRequest,
+  ): ResponseEntity<Any> {
+    val violations = exception.allErrors.map { error ->
+      if (error is FieldError) violationMapper.toFieldViolation(error)
+      else violationMapper.toGlobalViolation(
+        ObjectError(
+          error.codes?.firstOrNull() ?: Constants.ErrorDescription.INVALID_REQUEST,
+          error.defaultMessage,
+        )
+      )
+    }
 
     return problem(
       HttpStatus.BAD_REQUEST,
