@@ -67,15 +67,16 @@ class KotlinbrellaErrorOperationCustomizer(
   // --------------------------------------------------
 
   private fun mergeDescription(response: ApiResponse, errors: List<ApiError>) {
-    val bullets = errors.joinToString(Constants.ApiSpec.DESCRIPTION_SEPARATOR) {
-      Constants.ApiSpec.BULLET_PREFIX + it.detail
-    }
+    val fresh = errors
+      .filter { error -> response.description?.contains(error.detail) != true }
+      .joinToString(Constants.ApiSpec.DESCRIPTION_SEPARATOR) {
+        Constants.ApiSpec.BULLET_PREFIX + it.detail
+      }
 
-    response.description = if (response.description.isNullOrBlank())
-      bullets
+    if (fresh.isEmpty()) return
 
-    else
-      response.description + Constants.ApiSpec.DESCRIPTION_SEPARATOR + bullets
+    response.description = if (response.description.isNullOrBlank()) fresh
+    else response.description + Constants.ApiSpec.DESCRIPTION_SEPARATOR + fresh
   }
 
   // --------------------------------------------------

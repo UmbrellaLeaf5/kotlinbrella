@@ -124,6 +124,21 @@ class KotlinbrellaErrorOperationCustomizerTest {
     )
   }
 
+  // MARK: Keep repeated customization idempotent
+  // --------------------------------------------------
+
+  @Test
+  fun repeatedCustomizationDoesNotDuplicateBullets() {
+    val operation = customize(ErrorShape.SIMPLE, "multiple")
+
+    customize(ErrorShape.SIMPLE, "multiple", operation)
+
+    assertEquals(
+      "• First problem<br>• Second problem",
+      operation.responses["400"]?.description,
+    )
+  }
+
   // MARK: Leave unrelated operations alone
   // --------------------------------------------------
 
