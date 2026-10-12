@@ -42,12 +42,52 @@ class KotlinbrellaErrorOperationCustomizerTest {
 
     assertEquals("• First problem<br>• Second problem", operation.responses["400"]?.description)
     assertEquals(
-      setOf("First problem", "Second problem"),
+      setOf("BAD_REQUEST", "INVALID_UUID"),
       media?.examples?.keys,
     )
     assertEquals(
       mapOf("error" to "Bad Request", "message" to "First problem"),
-      media?.examples?.get("First problem")?.value,
+      media?.examples?.get("BAD_REQUEST")?.value,
+    )
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun keysDuplicateDetailsByCode() {
+    val simple = customize(ErrorShape.SIMPLE, "duplicate")
+    val standard = customize(ErrorShape.STANDARD, "duplicate")
+    val simpleMedia = simple.responses["400"]?.content?.get(Constants.ApiSpec.SIMPLE_MEDIA_TYPE)
+    val standardMedia = standard.responses["400"]?.content?.get(Constants.ApiSpec.PROBLEM_MEDIA_TYPE)
+
+    assertEquals(
+      setOf("BAD_REQUEST", "INVALID_UUID"),
+      simpleMedia?.examples?.keys,
+    )
+    assertEquals(
+      setOf("BAD_REQUEST", "INVALID_UUID"),
+      standardMedia?.examples?.keys,
+    )
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun suffixesRepeatedCode() {
+    val operation = customize(ErrorShape.SIMPLE, "sameCode")
+    val media = operation.responses["400"]?.content?.get(Constants.ApiSpec.SIMPLE_MEDIA_TYPE)
+
+    assertEquals(
+      setOf("BAD_REQUEST", "BAD_REQUEST-2"),
+      media?.examples?.keys,
+    )
+
+    customize(ErrorShape.SIMPLE, "sameCode", operation)
+
+    assertEquals(
+      setOf("BAD_REQUEST", "BAD_REQUEST-2"),
+      operation.responses["400"]?.content
+        ?.get(Constants.ApiSpec.SIMPLE_MEDIA_TYPE)?.examples?.keys,
     )
   }
 
@@ -90,7 +130,7 @@ class KotlinbrellaErrorOperationCustomizerTest {
         "code" to "NOT_FOUND",
         "traceId" to "example-trace-id",
       ),
-      media?.examples?.get("NOT_FOUND-1")?.value,
+      media?.examples?.get("NOT_FOUND")?.value,
     )
   }
 
@@ -103,7 +143,7 @@ class KotlinbrellaErrorOperationCustomizerTest {
 
     assertEquals("• First problem<br>• Second problem", operation.responses["400"]?.description)
     assertEquals(
-      setOf("BAD_REQUEST-1", "INVALID_UUID-2"),
+      setOf("BAD_REQUEST", "INVALID_UUID"),
       media?.examples?.keys,
     )
   }

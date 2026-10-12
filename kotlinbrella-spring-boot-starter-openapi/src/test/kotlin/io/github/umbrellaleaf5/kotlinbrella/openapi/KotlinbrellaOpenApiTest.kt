@@ -47,7 +47,7 @@ class KotlinbrellaOpenApiTest {
     )
     assertNotNull(response.content["application/json"])
     assertEquals(Constants.ApiSpec.PROBLEM_REFERENCE, media.schema.`$ref`)
-    assertEquals(setOf("BAD_REQUEST-1", "INVALID_UUID-2"), media.examples.keys)
+    assertEquals(setOf("BAD_REQUEST", "INVALID_UUID"), media.examples.keys)
     assertEquals("• Not found", operation.responses["404"]?.description)
   }
 

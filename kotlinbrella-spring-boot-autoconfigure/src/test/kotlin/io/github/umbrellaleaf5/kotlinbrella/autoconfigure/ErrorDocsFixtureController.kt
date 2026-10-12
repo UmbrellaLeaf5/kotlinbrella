@@ -37,6 +37,38 @@ class ErrorDocsFixtureController {
 
   // --------------------------------------------------
 
+  @ApiErrors(
+    [
+      ApiError(
+        code = ErrorCode.BAD_REQUEST,
+        detail = "Same problem",
+      ),
+      ApiError(
+        code = ErrorCode.INVALID_UUID,
+        detail = "Same problem",
+      ),
+    ],
+  )
+  fun duplicate(): String = "ok"
+
+  // --------------------------------------------------
+
+  @ApiErrors(
+    [
+      ApiError(
+        code = ErrorCode.BAD_REQUEST,
+        detail = "One problem",
+      ),
+      ApiError(
+        code = ErrorCode.BAD_REQUEST,
+        detail = "Another problem",
+      ),
+    ],
+  )
+  fun sameCode(): String = "ok"
+
+  // --------------------------------------------------
+
   fun plain(): String = "ok"
 
 }

@@ -92,7 +92,9 @@ class KotlinbrellaErrorOperationCustomizer(
     media.example = null
 
     for (error in errors) {
-      if (media.examples?.containsKey(error.detail) == true) continue
+      val exampleName = exampleNameFor(error, media)
+
+      if (exampleName.isEmpty()) continue
 
       val example = Example()
       example.summary = error.detail
@@ -101,7 +103,7 @@ class KotlinbrellaErrorOperationCustomizer(
         Constants.ApiSpec.MESSAGE_KEY to error.detail,
       )
 
-      media.addExamples(error.detail, example)
+      media.addExamples(exampleName, example)
     }
   }
 
@@ -122,10 +124,10 @@ class KotlinbrellaErrorOperationCustomizer(
 
     media.example = null
 
-    for ((index, error) in errors.withIndex()) {
-      val exampleName = "${error.code}-${index + 1}"
+    for (error in errors) {
+      val exampleName = exampleNameFor(error, media)
 
-      if (media.examples?.containsKey(exampleName) == true) continue
+      if (exampleName.isEmpty()) continue
 
       val example = Example()
       example.summary = error.detail
@@ -141,6 +143,26 @@ class KotlinbrellaErrorOperationCustomizer(
 
       media.addExamples(exampleName, example)
     }
+  }
+
+  // --------------------------------------------------
+
+  private fun exampleNameFor(error: ApiError, media: MediaType): String {
+    var name = error.code
+    var index = 2
+
+    while (media.examples?.containsKey(name) == true) {
+      val kept = media.examples[name]?.value as? Map<*, *>
+
+      if (kept?.get(Constants.ApiSpec.MESSAGE_KEY) == error.detail) return name
+
+      if (kept?.get(Constants.ApiSpec.DETAIL_KEY) == error.detail) return name
+
+      name = "${error.code}-$index"
+      index++
+    }
+
+    return name
   }
 
 }
