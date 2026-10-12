@@ -26,9 +26,10 @@ class KotlinbrellaErrorOperationCustomizerTest {
 
     assertEquals("• Calculation not found", operation.responses["404"]?.description)
     assertEquals(Constants.ApiSpec.SIMPLE_REFERENCE, media?.schema?.`$ref`)
+    assertNull(media?.example)
     assertEquals(
       mapOf("error" to "Not Found", "message" to "Calculation not found"),
-      media?.example,
+      media?.examples?.get("Calculation not found")?.value,
     )
   }
 
@@ -78,6 +79,7 @@ class KotlinbrellaErrorOperationCustomizerTest {
 
     assertEquals("• Calculation not found", operation.responses["404"]?.description)
     assertEquals(Constants.ApiSpec.PROBLEM_REFERENCE, media?.schema?.`$ref`)
+    assertNull(media?.example)
     assertEquals(
       mapOf(
         "type" to "about:blank",
@@ -88,7 +90,7 @@ class KotlinbrellaErrorOperationCustomizerTest {
         "code" to "NOT_FOUND",
         "traceId" to "example-trace-id",
       ),
-      media?.example,
+      media?.examples?.get("NOT_FOUND-1")?.value,
     )
   }
 

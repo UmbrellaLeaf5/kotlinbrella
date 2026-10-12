@@ -89,28 +89,19 @@ class KotlinbrellaErrorOperationCustomizer(
     if (media.schema == null)
       media.schema = Schema<Any>().`$ref`(Constants.ApiSpec.SIMPLE_REFERENCE)
 
-    if (errors.size == 1) {
-      val error = errors.first()
+    media.example = null
 
-      media.example = mapOf(
+    for (error in errors) {
+      if (media.examples?.containsKey(error.detail) == true) continue
+
+      val example = Example()
+      example.summary = error.detail
+      example.value = mapOf(
         Constants.Web.ERROR_KEY to error.title,
         Constants.ApiSpec.MESSAGE_KEY to error.detail,
       )
-    }
 
-    else {
-      for (error in errors) {
-        if (media.examples?.containsKey(error.detail) == true) continue
-
-        val example = Example()
-        example.summary = error.detail
-        example.value = mapOf(
-          Constants.Web.ERROR_KEY to error.title,
-          Constants.ApiSpec.MESSAGE_KEY to error.detail,
-        )
-
-        media.addExamples(error.detail, example)
-      }
+      media.addExamples(error.detail, example)
     }
   }
 
@@ -129,10 +120,16 @@ class KotlinbrellaErrorOperationCustomizer(
     if (media.schema == null)
       media.schema = Schema<Any>().`$ref`(Constants.ApiSpec.PROBLEM_REFERENCE)
 
-    if (errors.size == 1) {
-      val error = errors.first()
+    media.example = null
 
-      media.example = mapOf(
+    for ((index, error) in errors.withIndex()) {
+      val exampleName = "${error.code}-${index + 1}"
+
+      if (media.examples?.containsKey(exampleName) == true) continue
+
+      val example = Example()
+      example.summary = error.detail
+      example.value = mapOf(
         Constants.Web.TYPE_KEY to Constants.Web.ABOUT_BLANK,
         Constants.ApiSpec.TITLE_KEY to httpStatus.reasonPhrase,
         Constants.ApiSpec.STATUS_KEY to status,
@@ -141,28 +138,8 @@ class KotlinbrellaErrorOperationCustomizer(
         Constants.Web.CODE_KEY to error.code,
         Constants.Web.TRACE_ID_KEY to Constants.ApiSpec.SAMPLE_TRACE_ID,
       )
-    }
 
-    else {
-      for ((index, error) in errors.withIndex()) {
-        val exampleName = "${error.code}-${index + 1}"
-
-        if (media.examples?.containsKey(exampleName) == true) continue
-
-        val example = Example()
-        example.summary = error.detail
-        example.value = mapOf(
-          Constants.Web.TYPE_KEY to Constants.Web.ABOUT_BLANK,
-          Constants.ApiSpec.TITLE_KEY to httpStatus.reasonPhrase,
-          Constants.ApiSpec.STATUS_KEY to status,
-          Constants.ApiSpec.DETAIL_KEY to error.detail,
-          Constants.ApiSpec.INSTANCE_KEY to Constants.ApiSpec.SAMPLE_INSTANCE,
-          Constants.Web.CODE_KEY to error.code,
-          Constants.Web.TRACE_ID_KEY to Constants.ApiSpec.SAMPLE_TRACE_ID,
-        )
-
-        media.addExamples(exampleName, example)
-      }
+      media.addExamples(exampleName, example)
     }
   }
 
