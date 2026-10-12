@@ -18,6 +18,66 @@ unit- и интеграционными тестами.
       стабильный контракт «интерфейс-делегат»; не начинать с рефлексивного
       кодогенератора.
 
+## Phase 2: Добор ревью-2 (мелочь с конкретными находками)
+
+По итогам второго независимого ревью (0.3.2, оба сервиса подняты). Всё ниже —
+маленькие пункты с точным местом правки; каждый — с тестом.
+
+- [ ] Step 2.1 — точное сравнение пуль и симметричная чистка шейпов.
+      Зачем: `mergeDescription` ищет `contains(detail)` — подстрочный
+      (`"problem"` съест `"First problem"`); при смене шейпа остаётся чужой
+      media-type, а `SIMPLE→STANDARD` не удаляет `SimpleErrorResponse`.
+      Что править: `KotlinbrellaErrorOperationCustomizer.kt` (`mergeDescription`,
+      `renderSimple`/`renderStandard`), `KotlinbrellaSchemaCustomizer.kt`.
+      Как:
+
+      ```kotlin
+      // было:
+      .filter { error -> response.description?.contains(error.detail) != true }
+
+      // стало:
+      .filter { error ->
+        response.description?.split(Constants.ApiSpec.DESCRIPTION_SEPARATOR)
+          ?.none { it == Constants.ApiSpec.BULLET_PREFIX + error.detail } != false
+      }
+      ```
+
+      В `renderSimple` удалять `application/problem+json`-медиа при наличии,
+      в `renderStandard` — наоборот; в схеме-стороне при STANDARD удалять
+      `SimpleErrorResponse` симметрично SIMPLE-ветке. Покрыть тестами обе
+      стороны (шейп туда-обратно на одной спеке).
+
+- [ ] Step 2.2 — `ErrorDocsParity`: пробы по методу, строгие типы, лишние поля.
+      Зачем: сейчас пробы всегда `GET` (параметр `method` используется только
+      для поиска в спеке), `asText()` склеивает `404` и `"404"`, лишние
+      runtime-поля не ловятся.
+      Что править: `kotlinbrella-test/.../ErrorDocsParity.kt`.
+      Как: построить запрос по `method` (`get/post/delete/...` из
+      `MockMvcRequestBuilders`), сравнивать поля строгим JSON-равенством
+      (`value.toString() == body.path(key).toString()` вместо `asText()`),
+      добавить параметр `strict: Boolean = true` — при `true` падать на полях
+      body, которых нет в примере. Покрыть тестами: POST-проба, mismatch типов,
+      лишнее поле при `strict` и молчание при `strict = false`.
+
+- [ ] Step 2.3 — `verifyBiDelete`: перегрузка под `Long`.
+      Зачем: счётчики репозиториев бывают `Long`, иначе сервис пишет
+      велосипед с `.toInt()`.
+      Что править: `core/.../util/DeleteVerifiers.kt`.
+      Как:
+
+      ```kotlin
+      fun verifyBiDelete(expected: Long, actual: Long, target: String) {
+        if (expected == actual) return
+
+        throw ConflictException.unified(
+          "Partial delete of $target: expected $expected, removed $actual, please retry"
+        )
+      }
+      ```
+
+      `target` брать из доменных `Entity`-констант потребителя. Покрыть
+      unit-тестами зеркально `Int`-версии.
+
 ## Phase 3: Documentation as One System (GUIDE.md + Pages, no duplication)
 
 Принцип: у каждого типа знаний ровно один дом. `GUIDE.md` — нарратив
@@ -32,5 +92,39 @@ unit- и интеграционными тестами.
       и добор KDoc для непокрытого публичного API.
 - [ ] Step 3.2 — `GUIDE.md` по use-case'ам (ошибки в обеих формах, валидация,
       доступ, JPA, OpenAPI, конверсии, примеры) со ссылками в Dokka-справочник;
-      ужа
-      ...[truncated 10858 chars]
+      ужать `README.md` до титульной страницы со ссылками.
+      Зафиксировать здесь политику библиотеки (`ApiException` для рантайм-ошибок
+      клиентов; `IllegalStateException`/`IllegalArgumentException` для ошибок
+      конфигурации), а также решения из ревью-2, которым не нужен код:
+      `ApiErrorCodeValidator` смотрит только MVC-маппинг (actuator вне скоупа);
+      `ValidBatchIds` — только required-непустой батч (опциональный — отдельным
+      способом); дефолт `forceErrorSchema = false` (keep+warn) достаточен,
+      включать принудительно только с причиной.
+- [ ] Step 3.3 — проверить локальным `:dokkaGenerate` и визуально главную
+      страницу плюс два модуля; деплой едет следующим тегом.
+
+## Не делать
+
+- [ ] Не расширять `SIMPLE {error, message}` новыми полями — только мажорной
+      версией: фронт обоих потребителей парсит ровно два поля.
+- [ ] Не тащить XA/брокер/распределённые транзакции — преждевременно, решение
+      принято; `verifyBiDelete + 409 + retry` достаточно.
+- [ ] Не генерировать мапперы (MapStruct/KSP) — рукописные мапперы в корне
+      домена соблюдаются в обоих сервисах и работают; кодоген убьёт конвенцию.
+- [ ] Не требовать Kotlin-тесты в сервисах — регрессия Python autotests,
+      решение принято; вместо этого давать parity-сниппеты для Python.
+
+## Release Checklist (recurring, run on every release)
+
+- [ ] Проверить совместимость публичного API и описать миграцию.
+- [ ] Подтвердить: все рантайм-ошибки клиентов — семейство `ApiException`.
+- [ ] Прогнать build, интеграционные тесты, матрицу совместимости и сэмплы.
+- [ ] Проверить: сгенерированный OpenAPI совпадает с MVC-ответами.
+- [ ] Проверить граф зависимостей: `core` без фреймворков, у точечных
+      стартеров нет случайных зависимостей.
+- [ ] Просканировать исходники, тесты, доки и артефакты сборки на креды,
+      токены, локальные пути и dev-URL.
+- [ ] Сгенерировать release notes с поддерживаемыми версиями и изменениями
+      конфигурации.
+- [ ] Поставить тег, чтобы JitPack собрал версионные артефакты с sources и
+      javadoc; документация деплоится через `docs.yml`.
