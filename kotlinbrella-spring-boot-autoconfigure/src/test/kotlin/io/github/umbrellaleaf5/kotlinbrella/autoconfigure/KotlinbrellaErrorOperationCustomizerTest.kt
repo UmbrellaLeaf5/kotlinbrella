@@ -29,7 +29,7 @@ class KotlinbrellaErrorOperationCustomizerTest {
     assertNull(media?.example)
     assertEquals(
       mapOf("error" to "Not Found", "message" to "Calculation not found"),
-      media?.examples?.get("Calculation not found")?.value,
+      media?.examples?.get("NOT_FOUND")?.value,
     )
   }
 
