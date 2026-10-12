@@ -11,5 +11,6 @@ class KotlinbrellaWebProperties {
   var mode: Mode = Mode.PROD
   var requestIdHeader: String = Constants.Web.REQUEST_ID_HEADER
   var errorShape: ErrorShape = ErrorShape.STANDARD
+  var forceErrorSchema: Boolean = false
 
 }

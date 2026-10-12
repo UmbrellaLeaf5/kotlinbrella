@@ -4,6 +4,9 @@ import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Operation
+import io.swagger.v3.oas.models.media.Content
+import io.swagger.v3.oas.models.media.MediaType
+import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -206,6 +209,41 @@ class KotlinbrellaErrorOperationCustomizerTest {
   // --------------------------------------------------
 
   @Test
+  fun keepsForeignSchemaByDefault() {
+    val operation = operationWithSchema("404", "#/components/schemas/Foreign")
+
+    customize(ErrorShape.SIMPLE, "single", operation)
+
+    assertEquals(
+      "#/components/schemas/Foreign",
+      operation.responses["404"]?.content
+        ?.get(Constants.ApiSpec.SIMPLE_MEDIA_TYPE)?.schema?.`$ref`,
+    )
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun replacesForeignSchemaWhenForced() {
+    val properties = KotlinbrellaWebProperties().apply {
+      errorShape = ErrorShape.SIMPLE
+      forceErrorSchema = true
+    }
+    val bean = ErrorDocsFixtureController()
+    val method = ErrorDocsFixtureController::class.java.getMethod("single")
+    val operation = operationWithSchema("404", "#/components/schemas/Foreign")
+
+    KotlinbrellaErrorOperationCustomizer(properties)
+      .customize(operation, HandlerMethod(bean, method))
+
+    assertEquals(
+      Constants.ApiSpec.SIMPLE_REFERENCE,
+      operation.responses["404"]?.content
+        ?.get(Constants.ApiSpec.SIMPLE_MEDIA_TYPE)?.schema?.`$ref`,
+    )
+  }
+
+  @Test
   fun skipsUnknownCodesWithoutFailing() {
     val bean = ErrorDocsBadCodeFixture()
     val method = ErrorDocsBadCodeFixture::class.java.getMethod("broken")
@@ -245,6 +283,24 @@ class KotlinbrellaErrorOperationCustomizerTest {
     val handlerMethod = HandlerMethod(bean, method)
 
     return KotlinbrellaErrorOperationCustomizer(properties).customize(operation, handlerMethod)
+  }
+
+  // --------------------------------------------------
+
+  private fun operationWithSchema(status: String, ref: String): Operation {
+    val operation = Operation()
+    val responses = ApiResponses()
+    val response = ApiResponse()
+    val content = Content()
+    val media = MediaType()
+
+    media.schema = Schema<Any>().`$ref`(ref)
+    content.addMediaType(Constants.ApiSpec.SIMPLE_MEDIA_TYPE, media)
+    response.content = content
+    responses.addApiResponse(status, response)
+    operation.responses = responses
+
+    return operation
   }
 
 }

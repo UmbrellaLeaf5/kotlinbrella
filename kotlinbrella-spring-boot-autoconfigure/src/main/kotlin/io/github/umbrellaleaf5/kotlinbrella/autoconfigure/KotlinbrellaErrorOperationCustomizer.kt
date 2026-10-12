@@ -104,8 +104,7 @@ class KotlinbrellaErrorOperationCustomizer(
       content.addMediaType(Constants.ApiSpec.SIMPLE_MEDIA_TYPE, it)
     }
 
-    if (media.schema == null)
-      media.schema = Schema<Any>().`$ref`(Constants.ApiSpec.SIMPLE_REFERENCE)
+    ensureSchema(media, Constants.ApiSpec.SIMPLE_REFERENCE)
 
     media.example = null
 
@@ -137,8 +136,7 @@ class KotlinbrellaErrorOperationCustomizer(
       content.addMediaType(Constants.ApiSpec.PROBLEM_MEDIA_TYPE, it)
     }
 
-    if (media.schema == null)
-      media.schema = Schema<Any>().`$ref`(Constants.ApiSpec.PROBLEM_REFERENCE)
+    ensureSchema(media, Constants.ApiSpec.PROBLEM_REFERENCE)
 
     media.example = null
 
@@ -161,6 +159,25 @@ class KotlinbrellaErrorOperationCustomizer(
 
       media.addExamples(exampleName, example)
     }
+  }
+
+  // --------------------------------------------------
+
+  private fun ensureSchema(media: MediaType, expectedRef: String) {
+    val actualRef = media.schema?.`$ref`
+
+    if (actualRef == null) {
+      media.schema = Schema<Any>().`$ref`(expectedRef)
+
+      return
+    }
+
+    if (actualRef == expectedRef) return
+
+    logger.warn("Error response keeps foreign schema {}, expected {}", actualRef, expectedRef)
+
+    if (properties.forceErrorSchema)
+      media.schema = Schema<Any>().`$ref`(expectedRef)
   }
 
   // --------------------------------------------------
