@@ -1,6 +1,7 @@
 package io.github.umbrellaleaf5.kotlinbrella.util
 
 import io.github.umbrellaleaf5.kotlinbrella.error.BadRequestException
+import io.github.umbrellaleaf5.kotlinbrella.error.ConflictException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -137,6 +138,28 @@ class CoreUtilitiesTest {
         ErrorCode.INVALID_ENUM,
       ),
       invalid.map { (it as BadRequestException).code },
+    )
+  }
+
+  // MARK: Verify two-database deletes
+  // --------------------------------------------------
+
+  @Test
+  fun biDeleteVerifierPassesOnFullDelete() {
+    verifyBiDelete(expected = 2, actual = 2, target = "calculations")
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun biDeleteVerifierFailsOnPartialDelete() {
+    val failure = assertThrows(ConflictException::class.java) {
+      verifyBiDelete(expected = 2, actual = 1, target = "calculations")
+    }
+
+    assertEquals(
+      "Partial delete of calculations: expected 2, removed 1, please retry",
+      failure.message,
     )
   }
 
