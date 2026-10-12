@@ -11,6 +11,7 @@ object Constants {
     const val UNKNOWN_PROPERTY = "Unknown property in AtLeastOnePresent"
     const val BOOLEAN_GETTER_PREFIX = "is"
     const val INVALID_UUID = "Invalid UUID format"
+    const val INVALID_BATCH_IDS = "Batch must contain 1 to {max} ids"
     const val INVALID_EMAIL = "Invalid email format"
     const val INVALID_ENUM = "Invalid enum value"
     const val ENUM_FIELD = "field"

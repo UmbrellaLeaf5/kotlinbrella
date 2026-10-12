@@ -19,6 +19,21 @@ class NeutralConstraintsTest {
     assertTrue(validator.validate(EnumInput("PRINT")).isEmpty())
     assertTrue(validator.validate(RequiredFieldInput("name")).isEmpty())
     assertTrue(validator.validate(PositiveNumberInput("3", "2.5")).isEmpty())
+    assertTrue(validator.validate(BatchIdsInput(listOf("a", "b"))).isEmpty())
+    assertTrue(validator.validate(SmallBatchIdsInput(listOf("a", "b"))).isEmpty())
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun rejectsOversizedOrEmptyBatches() {
+    assertEquals(1, validator.validate(BatchIdsInput(null)).size)
+    assertEquals(1, validator.validate(BatchIdsInput(emptyList())).size)
+    assertEquals(1, validator.validate(SmallBatchIdsInput(listOf("a", "b", "c"))).size)
+    assertEquals(
+      1,
+      validator.validate(BatchIdsInput(List(101) { "id-$it" })).size,
+    )
   }
 
   // --------------------------------------------------
