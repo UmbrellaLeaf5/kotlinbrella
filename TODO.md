@@ -59,25 +59,6 @@ unit- и интеграционными тестами.
       body, которых нет в примере. Покрыть тестами: POST-проба, mismatch типов,
       лишнее поле при `strict` и молчание при `strict = false`.
 
-- [ ] Step 2.3 — `verifyBiDelete`: перегрузка под `Long`.
-      Зачем: счётчики репозиториев бывают `Long`, иначе сервис пишет
-      велосипед с `.toInt()`.
-      Что править: `core/.../util/DeleteVerifiers.kt`.
-      Как:
-
-      ```kotlin
-      fun verifyBiDelete(expected: Long, actual: Long, target: String) {
-        if (expected == actual) return
-
-        throw ConflictException.unified(
-          "Partial delete of $target: expected $expected, removed $actual, please retry"
-        )
-      }
-      ```
-
-      `target` брать из доменных `Entity`-констант потребителя. Покрыть
-      unit-тестами зеркально `Int`-версии.
-
 ## Phase 3: Documentation as One System (GUIDE.md + Pages, no duplication)
 
 Принцип: у каждого типа знаний ровно один дом. `GUIDE.md` — нарратив
@@ -113,6 +94,11 @@ unit- и интеграционными тестами.
       домена соблюдаются в обоих сервисах и работают; кодоген убьёт конвенцию.
 - [ ] Не требовать Kotlin-тесты в сервисах — регрессия Python autotests,
       решение принято; вместо этого давать parity-сниппеты для Python.
+- [ ] Не тащить BiDelete-сверки в библиотеку — двух-БД семантика (что с чем
+      сверять, какой retry допустим) принадлежит сервисам. `verifyBiDelete`
+      по ошибке попал в `0.3.2`, удалён из `main`; потребителям его не
+      использовать — сверку писать локально в сервисе (образец — Р2 TODO
+      slicer-api).
 
 ## Release Checklist (recurring, run on every release)
 
@@ -128,3 +114,4 @@ unit- и интеграционными тестами.
       конфигурации.
 - [ ] Поставить тег, чтобы JitPack собрал версионные артефакты с sources и
       javadoc; документация деплоится через `docs.yml`.
+
