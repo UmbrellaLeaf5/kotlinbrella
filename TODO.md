@@ -84,6 +84,69 @@ unit- и интеграционными тестами.
 - [ ] Step 3.3 — проверить локальным `:dokkaGenerate` и визуально главную
       страницу плюс два модуля; деплой едет следующим тегом.
 
+## Phase 4: Снос разделения dev/prod-сообщений (приказ руководства, breaking)
+
+Разделения на скрытые и открытые сообщения больше нет: никакого legacy,
+никаких `@Deprecated`-алиасов, чистый снос везде. Единое сообщение — бывший
+диагностический (информативный) текст: это то, что сегодня видит dev-профиль
+и что ассертят Python autotests обоих сервисов. Выполнять до Phase 3 (доки
+описывают уже новый контракт); релиз — новой версией с миграционной заметкой,
+после — подъём root и slicer-api (их этапы в их TODO).
+
+- [ ] Step 4.1 — схлопнуть `ApiException`: одно сообщение вместо пары.
+      Зачем: `publicDetail`/`diagnosticDetail` и `(devMessage, prodMessage)`
+      во всех 7 сабклассах (`BadRequest/NotFound/Conflict/Forbidden/
+      InternalServer/PayloadTooLarge/ServiceUnavailableException`) больше не
+      нужны; `unified()` как отдельная фабрика теряет смысл.
+      Что править: `kotlinbrella-core/.../error/ApiException.kt` (одно поле,
+      `RuntimeException(message)`), 7 сабклассов — конструктор
+      `(message: String, code: String = ..., cause: Throwable? = null)`,
+      `unified()` удалить, не депрекейтить.
+      Как:
+
+      ```kotlin
+      // было:
+      throw ConflictException(devMessage = "...", prodMessage = "...")
+      throw ConflictException.unified("...")
+
+      // стало:
+      throw ConflictException("...")
+      ```
+
+- [ ] Step 4.2 — схлопнуть библиотечные генераторы сообщений.
+      Зачем: `toUUIDOrThrow`/`toInstantOrThrow` (`.../util/StringConversions.kt`)
+      и `findByIdOrThrow`
+      (`starter-data-jpa/.../data/RepositoryExtensions.kt`) бросают
+      двухтекстовые исключения (`"Invalid UUID: <value>"` vs `"Invalid UUID"`,
+      `"... not found with id: <id>"` vs `"... not found"`).
+      Что править: те же файлы — оставить только информативный (бывший dev)
+      текст; вторую константу (`INVALID_UUID`, `notFound`) удалить, если
+      больше нигде не используется.
+- [ ] Step 4.3 — удалить `mode` из автоконфигурации.
+      Зачем: `KotlinbrellaWebProperties.mode`, `enum/Mode.kt`,
+      `exposeDiagnostics()`/`verbose()` и 4 тернарника в
+      `KotlinbrellaErrorAdvice.kt` (`:61` выбор detail исключения, `:142`
+      unreadable, `:162` mismatch, `:190` missing) — мёртвый код после сноса;
+      фреймворковые хендлеры всегда отдают детализированный текст.
+      Что править: удалить `Mode.kt`, поле `mode`, тернарники (оставить
+      dev-ветку как единственную); `KotlinbrellaJpaErrorAdvice.kt`
+      («Hide constraint and lock diagnostics») — раскрыть детали тоже.
+      Исчезновение ключа `kotlinbrella.web.mode` — в миграционную заметку.
+- [ ] Step 4.4 — переписать тесты на единый текст.
+      Что править: `ApiExceptionTest` (ассёрты пары detail'ов),
+      `KotlinbrellaErrorAdviceTest` (`redactsDiagnosticDetailsByDefault`,
+      `devModeEnablesDiagnosticDetails`,
+      `diagnosticDetailsNameFieldsWithoutRejectedValues` — удалить/переписать
+      на единый текст), `KotlinbrellaJpaErrorAdviceTest`,
+      `RepositoryExtensionsTest`, `DataJpaIntegrationTest` (упоминает mode).
+- [ ] Step 4.5 — релиз breaking-версии и миграционная заметка.
+      В release notes: удалены `mode`, `diagnosticDetail`/`publicDetail`,
+      `unified()`, двухаргументные конструкторы; `kotlinbrella.web.mode` из
+      yml удалить; единый текст = бывший dev. Дальше — подъём root и
+      slicer-api.
+
+      Готово, когда: `grep -rn "diagnosticDetail\|publicDetail\|exposeDiagnostics\|fun unified\|devMessage\|prodMessage\|enum class Mode" --include="*.kt" */src/main` пуст; `mode` нет в пропертях; build зелёный.
+
 ## Не делать
 
 - [ ] Не расширять `SIMPLE {error, message}` новыми полями — только мажорной
