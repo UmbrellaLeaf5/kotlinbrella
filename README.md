@@ -11,6 +11,12 @@
 consistent backend APIs. It extracts and evolves production patterns for error
 handling, validation, Spring Data, access checks, and OpenAPI documentation.
 
+- **[Guide](GUIDE.md)** — use cases, configuration, recipes, migration notes.
+- **[API reference](https://umbrellaleaf5.github.io/kotlinbrella/)** — Dokka
+  documentation published for every release.
+- **[TODO](TODO.md)** — remaining migration and release work.
+- **[Contributing](CONTRIBUTING.md)** — build and review conventions.
+
 ## Modules
 
 | Module                                         | Purpose                                  |
@@ -29,7 +35,7 @@ handling, validation, Spring Data, access checks, and OpenAPI documentation.
 
 - Kotlin-first implementation with practical Java interoperability.
 - One full dependency for opinionated services, focused starters for minimal services.
-- Immutable exceptions with safe public details and optional diagnostics.
+- One informative client message per error; no profile-dependent redaction.
 - Runtime client failures are always the `ApiException` family; see
   [GUIDE.md](GUIDE.md) for the policy.
 - Correct HTTP semantics for validation, missing resources, method/media errors,
@@ -40,12 +46,23 @@ handling, validation, Spring Data, access checks, and OpenAPI documentation.
 - Public contracts are versioned; project-specific domain code stays outside the
   library.
 
-## Status
+## Consuming
 
-Kotlinbrella has working focused starters, an aggregate starter, and runnable
-Kotlin and Java examples under `samples/`. The remaining migration and release
-work is tracked in [TODO.md](TODO.md). Consult [GUIDE.md](GUIDE.md) for public
-contracts and usage cases.
+Java 21 is required. Releases are consumed from [JitPack](https://jitpack.io)
+with no credentials: add `maven { url = uri("https://jitpack.io") }` to the
+consumer repositories and depend on group
+`com.github.UmbrellaLeaf5.kotlinbrella` with the git tag as version. For local
+development, run `./gradlew publishToMavenLocal` and add `mavenLocal()`.
+
+```kotlin
+dependencies {
+  implementation("com.github.UmbrellaLeaf5.kotlinbrella:kotlinbrella-spring-boot-starter:<tag>")
+}
+```
+
+The aggregate dependency includes Spring MVC, validation, JPA, Liquibase,
+PostgreSQL, Springdoc, AOP, Actuator, RestClient, Jackson Kotlin and Kotlin
+reflection. Domain-specific integrations remain application dependencies.
 
 ## Development
 
@@ -55,19 +72,6 @@ The repository uses Gradle, Kotlin, JUnit 5, and the conventions in
 ```bash
 ./gradlew build
 ```
-
-Java 21 is required. The Spring Boot baseline is 4.0.3. Releases are consumed
-from [JitPack](https://jitpack.io) with no credentials: add
-`maven { url = uri("https://jitpack.io") }` to the consumer repositories and
-depend on group `com.github.UmbrellaLeaf5.kotlinbrella` with the git tag as
-version (e.g. `0.1.0`). For local development of consumers, run
-`./gradlew publishToMavenLocal` and add `mavenLocal()` to the consumer
-repositories.
-
-The aggregate dependency includes the shared libraries needed by Digital
-Factory's `root` and `slicer-api`: Spring MVC, validation, JPA, Liquibase,
-PostgreSQL, Springdoc, AOP, Actuator, RestClient, Jackson Kotlin and Kotlin
-reflection. Domain-specific integrations remain application dependencies.
 
 The full sample requires PostgreSQL settings `SAMPLE_DATABASE_URL`,
 `SAMPLE_DATABASE_USER`, and `SAMPLE_DATABASE_PASSWORD`. `./gradlew build`

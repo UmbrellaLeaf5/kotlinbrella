@@ -12,5 +12,5 @@ import java.util.UUID
  */
 data class IdResponse @JsonCreator constructor(
   @param:JsonProperty("id")
-  val id: UUID,  // идентификатор сущности
+  val id: UUID,  // entity identifier
 )

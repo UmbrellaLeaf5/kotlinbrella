@@ -17,6 +17,14 @@ extra["bootBom"] = SpringBootPlugin.BOM_COORDINATES
 extra["springdocVersion"] = "3.0.2"
 extra["testcontainersVersion"] = "1.21.4"
 
+val docsVersion = providers.environmentVariable("GITHUB_REF_NAME")
+  .map { it.removePrefix("v") }
+  .orElse(providers.provider { project.version.toString() })
+
+val docsFooter = docsVersion.map {
+  "Kotlinbrella $it · <a href=\"https://github.com/UmbrellaLeaf5/kotlinbrella\">GitHub</a>"
+}
+
 allprojects {
   repositories {
     mavenCentral()
@@ -64,6 +72,38 @@ subprojects {
   if (!project.path.startsWith(":samples")) {
     apply(plugin = "org.jetbrains.dokka")
 
+    val packageDocs = tasks.register<Sync>("dokkaPackageDocs") {
+      from("src/main/kotlin") {
+        include("**/package.md")
+        eachFile { path = path.replace('/', '.') }
+      }
+      includeEmptyDirs = false
+      into(layout.buildDirectory.dir("dokka/package-docs"))
+    }
+
+    val packageDocFiles = files(packageDocs).asFileTree.matching {
+      include("**/*.md")
+    }
+
+    extensions.configure<org.jetbrains.dokka.gradle.DokkaExtension> {
+      dokkaPublications.html {
+        moduleVersion.set(docsVersion)
+        suppressObviousFunctions.set(true)
+        pluginsConfiguration.html {
+          footerMessage.set(docsFooter)
+        }
+      }
+
+      dokkaSourceSets.configureEach {
+        includes.from(packageDocFiles)
+
+        perPackageOption {
+          matchingRegex.set(".*\\.internal(\\..*)?")
+          suppress.set(true)
+        }
+      }
+    }
+
     val dokkaPublicationHtml = tasks.named("dokkaGeneratePublicationHtml")
 
     tasks.named<Jar>("javadocJar") {
@@ -104,4 +144,16 @@ dependencies {
   dokka(project(":kotlinbrella-spring-boot-starter-access"))
   dokka(project(":kotlinbrella-spring-boot-starter"))
   dokka(project(":kotlinbrella-test"))
+}
+
+dokka {
+  dokkaPublications.html {
+    moduleName.set("Kotlinbrella")
+    moduleVersion.set(docsVersion)
+    suppressObviousFunctions.set(true)
+    includes.from("README.md")
+    pluginsConfiguration.html {
+      footerMessage.set(docsFooter)
+    }
+  }
 }

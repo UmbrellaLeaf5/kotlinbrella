@@ -441,10 +441,10 @@ fun createOrder(
 
 ### Exceptions
 
-- Use a `BaseClientException` hierarchy for client-facing errors (`BadRequestException`, `NotFoundException`, `ConflictException`).
-- Each exception takes two messages: `devMessage` (shown in dev profile) and `prodMessage` (shown in prod).
+- Use the `ApiException` hierarchy for client-facing errors (`BadRequestException`, `NotFoundException`, `ConflictException`, ...).
+- Each exception takes a single informative `message` plus an optional `code` and `cause`. There is no hidden/public message split and no profile-dependent redaction.
 - Propagate exceptions to a global exception handler — do not catch and convert in controllers.
-- Use a `unified()` factory method for concise exception creation when dev and prod messages are the same.
+- Create exceptions with the plain constructor: `throw ConflictException("Order is not processable")`.
 
 ## Persistence & Database Engineering
 

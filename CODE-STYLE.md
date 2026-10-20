@@ -74,7 +74,7 @@ All code-writing rules for Kotlinbrella.
     skipOrder(order)
 
   else
-    throw ConflictException.unified("Order is not processable")
+    throw ConflictException("Order is not processable")
   ```
 
 - Use `for` for iteration over ranges and collections. `while` is permitted when iteration depends on mutable state or complex conditions.
@@ -386,9 +386,7 @@ All code-writing rules for Kotlinbrella.
 - After a long wrapped line — a blank line before the next statement.
 
   ```kotlin
-  throw ConflictException.unified(
-    "Order " + orderId + " has no persisted state"
-  )
+  throw ConflictException("Order " + orderId + " has no persisted state")
 
   computeNextState(input)
   ```
