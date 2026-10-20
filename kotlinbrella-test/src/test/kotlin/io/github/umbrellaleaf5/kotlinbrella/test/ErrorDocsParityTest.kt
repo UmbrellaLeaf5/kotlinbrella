@@ -15,7 +15,7 @@ class ErrorDocsParityTest {
   fun acceptsMatchingDocs() {
     ErrorDocsParity.assertParity(
       mockMvc = mockMvc,
-      openApiJson = SPEC,
+      openApiJson = spec("get"),
       method = "get",
       path = "/probe",
       probes = mapOf(404 to "/probe"),
@@ -25,8 +25,21 @@ class ErrorDocsParityTest {
   // --------------------------------------------------
 
   @Test
+  fun probesWithDocumentedMethod() {
+    ErrorDocsParity.assertParity(
+      mockMvc = mockMvc,
+      openApiJson = spec("post"),
+      method = "post",
+      path = "/probe",
+      probes = mapOf(404 to "/probe"),
+    )
+  }
+
+  // --------------------------------------------------
+
+  @Test
   fun rejectsMismatchedDocs() {
-    val drifted = SPEC.replace("Gone", "Vanished")
+    val drifted = spec("get").replace("Gone", "Vanished")
 
     assertThrows(AssertionError::class.java) {
       ErrorDocsParity.assertParity(
@@ -39,13 +52,88 @@ class ErrorDocsParityTest {
     }
   }
 
+  // --------------------------------------------------
+
+  @Test
+  fun rejectsTypeDrift() {
+    assertThrows(AssertionError::class.java) {
+      ErrorDocsParity.assertParity(
+        mockMvc = mockMvc,
+        openApiJson = TYPED_SPEC,
+        method = "get",
+        path = "/typed",
+        probes = mapOf(404 to "/typed"),
+      )
+    }
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun rejectsUnexpectedRuntimeFields() {
+    assertThrows(AssertionError::class.java) {
+      ErrorDocsParity.assertParity(
+        mockMvc = mockMvc,
+        openApiJson = spec("get", "/extra"),
+        method = "get",
+        path = "/extra",
+        probes = mapOf(404 to "/extra"),
+      )
+    }
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun allowsUnexpectedRuntimeFieldsWhenNotStrict() {
+    ErrorDocsParity.assertParity(
+      mockMvc = mockMvc,
+      openApiJson = spec("get", "/extra"),
+      method = "get",
+      path = "/extra",
+      probes = mapOf(404 to "/extra"),
+      strict = false,
+    )
+  }
+
   companion object {
 
-    private const val SPEC = """
+    private const val TYPED_SPEC = """
       {
         "paths": {
-          "/probe": {
+          "/typed": {
             "get": {
+              "responses": {
+                "404": {
+                  "content": {
+                    "application/json": {
+                      "examples": {
+                        "NOT_FOUND": {
+                          "value": {
+                            "code": "404"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    """
+
+    // --------------------------------------------------
+
+    private fun spec(
+      method: String,
+      path: String = "/probe",
+    ): String = """
+      {
+        "paths": {
+          "$path": {
+            "$method": {
               "responses": {
                 "404": {
                   "content": {

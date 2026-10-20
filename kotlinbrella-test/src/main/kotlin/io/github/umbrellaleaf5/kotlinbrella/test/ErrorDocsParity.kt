@@ -5,7 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 
 object ErrorDocsParity {
 
@@ -20,9 +25,10 @@ object ErrorDocsParity {
    *
    * @param mockMvc MVC entry point of the consuming application
    * @param openApiJson raw `/v3/api-docs` response body
-   * @param method lowercase HTTP method (`get`, `delete`, ...)
+   * @param method HTTP method (`get`, `post`, `delete`, ...)
    * @param path OpenAPI path template (`/api/v1/calculation/{id}/status`)
    * @param probes expected status to a probe URL returning it
+   * @param strict when `true`, unexpected runtime fields fail the assertion
    */
   fun assertParity(
     mockMvc: MockMvc,
@@ -30,6 +36,7 @@ object ErrorDocsParity {
     method: String,
     path: String,
     probes: Map<Int, String>,
+    strict: Boolean = true,
   ) {
     val responses = mapper.readTree(openApiJson)
       .path("paths").path(path).path(method.lowercase()).path("responses")
@@ -38,26 +45,53 @@ object ErrorDocsParity {
       val documented = documentedExamples(responses, method, path, status)
 
       val body = mapper.readTree(
-        mockMvc.perform(get(probeUrl)).andReturn().response.contentAsString
+        mockMvc.perform(requestFor(method, probeUrl)).andReturn().response.contentAsString
       )
 
       for (example in documented) {
-        val fields = example.fields()
-
-        while (fields.hasNext()) {
-          val (key, value) = fields.next()
-
+        for ((key, value) in example.properties()) {
           assertEquals(
-            value.asText(),
-            body.path(key).asText(),
+            value.toString(),
+            body.path(key).toString(),
             "Field $key mismatch for $method $path $status",
           )
         }
+
+        if (strict) assertNoExtraFields(example, body, method, path, status)
       }
     }
   }
 
   // MARK: Private Helpers
+  // --------------------------------------------------
+
+  private fun requestFor(method: String, url: String): MockHttpServletRequestBuilder =
+    when (method.lowercase()) {
+      "get" -> get(url)
+      "post" -> post(url)
+      "put" -> put(url)
+      "patch" -> patch(url)
+      "delete" -> delete(url)
+      else -> throw IllegalArgumentException("Unsupported HTTP method: $method")
+    }
+
+  // --------------------------------------------------
+
+  private fun assertNoExtraFields(
+    example: JsonNode,
+    body: JsonNode,
+    method: String,
+    path: String,
+    status: Int,
+  ) {
+    for ((key, _) in body.properties()) {
+      assertTrue(
+        example.has(key),
+        "Unexpected runtime field $key for $method $path $status",
+      )
+    }
+  }
+
   // --------------------------------------------------
 
   private fun documentedExamples(
@@ -74,21 +108,16 @@ object ErrorDocsParity {
     )
 
     val documented = mutableListOf<JsonNode>()
-    val contents = response.path("content").fields()
 
-    while (contents.hasNext()) {
-      val media = contents.next().value
-
+    for ((_, media) in response.path("content").properties()) {
       if (media.has("example") && !media.path("example").isNull)
         documented.add(media.path("example"))
 
       val examples = media.path("examples")
 
       if (examples.isObject) {
-        val values = examples.fields()
-
-        while (values.hasNext())
-          documented.add(values.next().value.path("value"))
+        for ((_, example) in examples.properties())
+          documented.add(example.path("value"))
       }
     }
 
