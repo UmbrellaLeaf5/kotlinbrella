@@ -60,7 +60,6 @@ object Constants {
     const val ERROR_KEY = "error"
     const val VIOLATIONS_KEY = "violations"
     const val UNKNOWN_FAILURE_LOG = "Unexpected request failure"
-    const val EXPECTED_FAILURE_LOG = "Expected client failure: {}"
     const val EXPECTED_FAILURE_DETAIL_LOG = "Expected client failure: {} {} {}"
 
   }

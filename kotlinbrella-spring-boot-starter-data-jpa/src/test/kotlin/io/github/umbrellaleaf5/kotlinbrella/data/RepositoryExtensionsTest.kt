@@ -27,7 +27,7 @@ class RepositoryExtensionsTest {
   // --------------------------------------------------
 
   @Test
-  fun emitsSafeNotFoundDetails() {
+  fun emitsNotFoundDetailsWithIdentifier() {
     @Suppress("UNCHECKED_CAST")
     val repository = mock(CrudRepository::class.java) as CrudRepository<String, Long>
     `when`(repository.findById(42L)).thenReturn(Optional.empty())
@@ -38,8 +38,7 @@ class RepositoryExtensionsTest {
 
     assertEquals(404, exception.status)
     assertEquals(ErrorCode.NOT_FOUND, exception.code)
-    assertEquals("Item not found", exception.publicDetail)
-    assertEquals("Item with ID 42 not found", exception.diagnosticDetail)
+    assertEquals("Item with ID 42 not found", exception.detail)
   }
 
 }

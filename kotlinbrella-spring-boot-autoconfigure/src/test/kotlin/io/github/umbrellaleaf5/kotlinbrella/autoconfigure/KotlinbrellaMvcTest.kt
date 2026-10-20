@@ -30,9 +30,8 @@ class KotlinbrellaMvcTest {
 
     assertEquals(400, response.status)
     assertTrue(response.contentType.orEmpty().startsWith("application/problem+json"))
-    assertTrue(response.contentAsString.contains("\"detail\":\"public\""))
+    assertTrue(response.contentAsString.contains("\"detail\":\"Rejected input\""))
     assertTrue(response.contentAsString.contains("\"code\":\"BAD_REQUEST\""))
-    assertFalse(response.contentAsString.contains("private"))
     assertTrue(response.contentAsString.contains("\"traceId\""))
   }
 

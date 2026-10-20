@@ -15,11 +15,11 @@ import org.springframework.mock.web.MockHttpServletRequest
 
 class KotlinbrellaJpaErrorAdviceTest {
 
-  // MARK: Hide constraint and lock diagnostics
+  // MARK: Render persistence conflicts with their details
   // --------------------------------------------------
 
   @Test
-  fun mapsPersistenceFailuresToSafeConflict() {
+  fun mapsPersistenceFailuresToConflictWithDetails() {
     val advice = KotlinbrellaJpaErrorAdvice(
       KotlinbrellaErrorAdvice(
         KotlinbrellaWebProperties(),
@@ -34,14 +34,20 @@ class KotlinbrellaJpaErrorAdviceTest {
 
     assertEquals(409, duplicate.statusCode.value())
     assertEquals(409, stale.statusCode.value())
-    assertFalse(duplicate.body.toString().contains("secret_constraint_name"))
-    assertFalse(stale.body.toString().contains("private row version"))
+    assertEquals(
+      "secret_constraint_name",
+      (duplicate.body as ProblemDetail).detail,
+    )
+    assertEquals(
+      "private row version",
+      (stale.body as ProblemDetail).detail,
+    )
   }
 
   // --------------------------------------------------
 
   @Test
-  fun rejectsUnknownSortPropertyWithoutQueryExposure() {
+  fun rejectsUnknownSortProperty() {
     val advice = KotlinbrellaJpaErrorAdvice(
       KotlinbrellaErrorAdvice(
         KotlinbrellaWebProperties(),

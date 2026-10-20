@@ -3,23 +3,8 @@ package io.github.umbrellaleaf5.kotlinbrella.error
 import io.github.umbrellaleaf5.kotlinbrella.Constants
 
 open class ConflictException @JvmOverloads constructor(
-  devMessage: String,
-  prodMessage: String,
+  message: String,
   code: String = ErrorCode.CONFLICT,
   cause: Throwable? = null,
-) : ApiException(Constants.Http.CONFLICT, code, prodMessage, devMessage, cause) {
+) : ApiException(Constants.Http.CONFLICT, code, message, cause)
 
-  companion object {
-
-    // --------------------------------------------------
-
-    @JvmStatic
-    @JvmOverloads
-    fun unified(
-      message: String,
-      code: String = ErrorCode.CONFLICT,
-    ): ConflictException = ConflictException(message, message, code)
-
-  }
-
-}

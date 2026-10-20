@@ -9,10 +9,6 @@ object Constants {
 
     // --------------------------------------------------
 
-    fun notFound(entityName: String): String = "$entityName$NOT_FOUND_SUFFIX"
-
-    // --------------------------------------------------
-
     fun notFoundWithId(entityName: String, id: Any): String =
       "$entityName$WITH_ID$id$NOT_FOUND_SUFFIX"
 

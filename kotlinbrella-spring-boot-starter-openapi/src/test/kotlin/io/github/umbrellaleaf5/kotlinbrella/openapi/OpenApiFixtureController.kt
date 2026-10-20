@@ -10,6 +10,6 @@ class OpenApiFixtureController {
   // --------------------------------------------------
 
   @GetMapping("/problem")
-  fun problem(): String = throw BadRequestException.unified("Invalid input")
+  fun problem(): String = throw BadRequestException("Invalid input")
 
 }

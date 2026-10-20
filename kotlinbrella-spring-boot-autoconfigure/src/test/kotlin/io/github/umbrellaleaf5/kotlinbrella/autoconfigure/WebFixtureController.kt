@@ -26,7 +26,7 @@ class WebFixtureController {
   // --------------------------------------------------
 
   @GetMapping("/failure")
-  fun failure(): String = throw BadRequestException("private", "public")
+  fun failure(): String = throw BadRequestException("Rejected input")
 
   // --------------------------------------------------
 

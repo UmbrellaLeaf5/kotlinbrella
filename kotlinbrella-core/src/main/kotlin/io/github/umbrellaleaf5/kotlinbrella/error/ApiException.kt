@@ -5,10 +5,9 @@ import io.github.umbrellaleaf5.kotlinbrella.Constants
 open class ApiException(
   val status: Int,
   val code: String,
-  val publicDetail: String,
-  val diagnosticDetail: String = publicDetail,
+  val detail: String,
   cause: Throwable? = null,
-) : RuntimeException(diagnosticDetail, cause) {
+) : RuntimeException(detail, cause) {
 
   init {
     require(status in Constants.Http.BAD_REQUEST..Constants.Http.MAX_ERROR_STATUS)

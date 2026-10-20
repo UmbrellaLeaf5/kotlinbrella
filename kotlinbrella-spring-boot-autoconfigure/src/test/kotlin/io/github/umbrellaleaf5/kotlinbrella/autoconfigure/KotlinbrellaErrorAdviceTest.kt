@@ -5,7 +5,6 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
-import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.Mode
 import io.github.umbrellaleaf5.kotlinbrella.error.BadRequestException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import io.github.umbrellaleaf5.kotlinbrella.error.SimpleErrorResponse
@@ -34,38 +33,23 @@ import java.util.UUID
 
 class KotlinbrellaErrorAdviceTest {
 
-  // MARK: Keep private diagnostics out of production responses
+  // MARK: Render the single client-facing detail
   // --------------------------------------------------
 
   @Test
-  fun redactsDiagnosticDetailsByDefault() {
+  fun rendersSingleDetail() {
     val request = MockHttpServletRequest("GET", "/resource")
     val advice = KotlinbrellaErrorAdvice(
       KotlinbrellaWebProperties(),
       ErrorViolationMapper(),
     )
-    val result = advice.apiException(BadRequestException("secret", "safe"), request)
+    val result = advice.apiException(BadRequestException("details"), request)
     val body = result.body as ProblemDetail
 
     assertEquals(400, result.statusCode.value())
-    assertEquals("safe", body.detail)
+    assertEquals("details", body.detail)
     assertEquals("BAD_REQUEST", body.properties?.get("code"))
     assertEquals("/resource", body.instance.toString())
-  }
-
-  // --------------------------------------------------
-
-  @Test
-  fun devModeEnablesDiagnosticDetails() {
-    val properties = KotlinbrellaWebProperties().apply {
-      mode = Mode.DEV
-    }
-    val advice = KotlinbrellaErrorAdvice(properties, ErrorViolationMapper())
-
-    val body = advice.apiException(BadRequestException("secret", "safe"),
-      MockHttpServletRequest()).body as ProblemDetail
-
-    assertEquals("secret", body.detail)
   }
 
   // --------------------------------------------------
@@ -187,11 +171,11 @@ class KotlinbrellaErrorAdviceTest {
     val advice = KotlinbrellaErrorAdvice(properties, ErrorViolationMapper())
     val request = MockHttpServletRequest("GET", "/resource")
 
-    val single = advice.apiException(BadRequestException("secret", "safe"),
+    val single = advice.apiException(BadRequestException("details"),
       request).body as SimpleErrorResponse
 
     assertEquals("Bad Request", single.error)
-    assertEquals("safe", single.message)
+    assertEquals("details", single.message)
 
     val method = WebFixtureController::class.java.getMethod("probe", String::class.java)
     val errors = BeanPropertyBindingResult(WebFixtureInput(null), "request")
@@ -216,7 +200,7 @@ class KotlinbrellaErrorAdviceTest {
     val advice = KotlinbrellaErrorAdvice(KotlinbrellaWebProperties(), ErrorViolationMapper())
 
     try {
-      advice.apiException(BadRequestException.unified("bad"),
+      advice.apiException(BadRequestException("bad"),
         MockHttpServletRequest())
 
       assertTrue(appender.list.isEmpty())
@@ -237,33 +221,22 @@ class KotlinbrellaErrorAdviceTest {
   // --------------------------------------------------
 
   @Test
-  fun verboseRecordsIncludeDetailsWhileMinimalKeepsCode() {
+  fun recordsClientFailureDetails() {
     val logger = LoggerFactory.getLogger(KotlinbrellaErrorAdvice::class.java) as Logger
     val appender = ListAppender<ILoggingEvent>()
     appender.start()
     logger.addAppender(appender)
 
-    val verbose = KotlinbrellaWebProperties().apply {
-      mode = Mode.DEV
-    }
-    val verboseAdvice = KotlinbrellaErrorAdvice(verbose, ErrorViolationMapper())
+    val advice = KotlinbrellaErrorAdvice(
+      KotlinbrellaWebProperties(),
+      ErrorViolationMapper(),
+    )
 
     try {
-      verboseAdvice.apiException(BadRequestException("secret", "safe"),
+      advice.apiException(BadRequestException("details"),
         MockHttpServletRequest("GET", "/resource"))
 
-      assertTrue(appender.list.single().formattedMessage.contains("secret"))
-
-      appender.list.clear()
-
-      val minimalAdvice = KotlinbrellaErrorAdvice(
-        KotlinbrellaWebProperties(),
-        ErrorViolationMapper(),
-      )
-      minimalAdvice.apiException(BadRequestException("secret", "safe"),
-        MockHttpServletRequest("GET", "/resource"))
-
-      assertEquals("Expected client failure: BAD_REQUEST", appender.list.single().formattedMessage)
+      assertTrue(appender.list.single().formattedMessage.contains("details"))
     }
 
     finally {
@@ -275,11 +248,11 @@ class KotlinbrellaErrorAdviceTest {
   // --------------------------------------------------
 
   @Test
-  fun diagnosticDetailsNameFieldsWithoutRejectedValues() {
-    val properties = KotlinbrellaWebProperties().apply {
-      mode = Mode.DEV
-    }
-    val advice = KotlinbrellaErrorAdvice(properties, ErrorViolationMapper())
+  fun detailsNameFieldsWithoutRejectedValues() {
+    val advice = KotlinbrellaErrorAdvice(
+      KotlinbrellaWebProperties(),
+      ErrorViolationMapper(),
+    )
     val request = MockHttpServletRequest()
 
     val unreadable = advice.unreadableMessage(

@@ -39,7 +39,7 @@ object Conversions {
   @JvmStatic
   fun <T : Enum<T>> enumValue(value: String, type: Class<T>): T =
     type.enumConstants.firstOrNull { it.name == value }
-      ?: throw BadRequestException.unified(
+      ?: throw BadRequestException(
         Constants.ErrorDescription.INVALID_ENUM,
         ErrorCode.INVALID_ENUM,
       )

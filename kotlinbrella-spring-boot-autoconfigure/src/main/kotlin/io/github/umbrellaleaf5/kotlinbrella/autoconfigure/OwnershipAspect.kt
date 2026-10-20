@@ -54,14 +54,14 @@ class OwnershipAspect(
 
     return when (decision) {
       AccessDecision.ALLOWED -> joinPoint.proceed()
-      AccessDecision.NOT_FOUND -> throw NotFoundException.unified(
+      AccessDecision.NOT_FOUND -> throw NotFoundException(
         Constants.ErrorDescription.RESOURCE_NOT_FOUND,
       )
       AccessDecision.FORBIDDEN -> when (checkOwnership.policy) {
-        DenialPolicy.HIDE_EXISTENCE -> throw NotFoundException.unified(
+        DenialPolicy.HIDE_EXISTENCE -> throw NotFoundException(
           Constants.ErrorDescription.RESOURCE_NOT_FOUND,
         )
-        DenialPolicy.FORBIDDEN -> throw ForbiddenException.unified(Constants.Access.ACCESS_DENIED)
+        DenialPolicy.FORBIDDEN -> throw ForbiddenException(Constants.Access.ACCESS_DENIED)
       }
     }
   }

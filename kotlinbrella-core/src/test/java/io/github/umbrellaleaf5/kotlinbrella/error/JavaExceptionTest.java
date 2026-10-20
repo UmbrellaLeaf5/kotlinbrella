@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JavaExceptionTest {
 
   @Test
-  void factoriesAndAccessorsAreAvailableToJava() {
-    NotFoundException exception = NotFoundException.unified("missing");
+  void constructorsAndAccessorsAreAvailableToJava() {
+    NotFoundException exception = new NotFoundException("missing");
     assertEquals(404, exception.getStatus());
-    assertEquals("missing", exception.getPublicDetail());
+    assertEquals("missing", exception.getDetail());
   }
 }

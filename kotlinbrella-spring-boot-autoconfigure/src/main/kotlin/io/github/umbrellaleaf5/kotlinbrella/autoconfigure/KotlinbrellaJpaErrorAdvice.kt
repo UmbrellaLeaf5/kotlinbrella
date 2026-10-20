@@ -2,7 +2,6 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import io.github.umbrellaleaf5.kotlinbrella.error.BadRequestException
 import io.github.umbrellaleaf5.kotlinbrella.error.ConflictException
-import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
@@ -20,7 +19,7 @@ class KotlinbrellaJpaErrorAdvice(
   private val errorAdvice: KotlinbrellaErrorAdvice,
 ) {
 
-  // MARK: Render persistence conflicts without exposing database details
+  // MARK: Render persistence conflicts
   // --------------------------------------------------
 
   @ExceptionHandler(OptimisticLockingFailureException::class)
@@ -30,9 +29,7 @@ class KotlinbrellaJpaErrorAdvice(
   ): ResponseEntity<Any> = errorAdvice.apiException(
     ConflictException(
       exception.message ?: Constants.ErrorDescription.CONFLICT,
-      Constants.ErrorDescription.CONFLICT,
-      ErrorCode.CONFLICT,
-      exception,
+      cause = exception,
     ),
     request,
   )
@@ -46,14 +43,12 @@ class KotlinbrellaJpaErrorAdvice(
   ): ResponseEntity<Any> = errorAdvice.apiException(
     ConflictException(
       exception.message ?: Constants.ErrorDescription.CONFLICT,
-      Constants.ErrorDescription.CONFLICT,
-      ErrorCode.CONFLICT,
-      exception,
+      cause = exception,
     ),
     request,
   )
 
-  // MARK: Reject unknown sort properties without exposing queries
+  // MARK: Reject unknown sort properties
   // --------------------------------------------------
 
   @ExceptionHandler(PropertyReferenceException::class)
@@ -61,7 +56,7 @@ class KotlinbrellaJpaErrorAdvice(
     exception: PropertyReferenceException,
     request: HttpServletRequest,
   ): ResponseEntity<Any> = errorAdvice.apiException(
-    BadRequestException.unified(
+    BadRequestException(
       "${Constants.ErrorDescription.INVALID_SORT_PROPERTY}: '${exception.propertyName}'",
     ),
     request,

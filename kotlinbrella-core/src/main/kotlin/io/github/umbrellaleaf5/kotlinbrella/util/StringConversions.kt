@@ -17,7 +17,6 @@ fun String.toUUIDOrThrow(): UUID = try {
 catch (exception: IllegalArgumentException) {
   throw BadRequestException(
     "${Constants.ErrorDescription.INVALID_UUID_PREFIX}$this",
-    Constants.ErrorDescription.INVALID_UUID,
     ErrorCode.INVALID_UUID,
     exception,
   )
@@ -26,7 +25,7 @@ catch (exception: IllegalArgumentException) {
 // --------------------------------------------------
 
 fun String.toIntOrThrow(): Int = toIntOrNull()
-  ?: throw BadRequestException.unified(
+  ?: throw BadRequestException(
     Constants.ErrorDescription.INVALID_INTEGER,
     ErrorCode.INVALID_INTEGER,
   )
@@ -34,7 +33,7 @@ fun String.toIntOrThrow(): Int = toIntOrNull()
 // --------------------------------------------------
 
 fun String.toLongOrThrow(): Long = toLongOrNull()
-  ?: throw BadRequestException.unified(
+  ?: throw BadRequestException(
     Constants.ErrorDescription.INVALID_LONG,
     ErrorCode.INVALID_LONG,
   )
@@ -42,7 +41,7 @@ fun String.toLongOrThrow(): Long = toLongOrNull()
 // --------------------------------------------------
 
 fun String.toDoubleOrThrow(): Double = toDoubleOrNull()?.takeIf { it.isFinite() }
-  ?: throw BadRequestException.unified(
+  ?: throw BadRequestException(
     Constants.ErrorDescription.INVALID_DOUBLE,
     ErrorCode.INVALID_DOUBLE,
   )
@@ -56,7 +55,6 @@ fun String.toInstantOrThrow(): Instant = try {
 catch (exception: DateTimeParseException) {
   throw BadRequestException(
     "${Constants.ErrorDescription.INVALID_INSTANT_PREFIX}$this",
-    Constants.ErrorDescription.INVALID_INSTANT,
     ErrorCode.INVALID_INSTANT,
     exception,
   )
@@ -65,7 +63,7 @@ catch (exception: DateTimeParseException) {
 // --------------------------------------------------
 
 inline fun <reified T : Enum<T>> String.toEnumOrThrow(): T = toEnumOrNull<T>()
-  ?: throw BadRequestException.unified(
+  ?: throw BadRequestException(
     Constants.ErrorDescription.INVALID_ENUM,
     ErrorCode.INVALID_ENUM,
   )

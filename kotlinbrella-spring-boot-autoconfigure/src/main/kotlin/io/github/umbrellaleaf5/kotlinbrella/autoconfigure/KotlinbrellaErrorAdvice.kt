@@ -2,7 +2,6 @@ package io.github.umbrellaleaf5.kotlinbrella.autoconfigure
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.ErrorShape
-import io.github.umbrellaleaf5.kotlinbrella.autoconfigure.enum.Mode
 import io.github.umbrellaleaf5.kotlinbrella.error.ApiException
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorCode
 import io.github.umbrellaleaf5.kotlinbrella.error.ErrorViolation
@@ -58,7 +57,7 @@ class KotlinbrellaErrorAdvice(
     problem(
       HttpStatusCode.valueOf(exception.status),
       exception.code,
-      if (exposeDiagnostics()) exception.diagnosticDetail else exception.publicDetail,
+      exception.detail,
       request,
     )
 
@@ -139,7 +138,7 @@ class KotlinbrellaErrorAdvice(
   ): ResponseEntity<Any> {
     val field = (exception.cause as? InvalidFormatException)
       ?.path?.firstOrNull()?.fieldName
-    val detail = if (field != null && exposeDiagnostics())
+    val detail = if (field != null)
       "${Constants.ErrorDescription.INVALID_VALUE} for field '$field'"
     else
       Constants.ErrorDescription.INVALID_REQUEST
@@ -159,10 +158,7 @@ class KotlinbrellaErrorAdvice(
     exception: MethodArgumentTypeMismatchException,
     request: HttpServletRequest,
   ): ResponseEntity<Any> {
-    val detail = if (exposeDiagnostics())
-      "${Constants.ErrorDescription.INVALID_VALUE} for parameter '${exception.name}'"
-    else
-      Constants.ErrorDescription.INVALID_REQUEST
+    val detail = "${Constants.ErrorDescription.INVALID_VALUE} for parameter '${exception.name}'"
 
     return problem(
       HttpStatus.BAD_REQUEST,
@@ -187,7 +183,7 @@ class KotlinbrellaErrorAdvice(
       is MissingRequestHeaderException -> exception.headerName
       else -> null
     }
-    val detail = if (name != null && exposeDiagnostics())
+    val detail = if (name != null)
       "${Constants.ErrorDescription.MISSING_VALUE}: '$name'"
     else
       Constants.ErrorDescription.INVALID_REQUEST
@@ -262,14 +258,6 @@ class KotlinbrellaErrorAdvice(
   // MARK: Private Helpers
   // --------------------------------------------------
 
-  private fun exposeDiagnostics(): Boolean = properties.mode == Mode.DEV
-
-  // --------------------------------------------------
-
-  private fun verbose(): Boolean = exposeDiagnostics()
-
-  // --------------------------------------------------
-
   private fun joinViolations(violations: List<ErrorViolation>): String =
     violations.joinToString("; ") {
       if (it.field == null) it.message else "${it.field}: ${it.message}"
@@ -291,17 +279,13 @@ class KotlinbrellaErrorAdvice(
 
     if (!status.is4xxClientError) return
 
-    if (verbose())
-      logger.info(Constants.Web.EXPECTED_FAILURE_DETAIL_LOG, code, detail, request.requestURI)
-
-    else
-      logger.info(Constants.Web.EXPECTED_FAILURE_LOG, code)
+    logger.info(Constants.Web.EXPECTED_FAILURE_DETAIL_LOG, code, detail, request.requestURI)
   }
 
   // --------------------------------------------------
 
   /**
-    * Builds a safe error response in the selected shape with code and request identifier.
+    * Builds an error response in the selected shape with code and request identifier.
    */
   private fun problem(
     status: HttpStatusCode,

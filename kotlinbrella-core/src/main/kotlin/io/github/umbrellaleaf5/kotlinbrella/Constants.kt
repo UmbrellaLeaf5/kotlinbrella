@@ -61,7 +61,6 @@ object Constants {
     const val INVALID_INTEGER = "Invalid integer"
     const val INVALID_LONG = "Invalid long"
     const val INVALID_DOUBLE = "Invalid double"
-    const val INVALID_INSTANT = "Invalid instant"
     const val INVALID_INSTANT_PREFIX = "Invalid instant: "
     const val INVALID_ENUM = "Invalid enum value"
     const val RESOURCE_NOT_FOUND = "Resource not found"

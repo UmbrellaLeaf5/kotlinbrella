@@ -21,7 +21,7 @@ class JavaConsumerTest {
     var id = UUID.randomUUID();
 
     assertEquals(id, Conversions.uuid(id.toString()));
-    assertEquals(404, NotFoundException.unified("Missing").getStatus());
+    assertEquals(404, new NotFoundException("Missing").getStatus());
     assertEquals(AccessDecision.ALLOWED, new JavaChecker().check("item", "user"));
     assertEquals(1, Validation.buildDefaultValidatorFactory().getValidator()
       .validate(new JavaPatchInput(null)).size());
