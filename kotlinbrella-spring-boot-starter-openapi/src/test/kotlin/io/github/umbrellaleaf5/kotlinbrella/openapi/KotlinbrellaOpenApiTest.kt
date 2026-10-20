@@ -16,6 +16,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -45,7 +46,7 @@ class KotlinbrellaOpenApiTest {
       "Existing description<br>• Invalid input<br>• Invalid identifier",
       response.description,
     )
-    assertNotNull(response.content["application/json"])
+    assertNull(response.content["application/json"])
     assertEquals(Constants.ApiSpec.PROBLEM_REFERENCE, media.schema.`$ref`)
     assertEquals(setOf("BAD_REQUEST", "INVALID_UUID"), media.examples.keys)
     assertEquals("• Not found", operation.responses["404"]?.description)

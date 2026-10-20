@@ -112,6 +112,24 @@ class KotlinbrellaErrorOperationCustomizerTest {
     )
   }
 
+  @Test
+  fun dedupesOnlyExactBullets() {
+    val operation = Operation().apply {
+      responses = ApiResponses().apply {
+        addApiResponse("400", ApiResponse().apply {
+          description = "Mentions First problem inside"
+        })
+      }
+    }
+
+    customize(ErrorShape.SIMPLE, "multiple", operation)
+
+    assertEquals(
+      "Mentions First problem inside<br>• First problem<br>• Second problem",
+      operation.responses["400"]?.description,
+    )
+  }
+
   // MARK: Render the standard shape
   // --------------------------------------------------
 
@@ -151,6 +169,32 @@ class KotlinbrellaErrorOperationCustomizerTest {
     )
   }
 
+  @Test
+  fun dropsForeignMediaTypeForSimpleShape() {
+    val operation = errorOperationWithMedia(Constants.ApiSpec.PROBLEM_MEDIA_TYPE)
+
+    customize(ErrorShape.SIMPLE, "single", operation)
+
+    val content = operation.responses["404"]?.content
+
+    assertNull(content?.get(Constants.ApiSpec.PROBLEM_MEDIA_TYPE))
+    assertTrue(content?.containsKey(Constants.ApiSpec.SIMPLE_MEDIA_TYPE) == true)
+  }
+
+  // --------------------------------------------------
+
+  @Test
+  fun dropsForeignMediaTypeForStandardShape() {
+    val operation = errorOperationWithMedia(Constants.ApiSpec.SIMPLE_MEDIA_TYPE)
+
+    customize(ErrorShape.STANDARD, "single", operation)
+
+    val content = operation.responses["404"]?.content
+
+    assertNull(content?.get(Constants.ApiSpec.SIMPLE_MEDIA_TYPE))
+    assertTrue(content?.containsKey(Constants.ApiSpec.PROBLEM_MEDIA_TYPE) == true)
+  }
+
   // MARK: Register the simple schema
   // --------------------------------------------------
 
@@ -186,6 +230,25 @@ class KotlinbrellaErrorOperationCustomizerTest {
 
     assertEquals(
       setOf(Constants.ApiSpec.SIMPLE_SCHEMA),
+      openApi.components.schemas.keys,
+    )
+  }
+
+  @Test
+  fun dropsSimpleSchemaWhenStandardSelected() {
+    val openApi = OpenAPI().apply { components = Components() }
+    val simple = KotlinbrellaWebProperties().apply {
+      errorShape = ErrorShape.SIMPLE
+    }
+    val standard = KotlinbrellaWebProperties().apply {
+      errorShape = ErrorShape.STANDARD
+    }
+
+    KotlinbrellaSchemaCustomizer(simple).customise(openApi)
+    KotlinbrellaSchemaCustomizer(standard).customise(openApi)
+
+    assertEquals(
+      setOf(Constants.ApiSpec.PROBLEM_SCHEMA, Constants.ApiSpec.VIOLATION_SCHEMA),
       openApi.components.schemas.keys,
     )
   }
@@ -283,6 +346,22 @@ class KotlinbrellaErrorOperationCustomizerTest {
     val handlerMethod = HandlerMethod(bean, method)
 
     return KotlinbrellaErrorOperationCustomizer(properties).customize(operation, handlerMethod)
+  }
+
+  // --------------------------------------------------
+
+  private fun errorOperationWithMedia(mediaType: String): Operation {
+    val operation = Operation()
+    val responses = ApiResponses()
+    val response = ApiResponse()
+    val content = Content()
+
+    content.addMediaType(mediaType, MediaType())
+    response.content = content
+    responses.addApiResponse("404", response)
+    operation.responses = responses
+
+    return operation
   }
 
   // --------------------------------------------------

@@ -85,8 +85,13 @@ class KotlinbrellaErrorOperationCustomizer(
   // --------------------------------------------------
 
   private fun mergeDescription(response: ApiResponse, errors: List<ApiError>) {
+    val existing = response.description
+      ?.split(Constants.ApiSpec.DESCRIPTION_SEPARATOR)
+      ?.toSet()
+      ?: emptySet()
+
     val fresh = errors
-      .filter { error -> response.description?.contains(error.detail) != true }
+      .filter { error -> (Constants.ApiSpec.BULLET_PREFIX + error.detail) !in existing }
       .joinToString(Constants.ApiSpec.DESCRIPTION_SEPARATOR) {
         Constants.ApiSpec.BULLET_PREFIX + it.detail
       }
@@ -100,6 +105,8 @@ class KotlinbrellaErrorOperationCustomizer(
   // --------------------------------------------------
 
   private fun renderSimple(content: Content, errors: List<ApiError>) {
+    content.remove(Constants.ApiSpec.PROBLEM_MEDIA_TYPE)
+
     val media = content[Constants.ApiSpec.SIMPLE_MEDIA_TYPE] ?: MediaType().also {
       content.addMediaType(Constants.ApiSpec.SIMPLE_MEDIA_TYPE, it)
     }
@@ -132,6 +139,8 @@ class KotlinbrellaErrorOperationCustomizer(
     status: Int,
     errors: List<ApiError>,
   ) {
+    content.remove(Constants.ApiSpec.SIMPLE_MEDIA_TYPE)
+
     val media = content[Constants.ApiSpec.PROBLEM_MEDIA_TYPE] ?: MediaType().also {
       content.addMediaType(Constants.ApiSpec.PROBLEM_MEDIA_TYPE, it)
     }

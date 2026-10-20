@@ -32,6 +32,8 @@ class KotlinbrellaSchemaCustomizer(
       return
     }
 
+    components.schemas?.remove(Constants.ApiSpec.SIMPLE_SCHEMA)
+
     if (components.schemas?.containsKey(Constants.ApiSpec.VIOLATION_SCHEMA) != true)
       components.addSchemas(Constants.ApiSpec.VIOLATION_SCHEMA, violationSchema())
 
